@@ -56,6 +56,10 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offse
 .card-in .label{color:#a9742a;margin:0 0 1.2em}
 .card-in h2{max-width:16ch;font-size:clamp(2.1rem,7vw,3.6rem)}
 .card-in p{max-width:44ch;margin:.6em 0 0}
+.modes{position:fixed;left:10px;top:10px;z-index:20;display:flex;align-items:center;gap:4px;padding:5px 6px 5px 12px;border-radius:999px;background:rgba(10,18,38,.82);border:1px solid rgba(242,176,74,.5);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.modes button{font:inherit;color:var(--marble);background:none;border:0;border-radius:999px;padding:.5em .8em;cursor:pointer}
+.modes button[aria-pressed="true"]{background:var(--diya);color:var(--lake)}
+#again{top:54px}
 .fade{height:140px;background:linear-gradient(#f6ead2,var(--lake))}
 .hero.lit #light{display:none}
 .hero.lit .onward{display:inline-block}
@@ -105,6 +109,13 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
 </head>
 <body>
 
+<nav class="modes" aria-label="Transition preview">
+  <span>Preview</span>
+  <button type="button" data-m="gate">Gate</button>
+  <button type="button" data-m="envelope">Envelope</button>
+  <button type="button" data-m="diya">Diya</button>
+  <button type="button" data-m="toran">Toran</button>
+</nav>
 <header class="stage" id="stage">
 <div class="hero" id="hero">
   <canvas id="scene" aria-hidden="true"></canvas>
@@ -386,6 +397,8 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
     var e=0;if(el>=0){var q=clamp((el-1500)/1900);e=1-Math.pow(1-q,3);}
     /* camera: scrolling flies toward the great gate, through it and down a hall of arches into the light */
     var cam=fly*2.15,gx=px0+50*u,gy=hz-15.5*u,gw=7.6*u,Z=cam<.97?1/(1-cam):33.4,tt=clamp(cam/.5),sx=gx+(W/2-gx)*tt,sy=gy+(H/2-gy)*tt;
+    if(mode==='diya'){gx=W/2;gy=hz+(H-hz)*.42;Z=Math.exp(fly*3.4);sx=gx;sy=gy+(H*.58-gy)*clamp(fly/.35);}
+    else if(mode!=='gate'){Z=1;sx=gx;sy=gy;}
     g.setTransform(D,0,0,D,0,0);g.globalAlpha=1;g.globalCompositeOperation='source-over';g.fillStyle='#070d1f';g.fillRect(0,0,W,H);
     g.setTransform(D*Z,0,0,D*Z,D*(sx-gx*Z),D*(sy-gy*Z));
 
@@ -426,6 +439,7 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
       g.fillStyle=mix([50,45,80],[206,140,82],ge);g.beginPath();g.ellipse(cxg,gt.cy,gt.rx,gt.ry,0,0,6.29);g.fill();}
     for(k=0;k<gd.length;k++){var d=gd[k];diya(d.x,d.y,d.s,at(d.y),t,d.p,false);}
 
+    if(mode==='diya')diya(W/2,hz+(H-hz)*.42,7,at(hz+(H-hz)*.42),t,2.2);
     /* fireworks */
     if(el>=0&&!reduce&&now>nextFw){launch(now);shots++;nextFw=now+(shots<6?260+Math.random()*260:1500+Math.random()*2000);}
     if(rockets.length||sparks.length){g.globalCompositeOperation='lighter';
@@ -438,7 +452,10 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
         p.vx*=.982;p.vy=p.vy*.982+42*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;
         g.strokeStyle='rgba('+p.c+','+(1-p.l/p.m)+')';g.beginPath();g.moveTo(p.x-p.vx*.05,p.y-p.vy*.05);g.lineTo(p.x,p.y);g.stroke();}
       g.globalCompositeOperation='source-over';}
-    if(fly>0){
+    if(fly>0&&mode!=='gate'){
+      g.setTransform(D,0,0,D,0,0);g.globalCompositeOperation='source-over';g.globalAlpha=1;
+      if(mode==='diya')flyDiya(sx,sy,t);else if(mode==='envelope')flyEnvelope(t);else flyToran(t);
+    }else if(fly>0){
       g.setTransform(D,0,0,D,0,0);g.globalCompositeOperation='source-over';
       var through=cam>=.97,end=clamp((cam-1.45)/.7),IV=[246,234,210],hk;
       g.save();
@@ -461,6 +478,65 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
       g.restore();g.globalAlpha=1;
     }
   }
+
+  /* ---- other transitions to compare (picked with the Preview bar) ---- */
+  var mode='gate',IVC=[246,234,210];
+  function ease(v){v=clamp(v);return v*v*(3-2*v);}
+  function teardrop(cx,cy,s){g.beginPath();g.moveTo(cx,cy-s*1.5);
+    g.bezierCurveTo(cx+s*.75,cy-s*.55,cx+s*.62,cy+s*.5,cx,cy+s*.5);
+    g.bezierCurveTo(cx-s*.62,cy+s*.5,cx-s*.75,cy-s*.55,cx,cy-s*1.5);g.closePath();}
+  /* diya: dive into one flame until it is all you can see */
+  function flyDiya(cx,cy,t){
+    var s=6*Math.exp(fly*6.6),w=1+.03*Math.sin(t*8),end=clamp((fly-.8)/.2);
+    g.globalAlpha=clamp(fly*6);
+    g.fillStyle=mix([255,150,50],IVC,end);teardrop(cx,cy+s*.2,s*1.25*w);g.fill();
+    g.fillStyle=mix([255,205,110],IVC,end);teardrop(cx,cy+s*.2,s*.9*w);g.fill();
+    g.fillStyle=mix([255,246,220],IVC,end);teardrop(cx,cy+s*.22,s*.55);g.fill();
+    g.globalAlpha=end;g.fillStyle='#f6ead2';g.fillRect(0,0,W,H);g.globalAlpha=1;
+  }
+  /* envelope: rises from the lake, the seal breaks, the card slides out and becomes the page */
+  function flyEnvelope(t){
+    var rise=ease(fly/.28),open=ease((fly-.3)/.22),out=ease((fly-.5)/.25),fill=ease((fly-.76)/.24);
+    var ew=Math.min(W*.8,460),eh=ew*.64,cx=W/2,cy=H*1.3+(H*.56-H*1.3)*rise+Math.sin(t*1.4)*4*(1-open),x=cx-ew/2,y=cy-eh/2,big=Math.max(W,H)*2.4;
+    g.fillStyle='rgba(7,13,31,'+(.62*rise)+')';g.fillRect(0,0,W,H);
+    g.fillStyle='#cdb78c';g.fillRect(x,y,ew,eh);
+    if(open>.5){var k=(open-.5)*2;g.fillStyle='#e3d0a8';g.beginPath();g.moveTo(x,y);g.lineTo(x+ew,y);g.lineTo(cx,y-eh*.56*k);g.closePath();g.fill();}
+    var cw=ew*.9+(big-ew*.9)*fill,ch=eh*.88+(big-eh*.88)*fill,cyy=cy-out*eh*.78+(H/2-(cy-out*eh*.78))*fill;
+    g.fillStyle='#f6ead2';g.fillRect(cx-cw/2,cyy-ch/2,cw,ch);
+    if(fill<1){g.globalAlpha=1-fill;g.strokeStyle='#b88a3a';g.lineWidth=1.2;g.strokeRect(cx-cw/2+8,cyy-ch/2+8,cw-16,ch-16);
+      g.fillStyle='#8a5a1c';g.textAlign='center';g.textBaseline='middle';g.font=Math.round(ew*.085)+'px Italiana, serif';
+      g.fillText('Rishabh & Poojan',cx,cyy-ch*.12);
+      g.fillStyle='#efe0bf';g.beginPath();g.moveTo(x,y);g.lineTo(cx,y+eh*.56);g.lineTo(x,y+eh);g.closePath();g.fill();
+      g.beginPath();g.moveTo(x+ew,y);g.lineTo(cx,y+eh*.56);g.lineTo(x+ew,y+eh);g.closePath();g.fill();
+      g.fillStyle='#f4e8cb';g.beginPath();g.moveTo(x,y+eh);g.lineTo(cx,y+eh*.4);g.lineTo(x+ew,y+eh);g.closePath();g.fill();
+      if(open<=.5){var k2=1-open*2,ty=y+eh*.58*k2;
+        g.fillStyle='#e9d8b4';g.beginPath();g.moveTo(x,y);g.lineTo(x+ew,y);g.lineTo(cx,ty);g.closePath();g.fill();
+        g.strokeStyle='rgba(150,110,50,.5)';g.lineWidth=1;g.stroke();
+        g.globalAlpha=(1-fill)*(1-clamp(open*3.2));var sr=ew*.075;
+        g.fillStyle='#8e1f2a';g.beginPath();g.arc(cx,ty-2,sr,0,6.29);g.fill();
+        g.strokeStyle='#e7b75a';g.lineWidth=1.4;g.beginPath();g.arc(cx,ty-2,sr*.72,0,6.29);g.stroke();
+        g.fillStyle='#f2cf82';g.font=Math.round(sr*.7)+'px Italiana, serif';g.fillText('R&P',cx,ty-1);}
+      g.globalAlpha=1;}
+  }
+  /* toran: marigold garlands fall like a curtain, then part */
+  function flyToran(t){
+    var drop=clamp(fly/.45),part=ease((fly-.55)/.38),gap=24,n=Math.ceil(W/gap)+1,i,j;
+    g.globalAlpha=clamp((fly-.4)/.1);g.fillStyle='#f6ead2';g.fillRect(0,0,W,H);g.globalAlpha=1;
+    for(i=0;i<n;i++){var c=(i+.5)/n,len=(H+50)*ease(drop*1.3-Math.abs(c-.5)*.6),x=i*gap+gap/2+(c<.5?-1:1)*part*(W*.56+gap);
+      if(len<=0)continue;
+      g.strokeStyle='#5d7a2c';g.lineWidth=2;g.beginPath();g.moveTo(x,-10);g.lineTo(x,len);g.stroke();
+      for(j=0;j*21<len;j++){var bx=x+Math.sin(t*1.5+i+j*.3)*1.6,by=j*21+4;
+        g.fillStyle=(i+j)%2?'#f29a1e':'#ffc93c';g.beginPath();g.arc(bx,by,13,0,6.29);g.fill();
+        g.fillStyle='rgba(150,70,0,.3)';g.beginPath();g.arc(bx,by,4.5,0,6.29);g.fill();}}
+  }
+  function setMode(m){
+    mode=({gate:1,envelope:1,diya:1,toran:1})[m]?m:'gate';
+    [].forEach.call(document.querySelectorAll('.modes button'),function(b){b.setAttribute('aria-pressed',b.dataset.m===mode);});
+    if(reduce)draw(0);
+  }
+  [].forEach.call(document.querySelectorAll('.modes button'),function(b){b.addEventListener('click',function(){setMode(b.dataset.m);try{location.hash=b.dataset.m;}catch(e){}});});
+  window.addEventListener('hashchange',function(){setMode(location.hash.slice(1));});
+  setMode(location.hash.slice(1));
 
   /* an ogee arch centred on (cx,cy), w wide: the gate and every arch down the hall share this shape */
   function holePath(cx,cy,w){var h=w*1.58,b=cy+h/2;
@@ -502,7 +578,7 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
   }
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){size();if(reduce)draw(0);});
   hero.addEventListener('pointerdown',function(ev){
-    if(ev.target.closest&&ev.target.closest('a,#again'))return;
+    if(ev.target.closest&&ev.target.closest('a,#again,.modes'))return;
     ignite();
   });
   btn.addEventListener('click',ignite);
