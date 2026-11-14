@@ -71,11 +71,18 @@ section{display:grid;grid-template-columns:minmax(120px,1fr) 3fr;gap:16px 40px;a
 h2{margin:0 0 .35em;font-family:var(--display);font-weight:400;font-size:clamp(1.9rem,5vw,3rem);line-height:1.1;text-wrap:balance}
 p{margin:0 0 1em;max-width:60ch}
 .soft{color:var(--muted)}
-.date{display:flex;flex-wrap:wrap;align-items:center;gap:8px 28px}
-.date .day{font-family:var(--display);font-size:clamp(5rem,16vw,8.5rem);line-height:.9;color:var(--marble)}
-.date .rest{display:flex;flex-direction:column;gap:2px;font-size:1.05rem;letter-spacing:.22em;text-transform:uppercase;font-weight:400}
-.date .rest small{font-size:.8rem;color:var(--muted);letter-spacing:.22em}
-.count{display:inline-block;margin:18px 0 0;padding:.5em 1.1em;border:1px solid rgba(242,176,74,.45);border-radius:999px;font-size:.82rem;letter-spacing:.2em;text-transform:uppercase;font-weight:400;color:var(--diya);font-variant-numeric:tabular-nums}
+.scratch{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2.5vw,22px);max-width:560px;margin:6px 0 14px}
+.card{display:flex;flex-direction:column;gap:10px;text-align:center}
+.face{position:relative;aspect-ratio:1/1.08;border-radius:14px;overflow:hidden;background:radial-gradient(120% 90% at 50% 0%,#1b2a55,var(--lake-2));border:1px solid rgba(242,176,74,.55);display:flex;align-items:center;justify-content:center}
+.val{font-family:var(--display);font-size:clamp(2.4rem,9vw,4.2rem);line-height:1;color:var(--marble)}
+.val.word{font-size:clamp(1.15rem,4.6vw,2.1rem)}
+.face canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair;transition:opacity .7s ease}
+.face canvas.gone{opacity:0;pointer-events:none}
+.cap{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+.weekday{margin:0 0 6px;font-size:1rem;letter-spacing:.22em;text-transform:uppercase;font-weight:400;color:var(--diya)}
+.textbtn{font:inherit;font-size:.82rem;color:var(--muted);background:none;border:0;padding:6px 0;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+.textbtn:hover{color:var(--marble)}
+.count{display:inline-block;margin:10px 0 0;padding:.5em 1.1em;border:1px solid rgba(242,176,74,.45);border-radius:999px;font-size:.82rem;letter-spacing:.2em;text-transform:uppercase;font-weight:400;color:var(--diya);font-variant-numeric:tabular-nums}
 .actions{margin-top:20px}
 .btn{display:inline-block;text-decoration:none;font-size:.82rem;font-weight:400;letter-spacing:.2em;text-transform:uppercase;color:var(--lake);background:var(--diya);border-radius:999px;padding:.85em 1.6em}
 .btn:hover{background:var(--marble)}
@@ -143,10 +150,15 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
   <section id="when">
     <p class="label">The day</p>
     <div>
-      <div class="date">
-        <span class="day">29</span>
-        <span class="rest">January 2027<small>Friday</small></span>
+      <p class="soft" id="scratch-hint">Scratch the three cards to reveal the date.</p>
+      <div class="scratch" id="scratch">
+        <div class="card"><div class="face"><span class="val">29</span><canvas aria-hidden="true"></canvas></div><span class="cap">Day</span></div>
+        <div class="card"><div class="face"><span class="val word">January</span><canvas aria-hidden="true"></canvas></div><span class="cap">Month</span></div>
+        <div class="card"><div class="face"><span class="val">2027</span><canvas aria-hidden="true"></canvas></div><span class="cap">Year</span></div>
       </div>
+      <p class="weekday" id="weekday" hidden>Friday, 29 January 2027</p>
+      <button class="textbtn" id="reveal" type="button">Or reveal it for me</button>
+      <br>
       <span class="count" id="count" hidden></span>
       <div class="actions">
         <a class="btn" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Rishabh+%26+Poojan%27s+wedding&dates=20270129/20270130&location=Udaipur,+Rajasthan">Add to Google Calendar</a>
@@ -232,7 +244,7 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
 
     /* forecourt: round pool with a tiered fountain, a path to the door, diyas along both */
     var g0=H-hz,rx=Math.min(W*.4,g0*.78,310),ry=rx*.3,cx=W/2,cy=hz+g0*.6,k,a;
-    pool={cx:cx,cy:cy,rx:rx,ry:ry,w0:PW*.036,wB:Math.min(W*.47,rx*1.55),fh:Math.min(rx*1.2,cy-hz+PH*.42)};
+    pool={cx:cx,cy:cy,rx:rx,ry:ry,w0:PW*.036,wB:Math.min(W*.47,rx*1.55),fh:Math.min(rx*1.0,cy-hz+PH*.22)};
     gd=[];fl=[];
     var n=Math.floor(rx*5/(narrow?20:24));
     for(k=0;k<n;k++){a=k/n*6.283+1.5708;
@@ -445,6 +457,53 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
   var days=Math.round((new Date(2027,0,29)-today)/864e5);
   if(days>0){c.textContent=days+(days===1?' day to go':' days to go');c.hidden=false;}
   else if(days===0){c.textContent='Today';c.hidden=false;}
+})();
+
+/* Scratch cards: gold foil over each part of the date, rubbed off with a finger or the mouse. */
+(function(){
+  var wrap=document.getElementById('scratch');if(!wrap)return;
+  var cards=[].slice.call(wrap.querySelectorAll('canvas')),left=cards.length;
+  var hint=document.getElementById('scratch-hint'),weekday=document.getElementById('weekday'),reveal=document.getElementById('reveal');
+  function paint(c){
+    var D=Math.min(window.devicePixelRatio||1,2),w=c.clientWidth,h=c.clientHeight,x=c.getContext('2d'),i;
+    c.width=Math.round(w*D);c.height=Math.round(h*D);c._w=w;x.setTransform(D,0,0,D,0,0);
+    var g=x.createLinearGradient(0,0,w,h);
+    g.addColorStop(0,'#b07f2a');g.addColorStop(.28,'#f4d98a');g.addColorStop(.5,'#c2913a');g.addColorStop(.72,'#fbeab0');g.addColorStop(1,'#a87626');
+    x.fillStyle=g;x.fillRect(0,0,w,h);
+    for(i=0;i<w*h/26;i++){x.fillStyle='rgba(255,255,255,'+(Math.random()*.16)+')';x.fillRect(Math.random()*w,Math.random()*h,1.2,1.2);}
+    x.strokeStyle='rgba(120,80,20,.35)';x.lineWidth=1;x.strokeRect(6.5,6.5,w-13,h-13);
+    x.fillStyle='rgba(96,62,14,.8)';x.textAlign='center';x.textBaseline='middle';
+    x.font='500 '+Math.max(9,w*.085)+'px Jost, sans-serif';
+    x.fillText('S C R A T C H',w/2,h/2);
+  }
+  function finish(c){
+    if(c._done)return;c._done=true;c.classList.add('gone');left--;
+    if(left===0){weekday.hidden=false;reveal.hidden=true;hint.textContent='See you there.';}
+  }
+  function cleared(c){
+    var x=c.getContext('2d'),d=x.getImageData(0,0,c.width,c.height).data,n=0,t=0,i;
+    for(i=3;i<d.length;i+=64){t++;if(d[i]<40)n++;}
+    return n/t;
+  }
+  cards.forEach(function(c){
+    paint(c);
+    var last=null,moves=0;
+    function pos(ev){var r=c.getBoundingClientRect();return [ev.clientX-r.left,ev.clientY-r.top];}
+    function rub(ev){
+      var x=c.getContext('2d'),p=pos(ev);
+      x.globalCompositeOperation='destination-out';x.lineWidth=Math.max(26,c._w*.24);x.lineCap='round';x.lineJoin='round';
+      x.beginPath();x.moveTo(last?last[0]:p[0]-.1,last?last[1]:p[1]);x.lineTo(p[0],p[1]);x.stroke();
+      x.globalCompositeOperation='source-over';last=p;c._touched=true;
+      if(++moves%8===0&&cleared(c)>.5)finish(c);
+    }
+    c.addEventListener('pointerdown',function(ev){if(c._done)return;ev.preventDefault();try{c.setPointerCapture(ev.pointerId);}catch(e){}last=null;rub(ev);});
+    c.addEventListener('pointermove',function(ev){if(c._done||!last)return;rub(ev);});
+    function up(){if(last&&!c._done&&cleared(c)>.5)finish(c);last=null;}
+    c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);
+  });
+  reveal.addEventListener('click',function(){cards.forEach(finish);});
+  window.addEventListener('resize',function(){cards.forEach(function(c){if(!c._done&&Math.abs(c.clientWidth-c._w)>2)paint(c);});});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){cards.forEach(function(c){if(!c._done&&!c._touched)paint(c);});});
 })();
 </script>
 </body>
