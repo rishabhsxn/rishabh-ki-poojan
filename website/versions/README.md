@@ -9,5 +9,6 @@ Each folder is a complete copy of the site at that point. Open its `index.html` 
 | `v3-scratch-date` | v2 plus scratch-to-reveal date cards |
 | `v4-city-palace-match-cut` | Scroll plays City Palace footage, which melts into a drawing traced from its last frame |
 | `v5-lake-palace-detailed` | Back to the v1 lake scene with a redrawn, layered palace; keeps the scratch cards |
+| `v6-gate-fly-through` | v5 plus a scroll fly-through: into the palace gate, down a hall of arches, out into the invitation |
 
 A new folder is added before every design change.

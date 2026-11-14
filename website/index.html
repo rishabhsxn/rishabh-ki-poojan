@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 /* One visual world: a lake palace in Udaipur after sunset. Single theme by choice.
-   Layout: a full-width lake scene you tap to light, then quiet two-column sections (label left, content right). */
+   Layout: a pinned lake scene you tap to light; scrolling then flies through the palace gate into the invitation, then quiet two-column sections (label left, content right). */
 :root{
   color-scheme: dark;
   --lake: #0a1226;        /* deep water, page ground */
@@ -19,6 +19,7 @@
   --diya: #f2b04a;        /* flame gold, the accent */
   --dusk: #a8566b;        /* afterglow rose, used sparingly */
   --muted: #8e93b0;
+  --ink: #3b2417;         /* text on the lit invitation card */
   --display: "Italiana", "Cormorant Garamond", "Times New Roman", serif;
   --body: "Jost", "Avenir Next", "Segoe UI", system-ui, sans-serif;
 }
@@ -29,7 +30,8 @@ a{color:var(--diya)}
 a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offset:4px}
 
 /* ---------- Hero ---------- */
-.hero{position:relative;height:clamp(600px,88vh,900px);overflow:hidden;cursor:pointer;background:#070d1f;user-select:none;-webkit-user-select:none}
+.stage{position:relative;height:340vh}
+.hero{position:sticky;top:0;height:100vh;height:100svh;min-height:560px;overflow:hidden;cursor:pointer;background:#070d1f;user-select:none;-webkit-user-select:none}
 .hero.lit{cursor:default}
 #scene{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hero-top{position:absolute;left:0;right:0;top:clamp(34px,6vh,64px);padding:0 20px;text-align:center;pointer-events:none;display:grid;justify-items:center}
@@ -49,6 +51,12 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offse
 .pill:hover{background:rgba(242,176,74,.18)}
 #again{position:absolute;top:14px;right:14px;font-size:.68rem;padding:.7em 1.2em;display:none}
 .onward{pointer-events:auto;font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;color:var(--marble);padding:.85em 0;display:none;text-shadow:0 1px 10px rgba(7,13,31,.9)}
+.hero.flying .hero-bottom,.hero.flying #again{visibility:hidden}
+.card-in{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px;opacity:0;pointer-events:none;color:var(--ink)}
+.card-in .label{color:#a9742a;margin:0 0 1.2em}
+.card-in h2{max-width:16ch;font-size:clamp(2.1rem,7vw,3.6rem)}
+.card-in p{max-width:44ch;margin:.6em 0 0}
+.fade{height:140px;background:linear-gradient(#f6ead2,var(--lake))}
 .hero.lit #light{display:none}
 .hero.lit .onward{display:inline-block}
 .hero.lit #again{display:block}
@@ -97,7 +105,8 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
 </head>
 <body>
 
-<header class="hero" id="hero">
+<header class="stage" id="stage">
+<div class="hero" id="hero">
   <canvas id="scene" aria-hidden="true"></canvas>
   <div class="hero-top">
     <div class="pre">
@@ -113,19 +122,18 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
   <button id="again" class="pill" type="button">Close it again</button>
   <div class="hero-bottom">
     <button id="light" class="pill" type="button">Tap to light the diyas</button>
-    <a class="onward" href="#invitation">Scroll down ↓</a>
+    <span class="onward">Scroll down ↓</span>
   </div>
+  <div class="card-in">
+    <p class="label">The invitation</p>
+    <h2>Rishabh Saxena and Poojan Soni are getting married</h2>
+    <p>We would love for you to be with us in Udaipur when we begin our life together. Please come, bless us, and celebrate with our families.</p>
+  </div>
+</div>
 </header>
+<div class="fade" aria-hidden="true"></div>
 
 <main>
-  <section id="invitation">
-    <p class="label">The invitation</p>
-    <div>
-      <h2>Rishabh Saxena and Poojan Soni are getting married</h2>
-      <p>We would love for you to be with us in Udaipur when we begin our life together. Please come, bless us, and celebrate with our families.</p>
-    </div>
-  </section>
-
   <section id="when">
     <p class="label">The day</p>
     <div>
@@ -186,6 +194,7 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
 (function(){
   var hero=document.getElementById('hero'),cv=document.getElementById('scene'),g=cv.getContext('2d');
   var btn=document.getElementById('light'),again=document.getElementById('again'),post=hero.querySelector('.post');
+  var stage=document.getElementById('stage'),topBox=hero.querySelector('.hero-top'),card=hero.querySelector('.card-in'),fly=0;
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var off=document.createElement('canvas'),og=off.getContext('2d');
   var W=0,H=0,D=1,hz=0,u=1,PW=0,PH=0,px0=0,lastE=-1,cxg=0,ghat=[],gd=[];
@@ -375,7 +384,10 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
     var span=H-(hz-PH);                          /* the light climbs this distance */
     function at(y){return el<0?0:clamp((el-(H-y)/span*2600)/420);}
     var e=0;if(el>=0){var q=clamp((el-1500)/1900);e=1-Math.pow(1-q,3);}
-    g.setTransform(D,0,0,D,0,0);
+    /* camera: scrolling flies toward the great gate, through it and down a hall of arches into the light */
+    var cam=fly*2.15,gx=px0+50*u,gy=hz-15.5*u,gw=7.6*u,Z=cam<.97?1/(1-cam):33.4,tt=clamp(cam/.5),sx=gx+(W/2-gx)*tt,sy=gy+(H/2-gy)*tt;
+    g.setTransform(D,0,0,D,0,0);g.globalAlpha=1;g.globalCompositeOperation='source-over';g.fillStyle='#070d1f';g.fillRect(0,0,W,H);
+    g.setTransform(D*Z,0,0,D*Z,D*(sx-gx*Z),D*(sy-gy*Z));
 
     var sky=g.createLinearGradient(0,0,0,hz);
     sky.addColorStop(0,'#060b1e');sky.addColorStop(.5,'#141d4c');sky.addColorStop(.82,'#4a3263');sky.addColorStop(.95,'#a05a6c');sky.addColorStop(1,'#de9163');
@@ -426,8 +438,45 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
         p.vx*=.982;p.vy=p.vy*.982+42*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;
         g.strokeStyle='rgba('+p.c+','+(1-p.l/p.m)+')';g.beginPath();g.moveTo(p.x-p.vx*.05,p.y-p.vy*.05);g.lineTo(p.x,p.y);g.stroke();}
       g.globalCompositeOperation='source-over';}
+    if(fly>0){
+      g.setTransform(D,0,0,D,0,0);g.globalCompositeOperation='source-over';
+      var through=cam>=.97,end=clamp((cam-1.45)/.7),IV=[246,234,210],hk;
+      g.save();
+      if(!through){g.beginPath();holePath(sx,sy,gw*Z);g.clip();}
+      g.globalAlpha=through?1:clamp(fly*7);
+      var R=Math.max(W,H)*.85,lg=g.createRadialGradient(sx,sy,0,sx,sy,R);
+      lg.addColorStop(0,mix([255,248,230],IV,end));lg.addColorStop(.4,mix([255,220,146],IV,end));lg.addColorStop(1,mix([222,146,66],IV,end));
+      g.fillStyle=lg;g.fillRect(0,0,W,H);
+      var fb=sy+gw/(1.9-Math.min(cam,1.86))*2.6*.79,fg=g.createLinearGradient(0,fb,0,H);
+      fg.addColorStop(0,mix([255,232,176],IV,end));fg.addColorStop(1,mix([150,92,56],IV,end));
+      g.fillStyle=fg;g.fillRect(0,fb,W,H-fb);
+      for(hk=3;hk>=1;hk--){var dist=1+hk*.3-cam;if(dist<.03)continue;
+        var wk=gw/dist*2.6,base=sy+wk*.79;
+        var lit2=clamp((dist-.03)/.9),wgr=g.createLinearGradient(0,base-wk*2.2,0,base);
+        wgr.addColorStop(0,mix([70,36,30],[150,96,66],lit2));wgr.addColorStop(1,mix([128,74,50],[236,176,112],lit2));g.fillStyle=wgr;
+        g.beginPath();g.rect(0,0,W,base);holePath(sx,sy,wk);g.fill('evenodd');
+        g.strokeStyle='rgba(255,230,170,.6)';g.lineWidth=Math.max(1,wk*.018);g.beginPath();holePath(sx,sy,wk);g.stroke();
+        g.strokeStyle='rgba(255,214,140,.28)';g.lineWidth=Math.max(1,wk*.012);g.beginPath();holePath(sx,sy-wk*.07,wk*1.16);g.stroke();
+        g.fillStyle='rgba(255,236,180,.85)';for(var dq=-6;dq<=6;dq++){if(Math.abs(dq)<1)continue;g.beginPath();g.arc(sx+dq*wk*.42,base-wk*.03,Math.max(1.2,wk*.016),0,6.29);g.fill();}}
+      g.restore();g.globalAlpha=1;
+    }
   }
 
+  /* an ogee arch centred on (cx,cy), w wide: the gate and every arch down the hall share this shape */
+  function holePath(cx,cy,w){var h=w*1.58,b=cy+h/2;
+    g.moveTo(cx-w/2,b);g.lineTo(cx-w/2,b-h*.5);
+    g.bezierCurveTo(cx-w/2,b-h*.86,cx-w*.1,b-h*.8,cx,b-h);
+    g.bezierCurveTo(cx+w*.1,b-h*.8,cx+w/2,b-h*.86,cx+w/2,b-h*.5);
+    g.lineTo(cx+w/2,b);g.closePath();}
+  function onScroll(){
+    var range=stage.offsetHeight-hero.offsetHeight,top=stage.getBoundingClientRect().top,P=range>0?clamp(-top/range):0;
+    var q=clamp((P-.05)/.8);fly=q*q*(3-2*q);
+    if(P>.02&&litAt===null)ignite();
+    hero.classList.toggle('flying',P>.03);
+    topBox.style.opacity=1-clamp((P-.02)/.1);
+    card.style.opacity=clamp((P-.88)/.1);
+    if(reduce)draw(0);
+  }
   function loop(now){draw(now);if(visible)raf=requestAnimationFrame(loop);else raf=0;}
   function ignite(){
     if(litAt!==null)return;
@@ -439,7 +488,9 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
     if(reduce)draw(0);
   }
 
-  size();
+  size();onScroll();
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
   if(reduce){litAt=-1e7;hero.classList.add('lit');draw(0);
     window.addEventListener('resize',function(){size();draw(0);});
   }else{
