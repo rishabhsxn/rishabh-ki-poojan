@@ -211,10 +211,10 @@ footer .credit{display:block;margin-top:18px;font-size:.66rem;letter-spacing:.14
   /* The scene is traced from the last frame of the footage, so both share one 9:16 rectangle. */
   var N=60,frames=[],unlit=new Image(),lit=new Image(),i;
   function loaded(){this.ok=true;lastKey='';if(reduce)draw(performance.now());}
-  unlit.onload=loaded;lit.onload=loaded;unlit.src='../../media/palace-unlit.png';lit.src='../../media/palace-lit.png';
+  unlit.onload=loaded;lit.onload=loaded;unlit.src='media/palace-unlit.png';lit.src='media/palace-lit.png';
   for(i=0;i<N;i++){frames[i]=new Image();frames[i].onload=loaded;}
   [0,N-1].concat(Array.apply(null,Array(N-2)).map(function(_,k){return k+1;})).forEach(function(k){
-    frames[k].src='../../media/seq/f'+(k<10?'0':'')+k+'.jpg';});
+    frames[k].src='media/seq/f'+(k<10?'0':'')+k+'.jpg';});
   function frameAt(k){var j;for(j=k;j>=0;j--)if(frames[j].ok)return frames[j];for(j=k+1;j<N;j++)if(frames[j].ok)return frames[j];return null;}
 
   var seed=20270129;
