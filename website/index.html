@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rishabh &amp; Poojan Wedding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* One visual world: Lake Pichola after sunset. Single theme by choice.
+   Layout: a full-width lake scene, then quiet two-column sections (label left, content right). */
+:root{
+  color-scheme: dark;
+  --lake: #0a1226;        /* deep water, page ground */
+  --lake-2: #111b38;      /* raised surface */
+  --moon: #c9c8da;        /* unlit text, cool */
+  --marble: #f3e6cd;      /* lit text, warm */
+  --diya: #f2b04a;        /* flame gold, the accent */
+  --dusk: #a8566b;        /* afterglow rose, used sparingly */
+  --muted: #8e93b0;
+  --display: "Italiana", "Cormorant Garamond", "Times New Roman", serif;
+  --body: "Jost", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--lake);color:var(--marble);font-family:var(--body);font-weight:300;font-size:1.0625rem;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--diya)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offset:4px}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;height:clamp(600px,88vh,900px);overflow:hidden;cursor:pointer;background:#070d1f;user-select:none;-webkit-user-select:none}
+.hero.lit{cursor:default}
+#scene{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-top{position:absolute;left:0;right:0;top:clamp(34px,6vh,64px);padding:0 20px;text-align:center;pointer-events:none;display:grid;justify-items:center}
+.pre,.post{grid-area:1/1}
+.pre{opacity:1;transition:opacity .6s ease .5s}
+.post{opacity:0;transition:opacity .5s ease}
+.hero.lit .pre{opacity:0;transition:opacity .7s ease}
+.hero.lit .post{opacity:1;transition:opacity 1.8s ease 3s}
+.invited{margin:0 0 .15em;font-family:var(--display);font-size:clamp(2.5rem,8.5vw,4.4rem);line-height:1.05;color:var(--moon)}
+.eyebrow{margin:0 0 .6em;font-size:.78rem;letter-spacing:.34em;text-transform:uppercase;color:var(--moon);font-weight:400}
+.names{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(3rem,11.5vw,6.6rem);line-height:.98;letter-spacing:.02em;color:var(--marble);text-shadow:0 0 28px rgba(242,176,74,.5),0 0 90px rgba(242,176,74,.28);display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;column-gap:.28em}
+.names .amp{font-size:.5em;color:var(--diya)}
+.when{margin:.9em 0 0;font-size:.9rem;letter-spacing:.3em;text-transform:uppercase;font-weight:400;color:var(--marble)}
+.when span{color:var(--diya);padding:0 .5em}
+.hero-bottom{position:absolute;left:clamp(18px,5vw,56px);bottom:clamp(22px,4.5vh,44px);pointer-events:none}
+.pill{pointer-events:auto;font:inherit;font-size:.8rem;font-weight:400;letter-spacing:.22em;text-transform:uppercase;color:var(--marble);background:rgba(10,18,38,.55);border:1px solid rgba(242,176,74,.7);border-radius:999px;padding:.85em 1.6em;cursor:pointer;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.pill:hover{background:rgba(242,176,74,.18)}
+#again{position:absolute;top:14px;right:14px;font-size:.68rem;padding:.7em 1.2em;display:none}
+.onward{pointer-events:auto;font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;color:var(--marble);padding:.85em 0;display:none;text-shadow:0 1px 10px rgba(7,13,31,.9)}
+.hero.lit #light{display:none}
+.hero.lit .onward{display:inline-block}
+.hero.lit #again{display:block}
+
+/* ---------- Sections ---------- */
+main{max-width:1000px;margin:0 auto;padding:clamp(40px,8vw,96px) 20px 24px;display:flex;flex-direction:column;gap:clamp(48px,8vw,96px)}
+section{display:grid;grid-template-columns:minmax(120px,1fr) 3fr;gap:16px 40px;align-items:start}
+.label{margin:.45em 0 0;font-size:.76rem;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--diya)}
+h2{margin:0 0 .35em;font-family:var(--display);font-weight:400;font-size:clamp(1.9rem,5vw,3rem);line-height:1.1;text-wrap:balance}
+p{margin:0 0 1em;max-width:60ch}
+.soft{color:var(--muted)}
+.date{display:flex;flex-wrap:wrap;align-items:center;gap:8px 28px}
+.date .day{font-family:var(--display);font-size:clamp(5rem,16vw,8.5rem);line-height:.9;color:var(--marble)}
+.date .rest{display:flex;flex-direction:column;gap:2px;font-size:1.05rem;letter-spacing:.22em;text-transform:uppercase;font-weight:400}
+.date .rest small{font-size:.8rem;color:var(--muted);letter-spacing:.22em}
+.count{display:inline-block;margin:18px 0 0;padding:.5em 1.1em;border:1px solid rgba(242,176,74,.45);border-radius:999px;font-size:.82rem;letter-spacing:.2em;text-transform:uppercase;font-weight:400;color:var(--diya);font-variant-numeric:tabular-nums}
+.actions{margin-top:20px}
+.btn{display:inline-block;text-decoration:none;font-size:.82rem;font-weight:400;letter-spacing:.2em;text-transform:uppercase;color:var(--lake);background:var(--diya);border-radius:999px;padding:.85em 1.6em}
+.btn:hover{background:var(--marble)}
+.frames{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2.5vw,24px);margin-top:8px}
+.frame{aspect-ratio:3/4.4;border:1px solid rgba(242,176,74,.5);border-radius:999px 999px 6px 6px;background:linear-gradient(180deg,var(--lake-2),rgba(17,27,56,.2));display:flex;align-items:flex-end;justify-content:center;padding:0 8px 18px;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-align:center}
+.frame:nth-child(2){transform:translateY(-14px)}
+.travel{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:20px 32px}
+.travel h3{margin:0 0 .3em;font-family:var(--body);font-size:.82rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--marble)}
+.travel p{margin:0;font-size:1rem}
+footer{max-width:1000px;margin:0 auto;padding:40px 20px 56px;text-align:center;color:var(--muted);font-size:.78rem;letter-spacing:.3em;text-transform:uppercase}
+footer .mono{display:block;font-family:var(--display);font-size:2.2rem;letter-spacing:.12em;color:var(--marble);margin-bottom:8px}
+footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
+@media (max-width:640px){
+  section{grid-template-columns:1fr;gap:8px}
+  .label{margin:0}
+  .names{flex-direction:column;align-items:center;row-gap:.04em}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .pre,.post,.hero.lit .pre,.hero.lit .post{transition:none}
+}
+</style>
+</head>
+<body>
+
+<header class="hero" id="hero">
+  <canvas id="scene" aria-hidden="true"></canvas>
+  <div class="hero-top">
+    <div class="pre">
+      <p class="invited">You're invited</p>
+      <p class="eyebrow">to a wedding in Udaipur</p>
+    </div>
+    <div class="post">
+      <p class="eyebrow">Welcome to the wedding of</p>
+      <h1 class="names"><span>Rishabh</span><span class="amp">&amp;</span><span>Poojan</span></h1>
+      <p class="when">29 January 2027<span>·</span>Udaipur</p>
+    </div>
+  </div>
+  <button id="again" class="pill" type="button">Close it again</button>
+  <div class="hero-bottom">
+    <button id="light" class="pill" type="button">Tap to light the diyas</button>
+    <a class="onward" href="#invitation">Scroll down ↓</a>
+  </div>
+</header>
+
+<main>
+  <section id="invitation">
+    <p class="label">The invitation</p>
+    <div>
+      <h2>Rishabh Saxena and Poojan Soni are getting married</h2>
+      <p>We would love for you to be with us in Udaipur, by the lake, when we begin our life together. Please come, bless us, and celebrate with our families.</p>
+    </div>
+  </section>
+
+  <section id="when">
+    <p class="label">The day</p>
+    <div>
+      <div class="date">
+        <span class="day">29</span>
+        <span class="rest">January 2027<small>Friday</small></span>
+      </div>
+      <span class="count" id="count" hidden></span>
+      <div class="actions">
+        <a class="btn" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Rishabh+%26+Poojan%27s+wedding&dates=20270129/20270130&location=Udaipur,+Rajasthan">Add to Google Calendar</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="where">
+    <p class="label">The place</p>
+    <div>
+      <h2>Udaipur, Rajasthan</h2>
+      <p class="soft">The venue and timings will be added here soon.</p>
+    </div>
+  </section>
+
+  <section id="photos">
+    <p class="label">The two of us</p>
+    <div>
+      <p class="soft">Our photographs are on their way.</p>
+      <div class="frames">
+        <div class="frame">Photo to come</div>
+        <div class="frame">Photo to come</div>
+        <div class="frame">Photo to come</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="travel">
+    <p class="label">Getting there</p>
+    <div class="travel">
+      <div><h3>By air</h3><p>Maharana Pratap Airport (UDR) is about 22 km from the city centre.</p></div>
+      <div><h3>By train</h3><p>Udaipur City is the main railway station.</p></div>
+      <div><h3>What to pack</h3><p>Late January days are mild and sunny. Evenings by the lake get cold, so bring a warm layer.</p></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span class="mono">R<i>&amp;</i>P</span>
+  29 · 01 · 2027
+</footer>
+
+<script>
+(function(){
+  var hero=document.getElementById('hero'),cv=document.getElementById('scene'),g=cv.getContext('2d');
+  var btn=document.getElementById('light'),again=document.getElementById('again'),post=hero.querySelector('.post');
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var off=document.createElement('canvas'),og=off.getContext('2d');
+  var W=0,H=0,D=1,hz=0,u=1,PW=0,PH=0,px0=0,lastE=-1,cxg=0,ghat=[],gd=[];
+  var litAt=null,visible=true,raf=0,prev=0,sparks=[],rockets=[],nextFw=0,shots=0;
+
+  var seed=20270129;
+  function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647;}
+  var stars=[],floats=[],i;
+  for(i=0;i<150;i++)stars.push({x:rnd(),y:rnd()*.56,r:rnd()*1.1+.3,p:rnd()*6.28});
+  for(i=0;i<14;i++)floats.push({x:.04+rnd()*.5,d:.1+rnd()*.8,p:rnd()*6.28});
+  floats.push({x:.1,d:.97,p:1,seed:true});
+
+  function clamp(v){return v<0?0:v>1?1:v;}
+  function mix(a,b,t){return 'rgb('+Math.round(a[0]+(b[0]-a[0])*t)+','+Math.round(a[1]+(b[1]-a[1])*t)+','+Math.round(a[2]+(b[2]-a[2])*t)+')';}
+
+  /* Palace, in palace units: x 0..100, y up from the waterline */
+  var wins=[],x;
+  for(x=12;x<=88.5;x+=5.4){if(Math.abs(x-50)>6)wins.push({x:x,y:7,w:2.4,h:6});}
+  for(x=17.5;x<=35;x+=4.4){wins.push({x:x,y:20.6,w:2,h:4.6});wins.push({x:100-x,y:20.6,w:2,h:4.6});}
+  wins.push({x:43.5,y:23,w:2.6,h:6.2},{x:50,y:23,w:2.6,h:6.2},{x:56.5,y:23,w:2.6,h:6.2},{x:50,y:3,w:7,h:12.5});
+  var strings=[[0,100,3.2],[8,92,19.2],[14,38,27.2],[62,86,27.2],[38,62,33.2],[0,100,.5]];
+
+  function size(){
+    W=hero.clientWidth;H=hero.clientHeight;D=Math.min(window.devicePixelRatio||1,2);
+    cv.width=Math.round(W*D);cv.height=Math.round(H*D);
+    var narrow=W<700;
+    hz=Math.round(H*(narrow?.58:.64));
+    var nb=post.getBoundingClientRect().bottom-hero.getBoundingClientRect().top+16;
+    PW=Math.max(220,Math.min(W*.92,780,(hz-nb)*100/46));u=PW/100;PH=Math.ceil(46*u);px0=(W-PW)/2;
+    off.width=Math.round(PW*D);off.height=Math.round(PH*D);lastE=-1;
+    /* Ghat: stepped terraces rising from the bottom-right corner, diyas along each rim */
+    cxg=W*(narrow?1.12:1.0);var cyg=H*1.07,rx0=Math.min(W*(narrow?.66:.36),(H-hz)*1.5),st=Math.max(9,rx0*.065),k,j;
+    ghat=[];gd=[];
+    for(k=0;k<4;k++){
+      var rx=rx0*(1-k*.2),ry=rx*.5,cy=cyg-k*st,n=Math.floor(rx*1.7/(narrow?14:18));
+      ghat.push({rx:rx,ry:ry,cy:cy,st:st});
+      for(j=0;j<=n;j++){var a=Math.PI*(1.02+.56*j/n),dx=cxg+(rx-7)*Math.cos(a),dy=cy+(ry-5)*Math.sin(a);
+        if(dx<W+8&&dy<H+8)gd.push({x:dx,y:dy,s:3+dy/H*2.4,p:j*1.7+k*2.3});}
+    }
+  }
+
+  function X(v){return v*u;} function Y(v){return PH-v*u;}
+  function box(c,x,y,w,h){c.fillRect(X(x),Y(y+h),w*u,h*u);}
+  function dome(c,cx,by,r){
+    c.beginPath();c.moveTo(X(cx-r),Y(by));
+    c.bezierCurveTo(X(cx-r*1.3),Y(by+r*.95),X(cx-r*.35),Y(by+r*1.15),X(cx),Y(by+r*1.75));
+    c.bezierCurveTo(X(cx+r*.35),Y(by+r*1.15),X(cx+r*1.3),Y(by+r*.95),X(cx+r),Y(by));
+    c.closePath();c.fill();
+    c.fillRect(X(cx)-Math.max(.6,r*u*.05),Y(by+r*2.25),Math.max(1.2,r*u*.1),r*u*.55);
+    c.beginPath();c.arc(X(cx),Y(by+r*2.3),Math.max(1,r*u*.13),0,6.29);c.fill();
+  }
+  function chhatri(c,cx,by){
+    box(c,cx-1.7,by,.5,2.6);box(c,cx+1.2,by,.5,2.6);box(c,cx-.25,by,.5,2.6);
+    box(c,cx-2.3,by+2.6,4.6,.55);dome(c,cx,by+3.15,1.9);
+  }
+  function arch(c,w){
+    c.beginPath();c.moveTo(X(w.x-w.w/2),Y(w.y));c.lineTo(X(w.x-w.w/2),Y(w.y+w.h*.55));
+    c.quadraticCurveTo(X(w.x-w.w/2),Y(w.y+w.h*.93),X(w.x),Y(w.y+w.h));
+    c.quadraticCurveTo(X(w.x+w.w/2),Y(w.y+w.h*.93),X(w.x+w.w/2),Y(w.y+w.h*.55));
+    c.lineTo(X(w.x+w.w/2),Y(w.y));c.closePath();
+  }
+  /* e: 0 dark .. 1 fully lit. Light climbs the building from the waterline up. */
+  function palace(e){
+    var c=og,k,q;c.setTransform(D,0,0,D,0,0);c.clearRect(0,0,PW,PH);
+    var gr=c.createLinearGradient(0,Y(42),0,Y(0));
+    gr.addColorStop(0,mix([36,44,82],[122,70,54],clamp(e*1.6-.6)));
+    gr.addColorStop(.55,mix([33,40,74],[178,112,70],clamp(e*1.6-.3)));
+    gr.addColorStop(1,mix([28,35,66],[232,164,98],clamp(e*1.6)));
+    c.fillStyle=gr;
+    box(c,0,0,100,3);box(c,8,3,84,16);box(c,14,19,24,8);box(c,62,19,24,8);box(c,38,19,24,14);
+    dome(c,50,33,7);dome(c,40.2,33,2.1);dome(c,59.8,33,2.1);
+    var cs=[16.5,26,35.5,64.5,74,83.5];
+    for(k=0;k<cs.length;k++)chhatri(c,cs[k],27);
+    chhatri(c,10.5,19);chhatri(c,89.5,19);
+    c.fillStyle='rgba(8,12,30,.22)';
+    box(c,8,18.3,84,.7);box(c,14,26.3,24,.7);box(c,62,26.3,24,.7);box(c,38,32.3,24,.7);box(c,0,2.5,100,.5);
+    for(k=0;k<wins.length;k++){
+      var w=wins[k],wl=clamp(e*1.9-w.y/36*.9);
+      arch(c,w);c.shadowBlur=0;c.fillStyle='#121832';c.fill();
+      if(wl>0){c.shadowColor='rgba(255,160,60,'+(.9*wl)+')';c.shadowBlur=9*D*wl;c.fillStyle='rgba(255,214,130,'+wl+')';c.fill();c.shadowBlur=0;}
+    }
+    for(k=0;k<strings.length;k++){
+      var s=strings[k],sl=clamp(e*1.9-s[2]/36*.9);if(sl<=0)continue;
+      c.shadowColor='rgba(255,170,70,'+sl+')';c.shadowBlur=5*D;c.fillStyle='rgba(255,226,160,'+sl+')';
+      for(q=s[0]+.8;q<s[1];q+=1.7){c.beginPath();c.arc(X(q),Y(s[2]),Math.max(.9,u*.26),0,6.29);c.fill();}
+      c.shadowBlur=0;
+    }
+  }
+
+  function ridge(base,amp,f,ph,col){
+    g.beginPath();g.moveTo(0,hz);
+    for(var x=0;x<=W;x+=8){var n=x/W;g.lineTo(x,hz-base-amp*(Math.sin(n*f+ph)*.55+Math.sin(n*f*2.3+ph*1.7)*.3+Math.sin(n*f*5.1+ph)*.15+.6));}
+    g.lineTo(W,hz);g.closePath();g.fillStyle=col;g.fill();
+  }
+
+  function diya(dx,dy,sz,a,t,p,streak){
+    if(a>0){g.globalCompositeOperation='lighter';
+      var fl=.9+.1*Math.sin(t*9+p*3);
+      var rg=g.createRadialGradient(dx,dy-sz*.5,0,dx,dy-sz*.5,sz*5);
+      rg.addColorStop(0,'rgba(255,176,80,'+(.5*a*fl)+')');rg.addColorStop(1,'rgba(255,176,80,0)');
+      g.fillStyle=rg;g.fillRect(dx-sz*5,dy-sz*5.5,sz*10,sz*10);
+      if(streak){var rl=g.createLinearGradient(0,dy,0,dy+sz*6);
+        rl.addColorStop(0,'rgba(255,186,90,'+(.3*a)+')');rl.addColorStop(1,'rgba(255,186,90,0)');
+        g.fillStyle=rl;g.fillRect(dx-sz*.45+Math.sin(t*2+p)*sz*.15,dy+sz*.3,sz*.9,sz*6);}
+      g.globalCompositeOperation='source-over';}
+    g.fillStyle='#4a2616';g.beginPath();g.ellipse(dx,dy,sz*.9,sz*.34,0,0,6.29);g.fill();
+    g.fillStyle='#7a4124';g.beginPath();g.ellipse(dx,dy-sz*.1,sz*.75,sz*.2,0,0,6.29);g.fill();
+    if(a>0){var tip=Math.sin(t*7+p*5)*sz*.12;g.globalAlpha=a;
+      var fg=g.createLinearGradient(0,dy-sz*1.5,0,dy);fg.addColorStop(0,'#ffb238');fg.addColorStop(.6,'#ffe9a8');fg.addColorStop(1,'#fff6d8');
+      g.fillStyle=fg;g.beginPath();g.moveTo(dx-sz*.26,dy-sz*.22);
+      g.quadraticCurveTo(dx-sz*.3,dy-sz*.8,dx+tip,dy-sz*1.45);
+      g.quadraticCurveTo(dx+sz*.3,dy-sz*.8,dx+sz*.26,dy-sz*.22);
+      g.quadraticCurveTo(dx,dy+sz*.05,dx-sz*.26,dy-sz*.22);g.fill();g.globalAlpha=1;}
+  }
+
+  var cols=['255,214,130','255,150,100','250,190,205','255,240,200'];
+  function burst(bx,by){
+    var c=cols[Math.random()*cols.length|0],n=W<700?46:70;
+    for(var k=0;k<n;k++){var a=Math.random()*6.283,s=(30+Math.random()*120)*(W<700?.75:1);
+      sparks.push({x:bx,y:by,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:0,m:1.1+Math.random()*.9,c:c});}
+  }
+  function launch(now){
+    var top=Math.max(40,hz-PH-20),side=Math.random()<.5;
+    rockets.push({x:(side?.08+Math.random()*.3:.62+Math.random()*.3)*W,y0:hz-PH*.2,ty:top*(.25+Math.random()*.75)+PH*.25*Math.random(),t0:now});
+  }
+
+  function draw(now){
+    var t=now/1000,dt=Math.min(.05,(now-prev)/1000||0),k;prev=now;
+    var el=litAt===null?-1:now-litAt;            /* ms since the tap */
+    var span=H-(hz-PH);                          /* the light climbs this distance */
+    function at(y){return el<0?0:clamp((el-(H-y)/span*2600)/420);}
+    var e=0;if(el>=0){var q=clamp((el-1500)/1900);e=1-Math.pow(1-q,3);}
+    g.setTransform(D,0,0,D,0,0);
+
+    var sky=g.createLinearGradient(0,0,0,hz);
+    sky.addColorStop(0,'#060b1e');sky.addColorStop(.5,'#141d4c');sky.addColorStop(.82,'#4a3263');sky.addColorStop(.95,'#a05a6c');sky.addColorStop(1,'#de9163');
+    g.fillStyle=sky;g.fillRect(0,0,W,hz);
+    var wat=g.createLinearGradient(0,hz,0,H);
+    wat.addColorStop(0,'#4d3058');wat.addColorStop(.12,'#232252');wat.addColorStop(.5,'#0f1838');wat.addColorStop(1,'#0a1226');
+    g.fillStyle=wat;g.fillRect(0,hz,W,H-hz);
+
+    for(k=0;k<stars.length;k++){var s=stars[k];g.globalAlpha=(.35+.45*Math.sin(t*1.3+s.p))*(1-s.y/.6);
+      g.fillStyle='#e9e6ff';g.beginPath();g.arc(s.x*W,s.y*H,s.r,0,6.29);g.fill();}
+    g.globalAlpha=1;
+
+    ridge(H*.035,H*.07,5.2,.6,'#262851');ridge(H*.012,H*.05,7.4,2.1,'#1a1f45');
+
+    if(Math.abs(e-lastE)>.0015){palace(e);lastE=e;}
+    g.drawImage(off,px0,hz-PH,PW,PH);
+    var rh=PH*.95;
+    for(k=0;k<rh;k+=2){var f=k/rh;g.globalAlpha=(.5+.3*e)*(1-f)*(1-f*.6);
+      g.drawImage(off,0,Math.max(0,(PH-k-2))*D,PW*D,2*D,px0+Math.sin(k*.21+t*1.5)*(1+k*.04),hz+k*.9,PW,2);}
+    g.globalAlpha=1;
+    if(e>0){g.globalCompositeOperation='lighter';
+      var R=PW*.62,gl=g.createRadialGradient(W/2,hz,0,W/2,hz,R);
+      gl.addColorStop(0,'rgba(255,170,80,'+(.2*e)+')');gl.addColorStop(1,'rgba(255,170,80,0)');
+      g.fillStyle=gl;g.fillRect(0,hz-R,W,R*2);g.globalCompositeOperation='source-over';}
+
+    /* floating diyas, far to near */
+    var fl=floats.slice().sort(function(a,b){return a.d-b.d;});
+    for(k=0;k<fl.length;k++){var dv=fl[k],sz=(3+dv.d*6.5)*(W<700?.85:1),
+      dx=dv.x*W+Math.sin(t*.35+dv.p)*6*dv.d,dy=hz+24+Math.pow(dv.d,1.3)*(H-hz-64)+Math.sin(t*1.2+dv.p)*sz*.16;
+      diya(dx,dy,sz,dv.seed?1:at(dy),t,dv.p,true);}
+
+    /* ghat terraces and their rim diyas */
+    var ge=el<0?0:clamp(el/1300);
+    for(k=0;k<ghat.length;k++){var gt=ghat[k];
+      g.fillStyle=mix([30,27,56],[128,76,44],ge);g.beginPath();g.ellipse(cxg,gt.cy+gt.st,gt.rx,gt.ry,0,0,6.29);g.fill();
+      g.fillStyle=mix([50,45,80],[206,140,82],ge);g.beginPath();g.ellipse(cxg,gt.cy,gt.rx,gt.ry,0,0,6.29);g.fill();}
+    for(k=0;k<gd.length;k++){var d=gd[k];diya(d.x,d.y,d.s,at(d.y),t,d.p,false);}
+
+    /* fireworks */
+    if(el>=0&&!reduce&&now>nextFw){launch(now);shots++;nextFw=now+(shots<6?260+Math.random()*260:1500+Math.random()*2000);}
+    if(rockets.length||sparks.length){g.globalCompositeOperation='lighter';
+      for(k=rockets.length-1;k>=0;k--){var r=rockets[k],rq=(now-r.t0)/700;
+        if(rq>=1){burst(r.x,r.ty);rockets.splice(k,1);continue;}
+        var ry=r.y0+(r.ty-r.y0)*(1-Math.pow(1-rq,2));
+        g.strokeStyle='rgba(255,220,160,.8)';g.lineWidth=1.6;g.beginPath();g.moveTo(r.x,ry+16);g.lineTo(r.x,ry);g.stroke();}
+      g.lineWidth=1.7;g.lineCap='round';
+      for(k=sparks.length-1;k>=0;k--){var p=sparks[k];p.l+=dt;if(p.l>p.m){sparks.splice(k,1);continue;}
+        p.vx*=.982;p.vy=p.vy*.982+42*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;
+        g.strokeStyle='rgba('+p.c+','+(1-p.l/p.m)+')';g.beginPath();g.moveTo(p.x-p.vx*.05,p.y-p.vy*.05);g.lineTo(p.x,p.y);g.stroke();}
+      g.globalCompositeOperation='source-over';}
+  }
+
+  function loop(now){draw(now);if(visible)raf=requestAnimationFrame(loop);else raf=0;}
+  function ignite(){
+    if(litAt!==null)return;
+    litAt=reduce?-1e7:performance.now();nextFw=litAt+2700;shots=0;hero.classList.add('lit');
+    if(reduce)draw(0);
+  }
+  function close(){
+    litAt=null;sparks=[];rockets=[];hero.classList.remove('lit');
+    if(reduce)draw(0);
+  }
+
+  size();
+  if(reduce){litAt=-1e7;hero.classList.add('lit');draw(0);
+    window.addEventListener('resize',function(){size();draw(0);});
+  }else{
+    raf=requestAnimationFrame(loop);
+    window.addEventListener('resize',size);
+    if('IntersectionObserver' in window){new IntersectionObserver(function(en){
+      visible=en[0].isIntersecting;if(visible&&!raf)raf=requestAnimationFrame(loop);
+    }).observe(hero);}
+  }
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){size();if(reduce)draw(0);});
+  hero.addEventListener('pointerdown',function(ev){
+    if(ev.target.closest&&ev.target.closest('a,#again'))return;
+    ignite();
+  });
+  btn.addEventListener('click',ignite);
+  again.addEventListener('click',close);
+
+  var c=document.getElementById('count'),today=new Date();today.setHours(0,0,0,0);
+  var days=Math.round((new Date(2027,0,29)-today)/864e5);
+  if(days>0){c.textContent=days+(days===1?' day to go':' days to go');c.hidden=false;}
+  else if(days===0){c.textContent='Today';c.hidden=false;}
+})();
+</script>
+</body>
+</html>
