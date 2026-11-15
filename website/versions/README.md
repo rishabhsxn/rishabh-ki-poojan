@@ -14,5 +14,6 @@ Each folder is a complete copy of the site at that point. Open its `index.html` 
 | `v8-gate-3d-hall` | Gate fly-through; the hall beyond the gate is a 60-frame Blender render (frames and scripts in its own `media/hall`) |
 | `v9-layered-depth` | Shakti Vilas forecourt from v2, rebuilt in 2D depth layers; scrolling moves through them and past the gate |
 | `v10-layered-lake` | v9's layered palace set on the lake: floating diyas, ghat steps with diyas, mountains; no fountain or forecourt |
+| `v11-lake-v8-sky` | v10 with v8's fifteen candles in their v8 positions, and v8's mountains and sky |
 
 A new folder is added before every design change.
