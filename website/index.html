@@ -194,7 +194,7 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
 (function(){
   var hero=document.getElementById('hero'),cv=document.getElementById('scene'),g=cv.getContext('2d');
   var btn=document.getElementById('light'),again=document.getElementById('again'),post=hero.querySelector('.post');
-  var stage=document.getElementById('stage'),topBox=hero.querySelector('.hero-top'),card=hero.querySelector('.card-in'),fly=0;
+  var Q=1,stage=document.getElementById('stage'),topBox=hero.querySelector('.hero-top'),card=hero.querySelector('.card-in'),fly=0;
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var off=document.createElement('canvas'),og=off.getContext('2d');
   var W=0,H=0,D=1,hz=0,u=1,PW=0,PH=0,px0=0,lastE=-1,cxg=0,ghat=[],gd=[];
@@ -217,7 +217,7 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
     hz=Math.round(H*(narrow?.58:.64));
     var nb=post.getBoundingClientRect().bottom-hero.getBoundingClientRect().top+16;
     PW=Math.max(220,Math.min(W*.92,780,(hz-nb)*100/54));u=PW/100;PH=Math.ceil(54*u);px0=(W-PW)/2;
-    off.width=Math.round(PW*D);off.height=Math.round(PH*D);lastE=-1;
+    Q=1;off.width=Math.round(PW*D);off.height=Math.round(PH*D);lastE=-1;
     /* Ghat: stepped terraces rising from the bottom-right corner, diyas along each rim */
     cxg=W*(narrow?1.12:1.0);var cyg=H*1.07,rx0=Math.min(W*(narrow?.66:.36),(H-hz)*1.5),st=Math.max(9,rx0*.065),k,j;
     ghat=[];gd=[];
@@ -255,7 +255,7 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
     var a=ey(e,y);ogee(c,x,y,w,h);c.shadowBlur=0;c.fillStyle='#0f1430';c.fill();
     if(a>0){var gr=c.createLinearGradient(0,Y(y+h),0,Y(y));
       gr.addColorStop(0,'rgba(255,150,60,'+a+')');gr.addColorStop(.6,'rgba(255,208,120,'+a+')');gr.addColorStop(1,'rgba(255,240,190,'+a+')');
-      c.shadowColor='rgba(255,150,50,'+(.85*a)+')';c.shadowBlur=7*D*a;c.fillStyle=gr;c.fill();c.shadowBlur=0;}
+      c.shadowColor='rgba(255,150,50,'+(.85*a)+')';c.shadowBlur=7*D*Q*a;c.fillStyle=gr;c.fill();c.shadowBlur=0;}
   }
   function dome(c,cx,by,r){
     c.beginPath();c.moveTo(X(cx-r),Y(by));
@@ -287,7 +287,7 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
   }
   function lights(c,e,x0,x1,y,step){
     var a=ey(e,y);if(a<=0)return;
-    c.shadowColor='rgba(255,170,70,'+a+')';c.shadowBlur=4*D;c.fillStyle='rgba(255,232,170,'+a+')';
+    c.shadowColor='rgba(255,170,70,'+a+')';c.shadowBlur=4*D*Q;c.fillStyle='rgba(255,232,170,'+a+')';
     for(var q=x0+.6;q<x1;q+=step){c.beginPath();c.arc(X(q),Y(y),Math.max(.8,u*.2),0,6.29);c.fill();}
     c.shadowBlur=0;
   }
@@ -302,7 +302,7 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
 
   /* e: 0 dark .. 1 fully lit */
   function palace(e){
-    var c=og,x,k;c.setTransform(D,0,0,D,0,0);c.globalCompositeOperation='source-over';c.clearRect(0,0,PW,PH);
+    var c=og,x,k;c.setTransform(D*Q,0,0,D*Q,0,0);c.globalCompositeOperation='source-over';c.clearRect(0,0,PW,PH);
 
     /* back: the tall central pavilion and its two towers */
     wall(c,e,0,29.5,0,7,33);wall(c,e,0,63.5,0,7,33);
@@ -387,6 +387,9 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
     /* camera: scrolling pushes in on the great gate until it matches frame 0 of the rendered hall */
     var S=Math.max(W,H),gx=px0+50*u,gy=hz-15.5*u,gw=7.6*u,Zm=.22*S/gw,za=clamp(fly/.38),ze=za*za*(3-2*za),Z=Math.exp(Math.log(Zm)*ze),tt=clamp(ze/.7),sx=gx+(W/2-gx)*tt,sy=gy+(H/2-gy)*tt;
     g.setTransform(D,0,0,D,0,0);g.globalAlpha=1;g.globalCompositeOperation='source-over';g.fillStyle='#070d1f';g.fillRect(0,0,W,H);
+    /* redraw the palace at up to 4x detail as the camera closes in, so it stays sharp */
+    var wq=Math.max(1,Math.min(Z>2.2?4:Z>1.2?2:1,Math.floor(4096/(PW*D))));
+    if(wq!==Q){Q=wq;off.width=Math.round(PW*D*Q);off.height=Math.round(PH*D*Q);lastE=-1;}
     g.setTransform(D*Z,0,0,D*Z,D*(sx-gx*Z),D*(sy-gy*Z));
 
     var sky=g.createLinearGradient(0,0,0,hz);
@@ -406,7 +409,7 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
     g.drawImage(off,px0,hz-PH,PW,PH);
     var rh=PH*.95;
     for(k=0;k<rh;k+=2){var f=k/rh;g.globalAlpha=(.5+.3*e)*(1-f)*(1-f*.6);
-      g.drawImage(off,0,Math.max(0,(PH-k-2))*D,PW*D,2*D,px0+Math.sin(k*.21+t*1.5)*(1+k*.04),hz+k*.9,PW,2);}
+      g.drawImage(off,0,Math.max(0,(PH-k-2))*D*Q,PW*D*Q,2*D*Q,px0+Math.sin(k*.21+t*1.5)*(1+k*.04),hz+k*.9,PW,2);}
     g.globalAlpha=1;
     if(e>0){g.globalCompositeOperation='lighter';
       var R=PW*.62,gl=g.createRadialGradient(W/2,hz,0,W/2,hz,R);
