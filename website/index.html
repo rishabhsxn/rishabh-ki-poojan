@@ -236,7 +236,7 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
     /* ghat: stepped terraces at the right-hand shore, a row of diyas on every rim */
     var cxg=W*(narrow?1.08:1.0),cyg=H*(narrow?1.01:1.07),rx0=Math.min(W*(narrow?.7:.36),(H-hz)*1.5),st=Math.max(9,rx0*.065);
     ghat={cx:cxg,tiers:[],diyas:[]};
-    for(k=0;k<4;k++){var rx=rx0*(1-k*.2),ry=rx*.5,cy=cyg-k*st,n=Math.floor(rx*1.7/(narrow?14:18));
+    for(k=0;k<4;k++){var rx=rx0*(1-k*.2),ry=rx*.5,cy=cyg-k*st,n=Math.floor(rx*1.7/(narrow?28:36));
       ghat.tiers.push({rx:rx,ry:ry,cy:cy,st:st});
       for(j=0;j<=n;j++){var a=Math.PI*(1.02+.56*j/n),dx=cxg+(rx-7)*Math.cos(a),dy=cy+(ry-5)*Math.sin(a);
         if(dx<W+8&&dy<H+8)ghat.diyas.push({x:dx,y:dy,s:3+dy/H*2.4,p:j*1.7+k*2.3});}}
