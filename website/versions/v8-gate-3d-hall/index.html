@@ -452,7 +452,7 @@ footer .mono i{font-style:normal;color:var(--diya);padding:0 .25em}
 
   var HN=60,hall=[],hk;
   for(hk=0;hk<HN;hk++){hall[hk]=new Image();hall[hk].onload=function(){this.ok=true;};}
-  [0].concat(Array.apply(null,Array(HN-1)).map(function(_,k){return k+1;})).forEach(function(k){hall[k].src='../../media/hall/h'+(k<10?'0':'')+k+'.jpg';});
+  [0].concat(Array.apply(null,Array(HN-1)).map(function(_,k){return k+1;})).forEach(function(k){hall[k].src='media/hall/h'+(k<10?'0':'')+k+'.jpg';});
   function frameAt(k){var j;for(j=k;j>=0;j--)if(hall[j].ok)return hall[j];return null;}
   function onScroll(){
     var range=stage.offsetHeight-hero.offsetHeight,top=stage.getBoundingClientRect().top,P=range>0?clamp(-top/range):0;

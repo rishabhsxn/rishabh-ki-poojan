@@ -11,6 +11,7 @@ Each folder is a complete copy of the site at that point. Open its `index.html` 
 | `v5-lake-palace-detailed` | Back to the v1 lake scene with a redrawn, layered palace; keeps the scratch cards |
 | `v6-gate-fly-through` | v5 plus a scroll fly-through: into the palace gate, down a hall of arches, out into the invitation |
 | `v7-transition-options` | v6 plus a Preview bar to compare four scroll transitions: gate, envelope, diya, toran |
-| `v8-gate-3d-hall` | Gate fly-through only; the hall beyond the gate is a 60-frame Blender render (uses `website/media/hall`) |
+| `v8-gate-3d-hall` | Gate fly-through; the hall beyond the gate is a 60-frame Blender render (frames and scripts in its own `media/hall`) |
+| `v9-layered-depth` | Shakti Vilas forecourt from v2, rebuilt in 2D depth layers; scrolling moves through them and past the gate |
 
 A new folder is added before every design change.
