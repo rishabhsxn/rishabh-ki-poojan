@@ -13,5 +13,6 @@ Each folder is a complete copy of the site at that point. Open its `index.html` 
 | `v7-transition-options` | v6 plus a Preview bar to compare four scroll transitions: gate, envelope, diya, toran |
 | `v8-gate-3d-hall` | Gate fly-through; the hall beyond the gate is a 60-frame Blender render (frames and scripts in its own `media/hall`) |
 | `v9-layered-depth` | Shakti Vilas forecourt from v2, rebuilt in 2D depth layers; scrolling moves through them and past the gate |
+| `v10-layered-lake` | v9's layered palace set on the lake: floating diyas, ghat steps with diyas, mountains; no fountain or forecourt |
 
 A new folder is added before every design change.
