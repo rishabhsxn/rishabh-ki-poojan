@@ -28,7 +28,8 @@
   --body: "Jost", "Avenir Next", "Segoe UI", system-ui, sans-serif;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scrollbar-gutter:stable}
+html.hold,html.hold body{overflow:hidden}
 body{margin:0;background:var(--lake);color:var(--marble);font-family:var(--body);font-weight:300;font-size:1.0625rem;line-height:1.65;-webkit-font-smoothing:antialiased}
 a{color:var(--diya)}
 a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offset:4px}
@@ -608,15 +609,29 @@ html.static *{transition:none!important}
   function loop(now){draw(now);if(visible&&!covered)raf=requestAnimationFrame(loop);else raf=0;}
   function ignite(){
     if(litAt!==null)return;
+    if(held)setTimeout(release,3600);
     if(window.__music)window.__music.play();
     litAt=reduce?-1e7:performance.now();nextFw=litAt+2700;shots=0;hero.classList.add('lit');
     if(reduce)draw(0);
   }
   function close(){
+    if(window.scrollY<10)hold();
     if(window.__music)window.__music.stop();
     litAt=null;sparks=[];rockets=[];hero.classList.remove('lit');
     if(reduce)draw(0);
   }
+  /* the page stays on the palace until the diyas have been lit and the light has climbed to the top;
+     trying to scroll before that lights them instead of skipping past */
+  var held=false,root=document.documentElement;
+  function hold(){if(reduce)return;held=true;root.classList.add('hold');}
+  function release(){held=false;root.classList.remove('hold');}
+  function nudge(ev){
+    if(!held)return;
+    if(ev.type==='keydown'&&[' ','ArrowDown','PageDown','End'].indexOf(ev.key)<0)return;
+    ignite();
+  }
+  ['wheel','touchmove','keydown'].forEach(function(t){window.addEventListener(t,nudge,{passive:true});});
+  if(window.scrollY<10&&!/[?&]y=/.test(location.search))hold();
   function refit(){size();onScroll();if(reduce)draw(0);}
 
   refit();
