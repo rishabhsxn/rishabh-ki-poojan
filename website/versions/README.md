@@ -25,3 +25,4 @@ A new folder is added before every design change.
 | v17-smoother-light-up | v16 with a lighter light-up: the palace is painted twice and blended, drawing resolution steps down if frames run long, and the song is loaded before the tap. |
 | v18-vaaroon-only | v17 without the song switcher: Vaaroon plays from 0:20 to 2:55, fades out and loops. |
 | v19-trimmed-song | v18 using a trimmed clip (media/vaaroon-clip.mp3, 2:35, fade in and out) instead of the full song; more space under the calendar button. |
+| v20-title-and-icon | v19 with the tab title "Rishabh & Poojan" and a diya icon for the browser tab and phone home screen. |
