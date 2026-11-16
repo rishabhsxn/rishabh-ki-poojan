@@ -56,6 +56,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offse
 #again{position:absolute;bottom:calc(clamp(22px,4.5vh,44px) + 46px);left:clamp(18px,5vw,56px);font-size:.68rem;padding:.7em 1.2em;display:none}
 .onward{pointer-events:auto;font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;color:var(--marble);padding:.85em 0;display:none;text-shadow:0 1px 10px rgba(7,13,31,.9)}
 .hero.flying .hero-bottom,.hero.flying #again{visibility:hidden}
+#song{position:fixed;top:8px;right:8px;z-index:20;font:inherit;font-size:.62rem;letter-spacing:.06em;color:var(--marble);background:rgba(10,18,38,.6);border:1px solid rgba(242,176,74,.5);border-radius:999px;padding:.25em .5em;max-width:9.5em;opacity:.7}
+#song:hover,#song:focus{opacity:1}
 .hero.lit #light{display:none}
 .hero.lit .onward{display:inline-block}
 .hero.lit #again{display:block}
@@ -176,6 +178,12 @@ html.static *{transition:none!important}
 </head>
 <body>
 
+<!-- temporary: song switcher for trying the two tracks -->
+<select id="song" aria-label="Song">
+  <option value="0">♪ Vaaroon</option>
+  <option value="1">♪ O Rangrez</option>
+  <option value="-1">♪ Off</option>
+</select>
 <header class="stage" id="stage">
 <div class="hero" id="hero">
   <canvas id="scene" aria-hidden="true"></canvas>
@@ -238,6 +246,25 @@ html.static *{transition:none!important}
 </section>
 
 <script>
+/* Music: starts when the diyas are lit. Each song begins at its own offset and loops back to it. */
+(function(){
+  var SONGS=[
+    {src:'media/Anand Bhaskar, Romy, Ginny Diwan - Vaaroon (SPOTISAVER).mp3',from:20},
+    {src:'media/Shankar-Ehsaan-Loy, Shreya Ghoshal, Javed Bashir - O Rangrez (SPOTISAVER).mp3',from:51}
+  ];
+  var sel=document.getElementById('song'),a=new Audio(),cur=-1,want=false;
+  a.preload='none';
+  function load(i){cur=i;a.src=encodeURI(SONGS[i].src);a.addEventListener('loadedmetadata',function(){a.currentTime=SONGS[i].from;},{once:true});}
+  function go(){
+    var i=+sel.value;if(i<0||!want){a.pause();return;}
+    if(i!==cur)load(i);
+    var pr=a.play();if(pr&&pr.catch)pr.catch(function(){});   /* blocked until the first tap; retried below */
+  }
+  a.addEventListener('ended',function(){a.currentTime=SONGS[cur].from;a.play();});
+  sel.addEventListener('change',go);
+  ['pointerdown','keydown'].forEach(function(ev){window.addEventListener(ev,function(){if(want&&a.paused)go();});});
+  window.__music={play:function(){want=true;go();},stop:function(){want=false;a.pause();if(cur>=0)a.currentTime=SONGS[cur].from;}};
+})();
 (function(){
   var stage=document.getElementById('stage'),hero=document.getElementById('hero'),cv=document.getElementById('scene'),g=cv.getContext('2d');
   var btn=document.getElementById('light'),again=document.getElementById('again'),post=hero.querySelector('.post');
@@ -581,10 +608,12 @@ html.static *{transition:none!important}
   function loop(now){draw(now);if(visible&&!covered)raf=requestAnimationFrame(loop);else raf=0;}
   function ignite(){
     if(litAt!==null)return;
+    if(window.__music)window.__music.play();
     litAt=reduce?-1e7:performance.now();nextFw=litAt+2700;shots=0;hero.classList.add('lit');
     if(reduce)draw(0);
   }
   function close(){
+    if(window.__music)window.__music.stop();
     litAt=null;sparks=[];rockets=[];hero.classList.remove('lit');
     if(reduce)draw(0);
   }

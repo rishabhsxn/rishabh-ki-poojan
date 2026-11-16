@@ -20,3 +20,4 @@ Each folder is a complete copy of the site at that point. Open its `index.html` 
 A new folder is added before every design change.
 | v13-boat-date-rickshaw-lane | Palace stays; then invitation with both families, a boat that reveals the date, days to go, a rickshaw lane for the four functions (new Rajasthani dress illustration), Shakti Vilas with map card and travel, smaller night footer. Scratch cards, photos and the gate fly-through removed. |
 | v14-daybreak-boat-day-lane | Night palace fades into a daytime lake at daybreak (jharokha scenery, boat and date, with days to go); blessings card is the first stop in a daytime rickshaw lane (haveli-ki-gali colours); Shakti Vilas section as in jharokha. Hero lamps and date removed, names smaller in Italiana, palace lower. |
+| v15-music | v14 plus music when the diyas are lit (Vaaroon from 0:20, O Rangrez from 0:51) and a small temporary song switcher in the top right. |
