@@ -38,7 +38,7 @@ a{color:var(--diya)}
 a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offset:4px}
 
 /* ---------- Hero ---------- */
-.stage{position:relative;height:520vh}
+.stage{position:relative;height:470vh}
 .hero{position:sticky;top:0;height:100vh;height:100svh;min-height:560px;overflow:hidden;cursor:pointer;background:#070d1f;user-select:none;-webkit-user-select:none}
 .hero.lit{cursor:default}
 #scene{position:absolute;inset:0;width:100%;height:100%;display:block}
@@ -60,6 +60,10 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offse
 #again{position:absolute;bottom:calc(clamp(22px,4.5vh,44px) + 46px);left:clamp(18px,5vw,56px);font-size:.68rem;padding:.7em 1.2em;display:none}
 .onward{pointer-events:auto;font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;color:var(--marble);padding:.85em 0;display:none;text-shadow:0 1px 10px rgba(7,13,31,.9)}
 .hero.flying .hero-bottom,.hero.flying #again{visibility:hidden}
+.totop{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:15;width:44px;height:44px;border-radius:50%;border:1px solid rgba(240,217,160,.6);background:rgba(14,22,52,.72);color:#f0d9a0;display:grid;place-items:center;cursor:pointer;opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .4s,transform .4s,background .3s;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.totop.on{opacity:1;transform:none;pointer-events:auto}
+.totop:hover{background:rgba(122,23,48,.85)}
+.totop svg{width:18px;height:18px}
 .hero.lit #light{display:none}
 .hero.lit .onward{display:inline-block}
 .hero.lit #again{display:block}
@@ -241,7 +245,15 @@ html.static *{transition:none!important}
   </div>
 </section>
 
+<button class="totop" id="totop" type="button" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 <script>
+/* Back to top: scrolls up only; the lit palace and the song carry on as they are. */
+(function(){
+  var b=document.getElementById('totop'),calm=matchMedia('(prefers-reduced-motion:reduce)').matches,t=0;
+  function chk(){t=0;b.classList.toggle('on',window.scrollY>innerHeight*1.5);}
+  addEventListener('scroll',function(){if(!t)t=requestAnimationFrame(chk);},{passive:true});chk();
+  b.addEventListener('click',function(){window.scrollTo({top:0,behavior:calm?'auto':'smooth'});});
+})();
 /* Music: a clip of Vaaroon (0:20 to 2:55 of the song, with a fade in and out made into the file).
    It starts when the diyas are lit and comes round again when it ends. */
 (function(){
@@ -667,7 +679,7 @@ const EVENTS = [
   { name: 'Engagement', when: 'Thu 28 Jan · Morning', note: 'Dress code: Rajasthani', icon: 'ring', dress: true, wall: '#ea93a8', shade: '#d06f88', color: '#a3154d' },
   { name: 'Sangeet', when: 'Thu 28 Jan · Evening', note: 'Music, dancing and dinner', icon: 'dhol', wall: '#8171b5', shade: '#63519a', color: '#4b3a86', lit: true },
   { name: 'Carnival Haldi', when: 'Fri 29 Jan · Morning', note: 'Wear something you can get yellow', icon: 'haldi', wall: '#f2c14e', shade: '#d9a52f', color: '#b86a00', strings: true },
-  { name: 'Shadi', when: 'Fri 29 Jan · Evening', note: 'The wedding', icon: 'kalash', wall: '#cf5148', shade: '#a8322c', color: '#8e1b2c', lit: true },
+  { name: 'Shubh Vivah', when: 'Fri 29 Jan · Evening', note: 'The wedding', icon: 'kalash', wall: '#cf5148', shade: '#a8322c', color: '#8e1b2c', lit: true },
 ];
 const $ = s => document.querySelector(s);
 const clamp = (v, a = 0, b = 1) => v < a ? a : v > b ? b : v, seg = (p, a, b) => clamp((p - a) / (b - a)), ez = t => t * t * (3 - 2 * t), lerp = (a, b, t) => a + (b - a) * t;
@@ -765,7 +777,7 @@ function flowers(list, seed) {
 const bougain = s => flowers([[30, 20, 110, 60, 110], [380, 30, 90, 80, 100], [396, 150, 26, 90, 40]], s);
 const P = [];
 P.push(`<div class="pn">${bougain(3)}<div class="dado"></div><div class="plq"><p class="eb r">With the blessings of our families</p><p class="lead r" style="--i:1">we invite you to the wedding of</p><p class="sc who r" style="--i:2">Rishabh</p><p class="of r" style="--i:3">son of<b>Anil Saxena &amp; Alpana Saxena</b></p><p class="amp r" style="--i:4">&amp;</p><p class="sc who r" style="--i:5">Poojan</p><p class="of r" style="--i:6">daughter of<b>Paras Ram Soni &amp; Jyoti Soni</b></p><p class="tail r" style="--i:7">Come to Udaipur, bless us, and celebrate with us.</p></div></div>`);
-EVENTS.forEach(e => P.push(`<div class="pn ev${e.lit ? ' lit' : ''}${e.dress ? ' hasd' : ''}${e.name.length > 11 ? ' long' : ''}" style="--wall:${e.wall};--shade:${e.shade};--trim:rgba(255,255,255,.55);--evc:${e.color}">${e.strings ? strings(false) : e.lit ? strings(true) : garland()}${lantern('left')}${lantern('right')}<div class="dado"></div><div class="ar"><div class="in">
+EVENTS.forEach(e => P.push(`<div class="pn ev${e.lit ? ' lit' : ''}${e.dress ? ' hasd' : ''}${e.name.length > 10 ? ' long' : ''}" style="--wall:${e.wall};--shade:${e.shade};--trim:rgba(255,255,255,.55);--evc:${e.color}">${e.strings ? strings(false) : e.lit ? strings(true) : garland()}${lantern('left')}${lantern('right')}<div class="dado"></div><div class="ar"><div class="in">
   <svg class="ic r" viewBox="0 0 80 80" aria-hidden="true">${ICON[e.icon]}</svg><h2 class="sc r" style="--i:1">${e.name}</h2><p class="wn r" style="--i:2">${e.when}</p><p class="nt r" style="--i:3">${e.note}</p>${e.dress ? `<div class="r" style="--i:4">${DRESS}</div>` : ''}</div>${TRIM}</div></div>`));
 const track = $('#track'), fillPn = s => `<div class="pn fill"${s ? ` style="${s}"` : ''}><div class="dado"></div></div>`;
 track.innerHTML = fillPn('') + P.join('') + fillPn('--wall:#b9606a;--shade:#9a4a58');
@@ -838,7 +850,7 @@ function update(y) {
     day.style.transform = `translate3d(0,${sh.toFixed(1)}px,0)`;
     dscn.style.transform = `scale(${(1.07 - ez(seg(p, .07, .34)) * .07).toFixed(4)})`;
     noon.setAttribute('opacity', seg(p, .3, .75).toFixed(3));
-    const half = VW / U / 2, bx = lerp(200 - half - 80, 200 + half + 360, seg(p, .24, .92));
+    const half = VW / U / 2, bx = lerp(200 - half - 80, 200 + half + 90, seg(p, .24, .9));
     dboat.style.transform = `translate3d(${(bx * U).toFixed(1)}px,0,0)`;
     ddt.style.clipPath = calm && !STATIC ? 'none' : `inset(0 ${Math.max(0, VW - (OX + (bx - 62) * U)).toFixed(1)}px 0 0)`;
   }

@@ -27,3 +27,4 @@ A new folder is added before every design change.
 | v19-trimmed-song | v18 using a trimmed clip (media/vaaroon-clip.mp3, 2:35, fade in and out) instead of the full song; more space under the calendar button. |
 | v20-title-and-icon | v19 with the tab title "Rishabh & Poojan" and a diya icon for the browser tab and phone home screen. |
 | v21-kalash-icon | v20 with a kalash tab icon (brass pot, mango leaves, coconut, red swastik on maroon), as PNG and SVG so it shows in Safari too. |
+| v22-boat-timing-shubh-vivah-top | v21 with less dead scroll after the boat, "Shadi" renamed to "Shubh Vivah", and a back-to-top button that keeps the light and the song. |
