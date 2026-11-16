@@ -254,15 +254,16 @@ html.static *{transition:none!important}
     {src:'media/Shankar-Ehsaan-Loy, Shreya Ghoshal, Javed Bashir - O Rangrez (SPOTISAVER).mp3',from:51}
   ];
   var sel=document.getElementById('song'),a=new Audio(),cur=-1,want=false;
-  a.preload='none';
-  function load(i){cur=i;a.src=encodeURI(SONGS[i].src);a.addEventListener('loadedmetadata',function(){a.currentTime=SONGS[i].from;},{once:true});}
+  a.preload='auto';
+  function load(i){cur=i;a.src=encodeURI(SONGS[i].src);a.addEventListener('loadedmetadata',function(){a.currentTime=SONGS[i].from;},{once:true});a.load();}
   function go(){
     var i=+sel.value;if(i<0||!want){a.pause();return;}
     if(i!==cur)load(i);
     var pr=a.play();if(pr&&pr.catch)pr.catch(function(){});   /* blocked until the first tap; retried below */
   }
   a.addEventListener('ended',function(){a.currentTime=SONGS[cur].from;a.play();});
-  sel.addEventListener('change',go);
+  sel.addEventListener('change',function(){if(+sel.value>=0&&+sel.value!==cur)load(+sel.value);go();});
+  load(+sel.value);
   ['pointerdown','keydown'].forEach(function(ev){window.addEventListener(ev,function(){if(want&&a.paused)go();});});
   window.__music={play:function(){want=true;go();},stop:function(){want=false;a.pause();if(cur>=0)a.currentTime=SONGS[cur].from;}};
 })();
@@ -278,6 +279,8 @@ html.static *{transition:none!important}
   /* depth of each layer: bigger is further away. The camera position c runs from 0 past each one. */
   var DF=3.0,DM=3.25,DR=3.65,DH1=11,DH2=8,DT=1.15,IN=[3.55,4.1],DEND=4.75,CMAX=4.5;
   var lay=[document.createElement('canvas'),document.createElement('canvas'),document.createElement('canvas')];
+  var DMAX=2,slow=0,lastT=0;   /* drawing resolution steps down by itself if frames run long */
+  var dark=[0,1,2].map(function(){return document.createElement('canvas');}),full=[0,1,2].map(function(){return document.createElement('canvas');});
 
   var seed=20270129;
   function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647;}
@@ -294,7 +297,7 @@ html.static *{transition:none!important}
   function dAt(y){return DF*(hz-vy0)/(y-vy0);}
 
   function size(){
-    W=hero.clientWidth;H=hero.clientHeight;D=Math.min(window.devicePixelRatio||1,2);
+    W=hero.clientWidth;H=hero.clientHeight;D=Math.min(window.devicePixelRatio||1,DMAX);
     cv.width=Math.round(W*D);cv.height=Math.round(H*D);
     narrow=W<700;
     hz=Math.round(H*(narrow?.55:.6))+(narrow?46:58);window.__hz=hz;
@@ -382,8 +385,8 @@ html.static *{transition:none!important}
       c.fillStyle=gr;c.fillRect(X(xs[k]-r),Y(r),2*r*u,r*u);}
     c.globalCompositeOperation='source-over';
   }
-  function paint(L,e){
-    var cvs=lay[L],c=cvs.getContext('2d'),x,r,k,rows=[1.6,7.6,13.6];
+  function paint(L,e,cvs){
+    var c=cvs.getContext('2d'),x,r,k,rows=[1.6,7.6,13.6];
     c.setTransform(D*Q,0,0,D*Q,0,0);c.globalCompositeOperation='source-over';c.clearRect(0,0,PW,PH);
     if(L===0){                                               /* rear wing rising behind the roofline */
       wall(c,e,0,18,0,64,25);
@@ -528,9 +531,20 @@ html.static *{transition:none!important}
 
       /* the building: redraw its layers when the light changes or the camera needs more detail */
       var sF=DF/(DF-cam),wq=Math.max(1,Math.min(sF>2.2?4:sF>1.2?2:1,Math.floor(4096/(PW*D))));
-      if(wq!==Q||Math.abs(e-lastE)>.0015){
-        if(wq!==Q){Q=wq;for(k=0;k<3;k++){lay[k].width=Math.round(PW*D*Q);lay[k].height=Math.round(PH*D*Q);}}
-        paint(0,e);paint(1,e);paint(2,e);lastE=e;}
+      /* the detailed painting is done only twice (unlit and fully lit); while the light climbs, each frame just blends the two */
+      if(wq!==Q){Q=wq;lastE=-1;for(k=0;k<3;k++){[lay,dark,full].forEach(function(set){set[k].width=Math.round(PW*D*Q);set[k].height=Math.round(PH*D*Q);});
+        paint(k,0,dark[k]);paint(k,1,full[k]);}}
+      if(Math.abs(e-lastE)>.0015){
+        for(k=0;k<3;k++){var lc=lay[k].getContext('2d'),lw=lay[k].width,lh=lay[k].height,si;
+          lc.setTransform(1,0,0,1,0,0);lc.globalCompositeOperation='source-over';lc.clearRect(0,0,lw,lh);
+          if(e<=0)lc.drawImage(dark[k],0,0);
+          else if(e>=1)lc.drawImage(full[k],0,0);
+          else{lc.drawImage(full[k],0,0);
+            var mg=lc.createLinearGradient(0,lh,0,lh-37*u*D*Q);
+            for(si=0;si<=18;si++)mg.addColorStop(si/18,'rgba(0,0,0,'+clamp(e*1.9-si/18*.9)+')');
+            lc.globalCompositeOperation='destination-in';lc.fillStyle=mg;lc.fillRect(0,0,lw,lh);
+            lc.globalCompositeOperation='destination-over';lc.drawImage(dark[k],0,0);lc.globalCompositeOperation='source-over';}}
+        lastE=e;}
       if(at3(DR))g.drawImage(lay[0],px0,hz-PH,PW,PH);
       if(at3(DM))g.drawImage(lay[1],px0,hz-PH,PW,PH);
       if(at3(DF)){g.drawImage(lay[2],px0,hz-PH,PW,PH);
@@ -606,7 +620,11 @@ html.static *{transition:none!important}
     hero.classList.toggle('flying',P>.05);
     if(reduce)draw(0);
   }
-  function loop(now){draw(now);if(visible&&!covered)raf=requestAnimationFrame(loop);else raf=0;}
+  function loop(now){
+    var dt=now-lastT;lastT=now;
+    if(dt>0&&dt<250){slow=dt>24?slow+1:Math.max(0,slow-2);
+      if(slow>20&&DMAX>1&&(window.devicePixelRatio||1)>1){DMAX=DMAX>1.5?1.5:1;slow=0;size();}}
+    draw(now);if(visible&&!covered)raf=requestAnimationFrame(loop);else raf=0;}
   function ignite(){
     if(litAt!==null)return;
     if(held)setTimeout(release,3600);
