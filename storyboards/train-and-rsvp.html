@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Train and RSVP Storyboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a1226;--card:#121c3c;--line:rgba(240,217,160,.28);--gold:#f0d9a0;--diya:#f2b04a;--text:#f3e6cd;--soft:#aab0cc;--pick:#e2508f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Jost,system-ui,sans-serif;font-weight:300;line-height:1.55;-webkit-font-smoothing:antialiased}
+main{max-width:1080px;margin:0 auto;padding:clamp(28px,6vw,64px) 20px 80px}
+h1{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:clamp(2rem,6vw,3.2rem);line-height:1.1;margin:0 0 .3em}
+h2{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:clamp(1.5rem,4vw,2.1rem);margin:2.2em 0 .2em;color:var(--gold)}
+h3{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1.35rem;margin:0 0 .2em}
+p{margin:0 0 .7em;max-width:70ch}
+.lede{color:var(--soft)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:18px;margin-top:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.card.pick{border-color:var(--pick);box-shadow:0 0 0 1px var(--pick)}
+.card svg{display:block;width:100%;background:#0d1634}
+.card .b{padding:16px 18px 18px}
+.tag{display:inline-block;font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;font-weight:500;color:var(--diya);margin-bottom:.5em}
+.pick .tag::after{content:" · my pick";color:var(--pick)}
+.card p{font-size:.95rem;margin:0 0 .5em}
+.card .n{color:var(--soft);font-size:.86rem}
+.flow{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0;padding:0;list-style:none}
+.flow li{border:1px solid var(--line);border-radius:999px;padding:.4em 1em;font-size:.82rem}
+.flow li.new{border-color:var(--pick);color:#ffd0e2}
+ul.need{padding-left:1.1em;max-width:70ch}
+svg text{font-family:Jost,sans-serif}
+</style>
+</head>
+<body>
+<main>
+<p class="tag">Storyboard · nothing here is built yet</p>
+<h1>Where the train could go, and how the RSVP could look</h1>
+<p class="lede">Version 13 of the site now runs: palace, invitation with both families, boat with the date, rickshaw lane with the four functions, Shakti Vilas, close. These are options for the two pieces still open.</p>
+
+<h2>1 · The train on the bridge</h2>
+<p class="lede">The boat already reveals the date, so the train needs a different job. Four places it could do one.</p>
+<div class="grid" id="train"></div>
+
+<h2>2 · The RSVP</h2>
+<p class="lede">It would sit after Shakti Vilas and before the close, with a small "RSVP" pill that stays in the corner once the palace is lit.</p>
+<div class="grid" id="rsvp"></div>
+
+<h2>How the page would run with my picks</h2>
+<ul class="flow"><li>Palace, tap to light</li><li>Invitation and parents</li><li>Boat brings the date</li><li>Rickshaw lane, four functions</li><li class="new">Train crosses, lane becomes Shakti Vilas</li><li>Place, map, getting there</li><li class="new">Photos in the train windows (when ready)</li><li class="new">RSVP reply card</li><li>Close</li></ul>
+
+<h2>What I would need from you</h2>
+<ul class="need">
+<li>For a WhatsApp RSVP: the phone number replies should go to.</li>
+<li>For a reply card: whether you want replies collected in a Google Sheet, and what to ask (number of guests, which functions, arrival date).</li>
+<li>For personal links: the guest list with who is invited to which functions.</li>
+<li>For the photo train: six to ten photographs, portrait ones work best.</li>
+</ul>
+</main>
+<script>
+const sky='<rect width="320" height="180" fill="#0d1634"/><rect y="118" width="320" height="62" fill="#111d44"/>';
+const bridge=(y=118)=>`<rect x="0" y="${y-34}" width="320" height="7" fill="#b9a27a"/>`+Array.from({length:7},(_,i)=>`<path d="M${i*50-14} ${y}V${y-27}h8V${y}Z" fill="#a08a64"/><path d="M${i*50-6} ${y-27}q21-0 21 20q0-20 21-20Z" fill="#a08a64"/>`).join('');
+const train=(x,y,n=3,win='#ffd879')=>`<g transform="translate(${x} ${y})"><path d="M0 0h30q8 0 10 8v8H0Z" fill="#7a1730"/><rect x="4" y="-8" width="8" height="8" fill="#5c1422"/><rect x="18" y="3" width="10" height="7" fill="${win}"/>`+Array.from({length:n},(_,i)=>`<rect x="${-36-i*36}" y="0" width="33" height="16" rx="2" fill="#1f5f6b"/><rect x="${-32-i*36}" y="3" width="7" height="7" fill="${win}"/><rect x="${-22-i*36}" y="3" width="7" height="7" fill="${win}"/><rect x="${-12-i*36}" y="3" width="7" height="7" fill="${win}"/>`).join('')+`<circle cx="14" cy="-14" r="5" fill="#fff" opacity=".25"/><circle cx="6" cy="-22" r="7" fill="#fff" opacity=".15"/></g>`;
+const lbl=(x,y,t,s=9,f='#f3e6cd',a='middle')=>`<text x="${x}" y="${y}" font-size="${s}" fill="${f}" text-anchor="${a}" letter-spacing="1">${t}</text>`;
+const archp=(x,y,w,h)=>`<path d="M${x} ${y+h}V${y+h*.35}Q${x} ${y+h*.12} ${x+w*.25} ${y+h*.1}Q${x+w*.45} ${y+h*.08} ${x+w/2} ${y}Q${x+w*.55} ${y+h*.08} ${x+w*.75} ${y+h*.1}Q${x+w} ${y+h*.12} ${x+w} ${y+h*.35}V${y+h}Z"`;
+const S={
+ t1:sky+`<rect width="170" height="118" fill="#7d1f30"/>${archp(60,40,70,78)} fill="#f8eedc"/>`+lbl(95,90,'Shadi',10,'#8e1b2c')+lbl(245,50,'Shakti Vilas',15)+lbl(245,66,'THE PLACE',6,'#f2b04a')+`<rect x="170" y="0" width="3" height="118" fill="#f0d9a0" opacity=".7"/>`+bridge()+train(196,68),
+ t2:sky+bridge()+Array.from({length:4},(_,i)=>`<rect x="${20+i*74}" y="38" width="62" height="42" rx="5" fill="#1f5f6b"/><rect x="${27+i*74}" y="43" width="48" height="30" rx="3" fill="#e9cdb8"/><circle cx="${45+i*74}" cy="55" r="5" fill="#b98463"/><circle cx="${58+i*74}" cy="55" r="5" fill="#c98e62"/><path d="M${36+i*74} 73q9-12 18 0ZM${50+i*74} 73q9-12 18 0Z" fill="#d81b60"/>`).join('')+`<rect x="0" y="80" width="320" height="4" fill="#5c1422"/>`+lbl(160,150,'each window is a photograph · scroll moves the train',7,'#aab0cc'),
+ t3:sky+bridge(128)+Array.from({length:6},(_,i)=>`<rect x="${i*50+18}" y="104" width="20" height="24" fill="#e9cdb8" opacity="${i%2?.9:.7}"/>`).join('')+train(230,78)+lbl(160,160,'photographs sit in the arches, the train passes above',7,'#aab0cc'),
+ t4:sky+bridge()+train(290,68,2)+lbl(120,50,'See you in Udaipur',15)+lbl(120,66,'29 · 01 · 2027',7,'#f0d9a0')+`<path d="M20 74h180" stroke="#fff" opacity=".2" stroke-width="6" stroke-linecap="round"/>`,
+ r1:sky+`<rect x="60" y="34" width="200" height="112" rx="12" fill="#121c3c" stroke="#f0d9a0" stroke-opacity=".4"/>`+lbl(160,62,'Will you join us?',14)+`<rect x="78" y="80" width="164" height="22" rx="11" fill="#f0d9a0"/>`+lbl(160,95,'YES, COUNT ME IN',7,'#1a1f45')+`<rect x="78" y="110" width="164" height="22" rx="11" fill="none" stroke="#f0d9a0"/>`+lbl(160,125,"SORRY, CAN'T MAKE IT",7,'#f0d9a0'),
+ r2:sky+`${archp(90,8,140,172)} fill="#f8eedc"/>`+lbl(160,58,'Kindly reply',13,'#7a1730')+`<rect x="108" y="68" width="104" height="14" rx="3" fill="#fff" stroke="#c9a24a"/>`+lbl(112,78,'Your name',6,'#8a7462','start')+lbl(112,96,'GUESTS',5,'#2c5d63','start')+`<rect x="150" y="88" width="62" height="12" rx="6" fill="#fff" stroke="#c9a24a"/>`+lbl(181,97,'−  2  +',7,'#4a2418')+['Engagement','Sangeet','Haldi','Shadi'].map((t,i)=>`<rect x="${108+(i%2)*54}" y="${106+Math.floor(i/2)*16}" width="50" height="12" rx="6" fill="${i==2?'#fff':'#f2c14e'}" stroke="#c9a24a"/>`+lbl(133+(i%2)*54,115+Math.floor(i/2)*16,t,5.5,'#4a2418')).join('')+`<rect x="124" y="144" width="72" height="16" rx="8" fill="#7a1730"/>`+lbl(160,155,'SEND REPLY',6,'#fff'),
+ r3:sky+`<g transform="rotate(-4 160 90)"><rect x="40" y="50" width="240" height="84" rx="8" fill="#f8eedc"/><path d="M206 50v84" stroke="#c9a24a" stroke-dasharray="4 4"/>`+lbl(52,68,'UDAIPUR EXPRESS',7,'#7a1730','start')+lbl(52,92,'Rishabh & Poojan',14,'#4a2418','start')+lbl(52,108,'28–29 JAN 2027 · DEBARI',6,'#2c5d63','start')+lbl(52,124,'PASSENGER  ________   SEATS  2',6,'#8a7462','start')+lbl(243,86,'TEAR TO',6,'#7a1730')+lbl(243,98,'CONFIRM',6,'#7a1730')+`</g>`,
+ r4:sky+`<rect x="30" y="20" width="260" height="20" rx="10" fill="#121c3c" stroke="#f0d9a0" stroke-opacity=".4"/>`+lbl(160,34,'rishabhpoojan.in/?g=sharma-family',7,'#aab0cc')+lbl(160,72,'Dear Sharma family,',15)+lbl(160,90,'you are invited to',8,'#aab0cc')+['Sangeet','Haldi','Shadi'].map((t,i)=>`<rect x="${58+i*70}" y="104" width="62" height="18" rx="9" fill="#f0d9a0"/>`+lbl(89+i*70,116,t,7,'#1a1f45')).join('')+lbl(160,150,'one link per family · only their functions show',7,'#aab0cc'),
+};
+const card=(k,tag,title,body,note,pick)=>`<div class="card${pick?' pick':''}"><svg viewBox="0 0 320 180" role="img" aria-label="${title}">${S[k]}</svg><div class="b"><span class="tag">${tag}</span><h3>${title}</h3><p>${body}</p><p class="n">${note}</p></div></div>`;
+document.getElementById('train').innerHTML=[
+ card('t1','Train A','Arrival: the train wipes the lane into Shakti Vilas','After the Shadi doorway the rickshaw stops at a level crossing. The train crosses the viaduct left to right; everything behind it is the lane, everything it has passed is the venue at night.','Fits the story because Debari station is next to the venue, and it gives the lane a proper ending. Same mechanic you liked in Safar.',true),
+ card('t2','Train B','Photos: every carriage window is a photograph','A pinned strip. Scrolling slides the train sideways across the bridge, one coach per screen on phones; each window holds a photograph and opens full size on tap.','Needs six to ten photographs. Works with a placeholder message until they arrive.',true),
+ card('t3','Train C','Photos in the arches of the bridge','The viaduct stays still with a photograph in each arch, reflected in the lake. The train passes over once as the section comes into view.','Calmer than B and shows more photographs at once, but they are small on phones.'),
+ card('t4','Train D','Close: the train leaves with the goodbye','The footer skyline gets the bridge. The train departs to the right and its smoke clears to show "See you in Udaipur" and the date.','Small and cheap to build. It would replace the drifting lamps in the current footer.'),
+].join('');
+document.getElementById('rsvp').innerHTML=[
+ card('r1','RSVP 1','Two buttons that open WhatsApp','"Yes, count me in" and "Sorry, can\'t make it" open WhatsApp with a message already written to a family number.','No form and no data to manage. You count replies by hand.'),
+ card('r2','RSVP 2','A reply card in a doorway','Same arch as the event doorways: name, number of guests, a chip for each function, then Send. Replies land in a Google Sheet. The windows of the palace light up as a thank you.','Gives you a headcount per function. Needs a Google Sheet set up once.',true),
+ card('r3','RSVP 3','A train ticket to tear','A boarding pass for the "Udaipur Express" with name and seats. Dragging the stub off sends the reply.','Pairs with the train if you choose A or B. More playful, slightly less obvious for older guests.'),
+ card('r4','RSVP 4','Personal links for each family','Each family gets its own link. The page greets them by name, shows only the functions they are invited to, and the RSVP is already filled with their names.','This also answers the earlier question of different invitations for different guests. Needs the guest list. Can be combined with 1, 2 or 3.'),
+].join('');
+</script>
+</body>
+</html>

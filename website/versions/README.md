@@ -18,3 +18,4 @@ Each folder is a complete copy of the site at that point. Open its `index.html` 
 | `v12-fewer-ghat-diyas` | v11 with half as many diyas on the ghat steps |
 
 A new folder is added before every design change.
+| v13-boat-date-rickshaw-lane | Palace stays; then invitation with both families, a boat that reveals the date, days to go, a rickshaw lane for the four functions (new Rajasthani dress illustration), Shakti Vilas with map card and travel, smaller night footer. Scratch cards, photos and the gate fly-through removed. |
