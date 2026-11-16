@@ -23,3 +23,4 @@ A new folder is added before every design change.
 | v15-music | v14 plus music when the diyas are lit (Vaaroon from 0:20, O Rangrez from 0:51) and a small temporary song switcher in the top right. |
 | v16-light-before-scroll | v15, but the page stays on the palace until the diyas have lit; scrolling first lights them instead of skipping the animation. |
 | v17-smoother-light-up | v16 with a lighter light-up: the palace is painted twice and blended, drawing resolution steps down if frames run long, and the song is loaded before the tap. |
+| v18-vaaroon-only | v17 without the song switcher: Vaaroon plays from 0:20 to 2:55, fades out and loops. |
