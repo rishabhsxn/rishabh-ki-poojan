@@ -158,7 +158,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offse
 .close .mono{font-family:var(--display);font-size:clamp(2.6rem,7vw,3.6rem);color:var(--gold);line-height:1;font-weight:500;margin-top:.25em}
 .close .mono em{font-size:.42em;font-style:italic;margin:0 .12em;vertical-align:.5em}
 .close .d{letter-spacing:.4em;font-size:.78rem;margin:10px 0 20px;color:var(--gold)}
-#night{display:block;width:100%;height:clamp(150px,24vh,230px);margin-top:26px;-webkit-mask-image:linear-gradient(transparent,#000 42%);mask-image:linear-gradient(transparent,#000 42%)}
+#night{display:block;width:100%;height:clamp(150px,24vh,230px);margin-top:clamp(56px,9vh,96px);-webkit-mask-image:linear-gradient(transparent,#000 42%);mask-image:linear-gradient(transparent,#000 42%)}
 #night .rip{animation:rip 5s ease-in-out infinite alternate}
 .lamp{animation:drift 9s ease-in-out infinite alternate}
 .lamp:nth-child(odd){animation-duration:12s;animation-direction:alternate-reverse}
@@ -239,24 +239,17 @@ html.static *{transition:none!important}
 </section>
 
 <script>
-/* Music: Vaaroon, from 0:20 to 2:55, starting when the diyas are lit. It fades out at the end and comes round again. */
+/* Music: a clip of Vaaroon (0:20 to 2:55 of the song, with a fade in and out made into the file).
+   It starts when the diyas are lit and comes round again when it ends. */
 (function(){
-  var SRC='media/Anand Bhaskar, Romy, Ginny Diwan - Vaaroon (SPOTISAVER).mp3',FROM=20,TO=175,FADE=2.5;
   var a=new Audio(),want=false;
-  a.preload='auto';a.src=encodeURI(SRC);
-  a.addEventListener('loadedmetadata',function(){a.currentTime=FROM;},{once:true});a.load();
+  a.preload='auto';a.loop=true;a.src='media/vaaroon-clip.mp3';a.load();
   function go(){
     if(!want){a.pause();return;}
     var pr=a.play();if(pr&&pr.catch)pr.catch(function(){});   /* blocked until the first tap; retried below */
   }
-  function again(){a.currentTime=FROM;a.volume=1;if(want)go();}
-  a.addEventListener('timeupdate',function(){
-    var t=a.currentTime;
-    if(t>=TO)again();else a.volume=t>TO-FADE?Math.max(0,(TO-t)/FADE):1;
-  });
-  a.addEventListener('ended',again);
   ['pointerdown','keydown'].forEach(function(ev){window.addEventListener(ev,function(){if(want&&a.paused)go();});});
-  window.__music={play:function(){want=true;go();},stop:function(){want=false;a.pause();a.currentTime=FROM;a.volume=1;}};
+  window.__music={play:function(){want=true;go();},stop:function(){want=false;a.pause();a.currentTime=0;}};
 })();
 (function(){
   var stage=document.getElementById('stage'),hero=document.getElementById('hero'),cv=document.getElementById('scene'),g=cv.getContext('2d');

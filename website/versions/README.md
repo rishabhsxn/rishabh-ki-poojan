@@ -24,3 +24,4 @@ A new folder is added before every design change.
 | v16-light-before-scroll | v15, but the page stays on the palace until the diyas have lit; scrolling first lights them instead of skipping the animation. |
 | v17-smoother-light-up | v16 with a lighter light-up: the palace is painted twice and blended, drawing resolution steps down if frames run long, and the song is loaded before the tap. |
 | v18-vaaroon-only | v17 without the song switcher: Vaaroon plays from 0:20 to 2:55, fades out and loops. |
+| v19-trimmed-song | v18 using a trimmed clip (media/vaaroon-clip.mp3, 2:35, fade in and out) instead of the full song; more space under the calendar button. |
