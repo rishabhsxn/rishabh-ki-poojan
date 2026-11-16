@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lake Site Storyboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Italiana&family=Jost:wght@300;400;500&family=Pinyon+Script&family=Rozha+One&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+<style>
+/* A working storyboard: numbered points, each with option cards (sketch, what happens, trade-off).
+   Layout: one column of points; option cards in a wrapping grid; sketches are 9:16 phone frames. */
+:root{
+  --paper:#f7f1e6; --card:#fffaf0; --ink:#2c2118; --soft:#6f6152; --line:#dccfb9;
+  --pick:#a0461f; --pick-bg:#f6e2cf;
+  --body:"Jost","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --display:"Cormorant Garamond","Times New Roman",serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark; --paper:#17131a; --card:#211b25; --ink:#f1e7d6; --soft:#b3a696; --line:#3a3140; --pick:#f0a56c; --pick-bg:#3a2619;}}
+:root[data-theme="dark"]{color-scheme:dark; --paper:#17131a; --card:#211b25; --ink:#f1e7d6; --soft:#b3a696; --line:#3a3140; --pick:#f0a56c; --pick-bg:#3a2619;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-weight:300;font-size:1.02rem;line-height:1.6}
+main{max-width:1120px;margin:0 auto;padding:clamp(24px,5vw,56px) 18px 64px;display:flex;flex-direction:column;gap:clamp(36px,6vw,64px)}
+h1{font-family:var(--display);font-weight:500;font-size:clamp(2.2rem,6vw,3.4rem);line-height:1.05;margin:0 0 .3em;text-wrap:balance}
+h2{font-family:var(--display);font-weight:500;font-size:clamp(1.6rem,4vw,2.2rem);line-height:1.15;margin:0;text-wrap:balance}
+h3{font-family:var(--body);font-weight:500;font-size:1rem;margin:0}
+p{margin:0;max-width:68ch}
+.lede{color:var(--soft)}
+.num{display:inline-block;min-width:2.1em;font-family:var(--display);font-size:1.5em;color:var(--pick)}
+.said{border-left:3px solid var(--line);padding:.1em 0 .1em .9em;color:var(--soft);margin:.6em 0 1.1em}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:16px}
+.opt{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.opt.pick{border-color:var(--pick);box-shadow:0 0 0 1px var(--pick)}
+.opt svg{width:100%;height:auto;border-radius:8px;display:block;background:#0c1330}
+.opt .tag{align-self:flex-start;font-size:.68rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--pick);background:var(--pick-bg);border-radius:999px;padding:.25em .8em}
+.opt p{font-size:.95rem}
+.opt .from,.opt .cost{font-size:.84rem;color:var(--soft)}
+.wide{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.flow{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;counter-reset:f}
+.flow li{list-style:none;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:.92rem;counter-increment:f}
+.flow li::before{content:counter(f);display:block;font-family:var(--display);font-size:1.6rem;color:var(--pick);line-height:1}
+ol.flow{margin:14px 0 0;padding:0}
+.type{display:flex;flex-direction:column;gap:4px;padding:16px;border-radius:8px;background:#f6ead2;color:#3b2417;text-align:center}
+.type.night{background:#0f1838;color:#f3e6cd}
+.type small{font-family:"Jost",sans-serif;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{text-align:left;padding:.55em .7em;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:500;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.tablewrap{overflow-x:auto}
+ul{margin:.4em 0 0;padding-left:1.2em}
+li{margin:.25em 0}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Lake site: what could change next</h1>
+  <p class="lede">A storyboard for the points you raised about the current site (v12). Each point has several options with a sketch, what would happen, where the idea comes from in your inspiration reels, and its trade-off. My pick is marked on each. Nothing here is built yet: tell me the option letters you want and I will build those.</p>
+</header>
+
+<section>
+  <h2><span class="num">1</span>The scroll transition</h2>
+  <p class="said">You said the gates look very empty.</p>
+  <p>I have left out the envelope, the diya dive and the marigold curtain, since you already turned those down.</p>
+  <div class="grid" id="s1" style="margin-top:16px"></div>
+</section>
+
+<section>
+  <h2><span class="num">2</span>The invitation screen</h2>
+  <p class="said">You said the screen after the transition is too plain, and the text is not great: font, placement and wording.</p>
+  <h3 style="margin:0 0 10px">Where the text sits</h3>
+  <div class="grid" id="s2"></div>
+  <h3 style="margin:26px 0 10px">Typefaces</h3>
+  <div class="grid wide" id="s2f"></div>
+  <h3 style="margin:26px 0 10px">Wording</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Option</th><th>Text</th><th>Needs from you</th></tr>
+    <tr><td>W1 · Traditional</td><td>With the blessings of their families, [parents' names] request the pleasure of your company at the wedding of their son Rishabh with Poojan, daughter of [parents' names].</td><td>Both sets of parents' names, as they should be printed</td></tr>
+    <tr><td>W2 · Warm (my pick)</td><td>Two families, one celebration. Rishabh and Poojan are getting married in Udaipur, and it would not be the same without you.</td><td>Nothing</td></tr>
+    <tr><td>W3 · Short</td><td>Rishabh weds Poojan. Come celebrate with us.</td><td>Nothing</td></tr>
+  </table></div>
+  <p style="margin-top:10px" class="lede">A Ganesh mark or a short Sanskrit or Hindi line above the names can be added to any of these.</p>
+</section>
+
+<section>
+  <h2><span class="num">3</span>The date</h2>
+  <p class="said">You said you do not like the scratch-the-date section.</p>
+  <ul>
+    <li><strong>D1 · Drop it (my pick).</strong> The date already appears under your names once the palace lights up, and each event below carries its own date. A separate date section repeats it.</li>
+    <li><strong>D2 · A plaque.</strong> A red plaque with a gold border under a strip of haveli windows, as in the gate-palace reel. No interaction.</li>
+    <li><strong>D3 · A countdown.</strong> Four small jharokha-shaped tiles counting days, hours, minutes and seconds. Could sit in the closing section instead.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="num">4</span>The four events</h2>
+  <p class="said">You asked to include the other events, with Rajasthani dress for the engagement shown as an illustration.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Day</th><th>When</th><th>Event</th><th>Dress</th></tr>
+    <tr><td>Thursday 28 January 2027</td><td>Morning</td><td>Engagement</td><td>Rajasthani</td></tr>
+    <tr><td>Thursday 28 January 2027</td><td>Evening</td><td>Sangeet</td><td>Not given yet</td></tr>
+    <tr><td>Friday 29 January 2027</td><td>Morning</td><td>Carnival Haldi</td><td>Not given yet</td></tr>
+    <tr><td>Friday 29 January 2027</td><td>Evening</td><td>Shadi</td><td>Not given yet</td></tr>
+  </table></div>
+  <h3 style="margin:26px 0 10px">How the events are shown</h3>
+  <div class="grid" id="s4"></div>
+  <h3 style="margin:26px 0 10px">The Rajasthani dress illustration</h3>
+  <div class="grid wide" id="s4d"></div>
+  <p style="margin-top:14px"><strong>One decision this reopens.</strong> Earlier you said not everyone is invited to every function, and the site should show only the wedding. If all four events go on the site, either everyone sees all four, or each guest group gets its own link that shows only its events. Tell me which.</p>
+</section>
+
+<section>
+  <h2><span class="num">5</span>Photos</h2>
+  <p class="said">You said you do not like the photo section.</p>
+  <ul>
+    <li><strong>P1 · Remove it for now (my pick).</strong> There are no photos yet, so the section is three empty frames. Bring it back when the pre-wedding photos arrive.</li>
+    <li><strong>P2 · One framed photo with thumbnails</strong> below it and arrows, from the scroll-message-themes reel.</li>
+    <li><strong>P3 · Loose prints</strong> that tumble onto the page as you scroll, from the south-indian-style reel.</li>
+    <li><strong>P4 · Photos inside the events.</strong> One photo per event card, so there is no separate gallery.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="num">6</span>Place and getting there, together at the bottom</h2>
+  <div class="grid" id="s6" style="margin-top:14px"></div>
+</section>
+
+<section>
+  <h2><span class="num">7</span>How it could fit together</h2>
+  <p>My picks, in scroll order. Swap any step for another option letter.</p>
+  <ol class="flow">
+    <li><strong>The lake at night.</strong> Tap to light, as it is now.</li>
+    <li><strong>Pull back through a jharokha (T3).</strong> The lake becomes a view in a window.</li>
+    <li><strong>Invitation on the haveli wall (I2),</strong> script names, warm wording.</li>
+    <li><strong>Four events as four skies (E2).</strong> The same palace, re-lit for each.</li>
+    <li><strong>Venue and travel as a painted route (V1).</strong></li>
+    <li><strong>Close.</strong> A closing line and, if you want one, a countdown or an RSVP button.</li>
+  </ol>
+</section>
+
+<section>
+  <h2><span class="num">8</span>What I need from you</h2>
+  <ul>
+    <li>Your option letter for each point, or "your picks".</li>
+    <li>Time and place within the venue for each event, and any dress code for the Sangeet, Haldi and Shadi.</li>
+    <li>Whether every guest sees all four events, or each group gets its own link.</li>
+    <li>Parents' names, only if you choose the traditional wording.</li>
+    <li>Whether you want an RSVP, for example a WhatsApp button. The site has none today.</li>
+  </ul>
+</section>
+</main>
+
+<script>
+(function(){
+  var N='#0c1330',G='#f2b04a',C='#f6ead2',R='#a8323a',K='#e9a08c';
+  function pal(x,y,w,lit){var u=w/100,f=lit?'#f0b890':'#3a3558',g=lit?'#ffd98a':'#1a1838',s='';
+    s+='<g transform="translate('+x+','+y+') scale('+u+')" fill="'+f+'">';
+    s+='<rect x="18" y="-25" width="64" height="25" opacity=".75"/><rect x="10" y="-18" width="80" height="18"/><rect x="0" y="-22" width="10" height="22"/><rect x="90" y="-22" width="10" height="22"/><rect x="40" y="-23" width="20" height="23"/>';
+    s+='<path d="M2-22q3-7 6 0zM92-22q3-7 6 0zM46-23q4-9 8 0zM28-25q2-5 4 0zM68-25q2-5 4 0z"/>';
+    for(var r=0;r<3;r++)for(var i=0;i<7;i++){s+='<rect x="'+(13+i*3.8)+'" y="'+(-16+r*5.5)+'" width="1.8" height="3" fill="'+g+'"/><rect x="'+(62+i*3.8)+'" y="'+(-16+r*5.5)+'" width="1.8" height="3" fill="'+g+'"/>';}
+    s+='<path d="M47 0v-5q3-4 6 0v5z" fill="'+g+'"/></g>';return s;}
+  function arch(cx,base,w,h,fill,stroke){return '<path d="M'+(cx-w/2)+' '+base+'v'+(-h*.5)+'c0 '+(-h*.36)+' '+(w*.4)+' '+(-h*.3)+' '+(w/2)+' '+(-h*.5)+'c'+(w*.1)+' '+(h*.2)+' '+(w/2)+' '+(h*.14)+' '+(w/2)+' '+(h*.5)+'v'+(h*.5)+'z" fill="'+(fill||'none')+'" stroke="'+(stroke||'none')+'" stroke-width="1.2"/>';}
+  function lines(x,y,ws,col,gap){return ws.map(function(w,i){return '<rect x="'+(x-w/2)+'" y="'+(y+i*(gap||6))+'" width="'+w+'" height="2" rx="1" fill="'+col+'"/>';}).join('');}
+  function night(){return '<rect width="90" height="160" fill="'+N+'"/><rect y="96" width="90" height="64" fill="#0a1026"/>';}
+  function diyas(pts){return pts.map(function(p){return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1.6" fill="'+G+'"/>';}).join('');}
+  function svg(inner){return '<svg viewBox="0 0 90 160" role="img">'+inner+'</svg>';}
+  function boug(){return '<g fill="#d6417f"><circle cx="6" cy="8" r="9"/><circle cx="20" cy="4" r="7"/><circle cx="84" cy="8" r="9"/><circle cx="70" cy="4" r="7"/><circle cx="4" cy="24" r="6"/><circle cx="87" cy="26" r="6"/></g>';}
+
+  var S={
+   T1:svg('<rect width="90" height="160" fill="#8a4f33"/>'+arch(45,150,70,130,'#f3d9a4')+'<rect x="10" y="60" width="16" height="90" fill="#4a2616"/><rect x="64" y="60" width="16" height="90" fill="#4a2616"/>'+arch(45,150,34,60,'none','#a8323a')+'<rect x="34" y="118" width="22" height="3" fill="#a8323a"/><path d="M36 150l5-28h8l5 28z" fill="#a8323a"/><path d="M12 22q33 22 66 0" fill="none" stroke="#f29a1e" stroke-width="3" stroke-dasharray="2 2"/><rect x="28" y="30" width="4" height="7" fill="'+G+'"/><rect x="58" y="30" width="4" height="7" fill="'+G+'"/>'+diyas([[30,152],[60,152],[22,146],[68,146]])+'<g fill="#e77"><circle cx="38" cy="80" r="1"/><circle cx="52" cy="96" r="1"/><circle cx="44" cy="108" r="1"/></g>'),
+   T2:svg(night()+pal(48,96,52,true)+'<path d="M0 0h52l-22 160H0z" fill="'+C+'"/>'+lines(22,40,[26,18,22],'#8a5a1c')+'<path d="M24 118h30l-5 7H30z" fill="#4a2616"/><path d="M40 118v-14l10 14z" fill="#a8323a"/><circle cx="34" cy="113" r="2" fill="'+G+'"/><path d="M4 126q14-4 22 0" stroke="#fff" stroke-opacity=".5" fill="none"/>'),
+   T3:svg('<rect width="90" height="160" fill="'+K+'"/>'+arch(45,128,56,96,N)+'<clipPath id="c3">'+arch(45,128,56,96,'#000')+'</clipPath><g clip-path="url(#c3)"><rect y="88" width="90" height="40" fill="#0a1026"/>'+pal(21,88,48,true)+diyas([[30,100],[52,108],[40,118]])+'</g>'+arch(45,128,56,96,'none','#fff3d6')+boug()+'<rect x="14" y="128" width="62" height="4" fill="#f6ead2"/>'+lines(45,142,[40,28],'#7a3b2a')),
+   T4:svg('<defs><linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1c98a"/><stop offset=".5" stop-color="#5b3a6e"/><stop offset="1" stop-color="'+N+'"/></linearGradient></defs><rect width="90" height="160" fill="url(#g4)"/>'+pal(20,150,50,true)+'<g fill="#ffcf7a">'+[[20,120],[62,112],[38,98],[72,84],[14,80],[50,70],[30,54],[66,48],[44,34]].map(function(p,i){return '<rect x="'+p[0]+'" y="'+p[1]+'" width="'+(4+i*.4)+'" height="'+(6+i*.5)+'" rx="1.5"/>';}).join('')+'</g>'+lines(45,14,[34,22],'#3b2417')),
+   I1:svg('<rect width="90" height="160" fill="#efe2c6"/><rect x="5" y="5" width="80" height="150" fill="none" stroke="#9c2f2f" stroke-width="2"/><rect x="8.5" y="8.5" width="73" height="143" fill="none" stroke="#b88a3a" stroke-width=".8" stroke-dasharray="1.5 1.5"/><circle cx="45" cy="30" r="5" fill="#9c2f2f"/>'+lines(45,46,[30],'#7a5a2a')+'<path d="M22 70q10-10 20 0t20 0" fill="none" stroke="#9c2f2f" stroke-width="2"/><path d="M26 86q8-8 16 0t16 0" fill="none" stroke="#9c2f2f" stroke-width="2"/>'+lines(45,102,[44,38,30],'#7a5a2a')+'<g fill="#6b7f3a"><path d="M14 150q0-16 6-18q-2 10 0 18zM70 150q2-10 0-18q6 2 6 18z"/></g><g fill="#d98a9a"><circle cx="24" cy="138" r="3"/><circle cx="66" cy="138" r="3"/></g>'),
+   I2:svg('<rect width="90" height="160" fill="'+K+'"/>'+arch(45,138,62,110,C,'#b88a3a')+boug()+'<rect x="16" y="20" width="4" height="8" fill="'+G+'"/><rect x="70" y="20" width="4" height="8" fill="'+G+'"/><circle cx="45" cy="52" r="3.5" fill="#9c2f2f"/>'+lines(45,62,[26],'#7a5a2a')+'<path d="M26 82q9-9 19 0t19 0" fill="none" stroke="#9c2f2f" stroke-width="2"/>'+lines(45,98,[40,34,26],'#7a5a2a')+'<g fill="#b5653f"><rect x="6" y="140" width="10" height="12" rx="2"/><rect x="74" y="140" width="10" height="12" rx="2"/></g>'),
+   I3:svg(night()+'<g fill="#fff" opacity=".7"><circle cx="12" cy="14" r=".7"/><circle cx="70" cy="22" r=".7"/><circle cx="40" cy="8" r=".7"/><circle cx="80" cy="50" r=".7"/></g>'+lines(45,26,[30],'#c9c8da')+'<path d="M22 46q10-10 22 0t22 0" fill="none" stroke="'+C+'" stroke-width="2.2"/>'+lines(45,60,[46,38],'#c9c8da')+pal(10,104,70,true)+diyas([[20,120],[44,128],[66,118],[32,142]])),
+   E1:svg('<rect width="90" height="160" fill="'+C+'"/><path d="M0 8q22 14 45 0t45 0" fill="none" stroke="#f29a1e" stroke-width="3" stroke-dasharray="2 2"/><line x1="45" y1="12" x2="45" y2="156" stroke="#b88a3a" stroke-width=".8"/>'+[[10,22],[48,54],[10,86],[48,118]].map(function(p){return '<rect x="'+(p[0]-2)+'" y="'+p[1]+'" width="36" height="2.5" fill="#b88a3a"/><rect x="'+p[0]+'" y="'+(p[1]+2.5)+'" width="32" height="24" fill="'+R+'"/>'+lines(p[0]+16,p[1]+9,[20,14],'#f6d9a0',5)+'<path d="M'+(p[0]+16)+' '+(p[1]+26.5)+'v5" stroke="#b88a3a"/>';}).join('')),
+   E2:svg([['#f7d9b8','#f0b890','28 · morning'],['#5b3a6e','#f0b890','28 · evening'],['#ffd75e','#fff3c4','29 · morning'],[N,'#f0b890','29 · evening']].map(function(b,i){return '<rect y="'+(i*40)+'" width="90" height="40" fill="'+b[0]+'"/>'+pal(34,i*40+34,46,i!==0&&i!==2)+'<text x="4" y="'+(i*40+11)+'" font-size="5.5" font-family="Jost,sans-serif" fill="'+(i===0||i===2?'#3b2417':'#f6ead2')+'">'+b[2]+'</text>';}).join('')+'<g fill="'+G+'"><circle cx="20" cy="140" r="1.4"/><circle cx="14" cy="148" r="1.4"/></g><path d="M6 100l4-8 4 8zM16 100l4-8 4 8z" fill="#e2532f"/>'),
+   E3:svg('<rect width="90" height="160" fill="'+C+'"/><line x1="45" y1="10" x2="45" y2="152" stroke="#b88a3a" stroke-width="1"/>'+[0,1,2,3].map(function(i){var y=30+i*36,l=i%2;return '<circle cx="45" cy="'+(y-6)+'" r="2.2" fill="#9c2f2f"/>'+arch(l?22:68,y+8,22,26,['#f7d9b8','#5b3a6e','#ffd75e',N][i],'#b88a3a')+lines(l?66:24,y-8,[26,18,22],'#7a5a2a',5);}).join('')),
+   E4:svg('<rect width="90" height="160" fill="#191430"/><rect x="12" y="14" width="66" height="6" rx="3" fill="#7a4a24"/><rect x="16" y="20" width="58" height="118" fill="#efe2c6"/><rect x="12" y="138" width="66" height="6" rx="3" fill="#7a4a24"/>'+[0,1,2,3].map(function(i){return '<circle cx="24" cy="'+(36+i*26)+'" r="2.4" fill="#9c2f2f"/>'+lines(48,32+i*26,[36,26,30],'#7a5a2a',5);}).join('')),
+   R1:'<svg viewBox="0 0 160 90" role="img"><rect width="160" height="90" fill="'+C+'"/><path d="M22 54q-4-26 22-30q26-2 30 20q2 12-8 14q-24 6-44-4z" fill="#d6417f"/><path d="M26 44q20-14 46-6M24 52q22-10 50-4" stroke="#ffd75e" stroke-width="2" fill="none"/><path d="M62 26q8-14 14-2" stroke="#d6417f" stroke-width="5" fill="none"/><circle cx="46" cy="40" r="3" fill="'+G+'"/><path d="M96 20q30-8 44 10q6 22-8 46q-22 6-40-6q8-26 4-50z" fill="#e2532f"/><g fill="#ffd75e">'+[[104,30],[116,28],[128,34],[108,44],[122,46],[132,52],[106,58],[118,62],[128,66]].map(function(p){return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1.6"/>';}).join('')+'</g><path d="M96 20q30-8 44 10" stroke="#ffd75e" stroke-width="2.5" fill="none"/></svg>',
+   R2:'<svg viewBox="0 0 160 90" role="img"><rect width="160" height="90" fill="#f7d9b8"/>'+'<g transform="translate(34,12)"><path d="M14 10q10-12 20 0q2 6-2 8h-16q-4-2-2-8z" fill="#d6417f"/><circle cx="24" cy="22" r="6" fill="#c98a63"/><path d="M10 78V40q0-10 14-10t14 10v38z" fill="#fff8ea"/><path d="M14 34l20 44" stroke="#e2532f" stroke-width="5"/></g><g transform="translate(86,12)"><circle cx="24" cy="22" r="6" fill="#c98a63"/><path d="M14 20q0-12 10-12t10 12q4 30 8 58H6q4-28 8-58z" fill="#e2532f"/><path d="M4 78q10-34 20-34t20 34z" fill="#d6417f"/><g fill="#ffd75e"><circle cx="16" cy="62" r="1.5"/><circle cx="26" cy="56" r="1.5"/><circle cx="34" cy="66" r="1.5"/><circle cx="22" cy="72" r="1.5"/></g></g></svg>',
+   R3:'<svg viewBox="0 0 160 90" role="img"><rect width="160" height="90" fill="#5d7a4a"/><rect x="3" y="3" width="154" height="84" fill="none" stroke="#9c2f2f" stroke-width="5"/><g fill="#efe2c6">'+[18,44,70,96,122].map(function(x,i){return '<ellipse cx="'+(x+8)+'" cy="58" rx="12" ry="8" fill="'+(i%2?'#c9c2b0':'#8a8f98')+'"/><rect x="'+(x+2)+'" y="62" width="3" height="12" fill="#6b6f78"/><rect x="'+(x+12)+'" y="62" width="3" height="12" fill="#6b6f78"/><rect x="'+(x+2)+'" y="40" width="12" height="10" fill="#d6417f"/><circle cx="'+(x+8)+'" cy="36" r="3" fill="#c98a63"/>';}).join('')+'</g><text x="80" y="20" text-anchor="middle" font-size="7" font-family="Jost,sans-serif" fill="#efe2c6">a Mewar court painting, cropped</text></svg>',
+   V1:svg('<rect width="90" height="160" fill="#efe2c6"/><rect x="5" y="5" width="80" height="150" fill="none" stroke="#9c2f2f" stroke-width="1.5"/><path d="M0 60q20-14 40-4t50-8v30H0z" fill="#cfe0d2"/><path d="M66 26l8 3-8 3 2-3z" fill="#3b2417"/><path d="M70 32q-10 30-30 44t-14 44" fill="none" stroke="#9c2f2f" stroke-width="1.6" stroke-dasharray="3 3"/><rect x="34" y="72" width="12" height="6" fill="#e2a53a"/>'+pal(8,132,40,true)+'<g fill="#3b2417" font-family="Jost,sans-serif" font-size="5.2"><text x="52" y="22">Airport</text><text x="50" y="78">Debari</text><text x="10" y="144">Shakti Vilas</text></g><g fill="#6b7f3a"><path d="M72 120q3-14 6 0zM14 100q3-14 6 0z"/></g>'),
+   V2:svg('<rect width="90" height="160" fill="#f7d9b8"/><rect x="12" y="20" width="4" height="40" fill="#3b2417"/><rect x="74" y="20" width="4" height="40" fill="#3b2417"/><rect x="8" y="16" width="74" height="26" rx="3" fill="#f2c230"/><text x="45" y="34" text-anchor="middle" font-size="10" font-family="Jost,sans-serif" font-weight="500" fill="#1c1408">DEBARI</text>'+[[70],[98],[126]].map(function(p){return '<rect x="10" y="'+p[0]+'" width="70" height="22" rx="4" fill="#fff8ea" stroke="#d9b98a"/>'+lines(40,p[0]+7,[44,30],'#7a5a2a',6);}).join('')),
+   V3:svg('<rect width="90" height="160" fill="#0f1838"/>'+lines(45,16,[36],C)+'<rect x="8" y="30" width="74" height="50" rx="4" fill="#26315e"/><path d="M8 62q20-16 40-4t34-10" fill="none" stroke="#5f6fb0"/><circle cx="52" cy="54" r="3" fill="'+G+'"/><rect x="8" y="90" width="35" height="56" rx="4" fill="#17224a"/><rect x="47" y="90" width="35" height="56" rx="4" fill="#17224a"/>'+lines(25,100,[22,18,20,14],'#c9c8da',7)+lines(64,100,[22,18,20,14],'#c9c8da',7))
+  };
+  function card(o){return '<article class="opt'+(o.pick?' pick':'')+'">'+(o.pick?'<span class="tag">My pick</span>':'')+(o.html||S[o.id])+'<h3>'+o.id.replace(/^R/,'R')+' · '+o.t+'</h3><p>'+o.d+'</p>'+(o.from?'<p class="from">From: '+o.from+'</p>':'')+'<p class="cost">Trade-off: '+o.c+'</p></article>';}
+  function fill(id,list){document.getElementById(id).innerHTML=list.map(card).join('');}
+
+  fill('s1',[
+   {id:'T1',t:'Furnish the gate',d:'Keep the fly-through, but give it things to pass: carved doors that swing open, a marigold swag, hanging lanterns, petals falling, a red runner, and a mandap glimpsed in the courtyard at the end in place of blank light.',from:'gate-palace (doors opening)',c:'Still the same move you have seen. It fixes "empty", not the idea.'},
+   {id:'T2',t:'A boat crosses',d:'A lantern-lit boat glides across the lake. Its wake wipes the night scene away and the invitation page appears behind it.',from:'train-animation (a vehicle wipes one scene into the next)',c:'Sideways, so it loses the feeling of going somewhere.'},
+   {id:'T3',t:'Pull back through a jharokha',pick:true,d:'The camera moves backwards. A cusped window frame closes in around the lake, bougainvillea drops into the corners, and the night scene becomes a view in a window on a warm haveli wall. That wall is the page for everything after.',from:'scroll-animation (pull back through arches), udaipur-window-view (jharokha frame)',c:'Brings daylight colours into a night site, which is a bigger change of mood.'},
+   {id:'T4',t:'Lanterns rise',d:'Sky lanterns lift off the water. The camera tilts up to follow them into a sky that warms toward dawn, and the invitation text sits among them.',from:'udaipur-window-view (sky as the text area)',c:'Gentle and simple, but the palace leaves the screen early.'}
+  ]);
+  fill('s2',[
+   {id:'I1',t:'A bordered painted page',d:'Aged cream paper with a narrow miniature-painting border, a Ganesh mark, names in script, and small lotus and cypress motifs growing from the bottom edge.',from:'hands-animation',c:'Calm and traditional. The border art has to be drawn simply or taken from a museum painting.'},
+   {id:'I2',t:'A panel on the haveli wall',pick:true,d:'A cream cusped-arch panel set into a coral wall, with bougainvillea and two brass lanterns. The text sits in the upper half of the arch; the lower half stays empty.',from:'rickshaw (a door becomes the invitation panel)',c:'Pairs naturally with T3. Less formal than a printed card.'},
+   {id:'I3',t:'Keep it in the scene',d:'No separate screen. After the palace lights up, the invitation lines appear in the sky above it, one line at a time.',from:'udaipur-window-view, static-images (one calm scene, text fading in)',c:'Least work and no plain screen at all, but room for only three or four short lines.'}
+  ]);
+  document.getElementById('s2f').innerHTML=[
+   ['F1 · Script names, classic serif',true,'<div class="type"><small>Together with their families</small><span style="font-family:\'Pinyon Script\',cursive;font-size:2.5rem;line-height:1.1">Rishabh &amp; Poojan</span><span style="font-family:\'Cormorant Garamond\',serif;font-size:1.15rem">are getting married in Udaipur</span><small>29 January 2027</small></div>','Pinyon Script for names, Cormorant Garamond for sentences, Jost small capitals for labels. This is the pattern most of your reels use.'],
+   ['F2 · Bolder script on night',false,'<div class="type night"><small>Together with their families</small><span style="font-family:Tangerine,cursive;font-weight:700;font-size:3.1rem;line-height:1">Rishabh &amp; Poojan</span><span style="font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:1.15rem">are getting married in Udaipur</span><small>29 January 2027</small></div>','Tangerine for names with italic Cormorant. Reads better on the dark lake scene than a thin script.'],
+   ['F3 · Indian display face',false,'<div class="type"><small>Together with their families</small><span style="font-family:\'Rozha One\',serif;font-size:2rem;line-height:1.15">Rishabh &amp; Poojan</span><span style="font-family:Jost,sans-serif;font-size:1rem">are getting married in Udaipur</span><small>29 January 2027</small></div>','Rozha One, a heavy face drawn with Devanagari in mind, with Jost. Poster-like and modern; no script.']
+  ].map(function(f){return '<article class="opt'+(f[1]?' pick':'')+'">'+(f[1]?'<span class="tag">My pick</span>':'')+f[2]+'<h3>'+f[0]+'</h3><p>'+f[3]+'</p></article>';}).join('');
+  fill('s4',[
+   {id:'E1',t:'Hanging scrolls',d:'Four red scrolls with gold rods and tassels hang from a marigold toran, alternating left and right down a centre line. Each unrolls as it scrolls into view.',from:'gate-palace',c:'Decorative and compact. All four look alike, so the events do not feel different from each other.'},
+   {id:'E2',t:'Four skies, one palace',pick:true,d:'One screen per event, using the palace you like, re-lit each time: soft morning for the Engagement, dusk with string lights for the Sangeet, bright yellow with pinwheels and marigolds for the Carnival Haldi, and the lit night with fireworks for the Shadi.',from:'static-images (one calm scene per screen)',c:'Longest to scroll and the most drawing. It reuses a scene that is already built.'},
+   {id:'E3',t:'A timeline with arch vignettes',d:'A vertical line with four small arch-shaped pictures alternating sides, each with the event name, day, time, dress, and an add-to-calendar link.',from:'diya-light',c:'Everything visible at once and quickest to read. Less of a show.'},
+   {id:'E4',t:'A parchment scroll',d:'A cream scroll with wooden rollers unrolls on the dark ground and lists the four events in order.',from:'scroll-message-themes (Pichwai Noor)',c:'Fits the night look as it is. Mostly text, so the dress illustration would be small.'}
+  ]);
+  fill('s4d',[
+   {id:'R1',html:S.R1,t:'Objects',pick:true,d:'A leheriya safa and a bandhani odhni drawn as flat shapes beside the Engagement, with a line such as "Come in Rajasthani colours".',c:'Clear at a glance and easy for me to draw well.'},
+   {id:'R2',html:S.R2,t:'A faceless couple',d:'Two simple figures seen without faces, he in a safa and angrakha, she in a lehenga and odhni.',from:'static-images (the couple shown without faces)',c:'Friendlier, but simple vector figures can look generic.'},
+   {id:'R3',html:S.R3,t:'A museum painting',d:'A cropped band from a public-domain Mewar court painting of a wedding procession, behind the Engagement details.',from:'the Met open-access paintings listed in your reel analysis',c:'The most authentic look. It is a real painting, so it sets a different style from the drawn palace.'}
+  ]);
+  fill('s6',[
+   {id:'V1',t:'A painted route',pick:true,d:'A simple map in a miniature-painting style: the airport, Debari station and Shakti Vilas joined by a dotted route that draws itself as you scroll, with the address, a Google Maps button and what to pack beside it.',from:'the painted-map idea in your reel analysis',c:'Shows how close the station and airport are. Not to scale.'},
+   {id:'V2',t:'A station board',d:'A yellow railway board reading DEBARI above three cards: by air, by train, what to pack, plus the address and a map button.',from:'train-window, train-animation',c:'Playful and quick to build. Leans on the train, which most guests may not use.'},
+   {id:'V3',t:'One plain panel',d:'One night-coloured panel: a map image at the top with a pin on the venue, the address and travel notes in two columns below.',from:'gate-palace (map inside a coloured panel)',c:'The least decoration. Closest to what the site has now, merged into one.'}
+  ]);
+})();
+</script>
+</body>
+</html>
