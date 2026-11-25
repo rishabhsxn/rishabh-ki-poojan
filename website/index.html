@@ -88,9 +88,14 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offse
 #day{position:absolute;inset:0;opacity:0;pointer-events:none}
 #day .L{position:absolute;inset:0;width:100%;height:100%;overflow:visible;display:block}
 #dscn,#dboat{will-change:transform}
+/* the morning lake is built in layers so scrolling never repaints the big picture: a sky, a noon sky that fades in over it,
+   the scene, the ripples in two sets that drift by themselves, and the date behind a sliding window that follows the boat */
+#dnoon{opacity:0;will-change:opacity}
+#day .rp{will-change:transform;animation:rip 7s ease-in-out infinite alternate-reverse}
+#day #drip1{animation-duration:5s;animation-direction:alternate}
+#day #ddtw{overflow:hidden;will-change:transform}
+#ddt{will-change:transform}
 #ddt text{font-family:var(--display)}
-#day .rip{animation:rip 5s ease-in-out infinite alternate}
-#day .rip:nth-child(odd){animation-duration:7s;animation-direction:alternate-reverse}
 @keyframes rip{to{transform:translateX(10px)}}
 #day .bob{animation:bob 3.2s ease-in-out infinite alternate}
 @keyframes bob{from{transform:translateY(-1px) rotate(-.6deg)}to{transform:translateY(1.4px) rotate(.6deg)}}
@@ -269,7 +274,7 @@ html.static *{transition:none!important}
   html{scroll-behavior:auto}
   .pre,.post,.hero.lit .pre,.hero.lit .post{transition:none}
   .rv,.pn .r{transition:none;opacity:1;transform:none;filter:none}
-  .lamp,#day .rip,#day .bob,#night .rip,.lhint .dt,.snd .w2,.pring,.sv-sl.kb .fg{animation:none}
+  .lamp,#day .rp,#day .bob,#night .rip,.lhint .dt,.snd .w2,.pring,.sv-sl.kb .fg{animation:none}
 }
 </style>
 </head>
@@ -294,7 +299,7 @@ html.static *{transition:none!important}
     <span class="onward">Scroll down ↓</span>
   </div>
   <div id="glow" aria-hidden="true"></div>
-  <div id="day"><svg class="L" id="dscn" viewBox="0 0 400 700" aria-hidden="true"></svg><svg class="L" id="dboat" viewBox="0 0 400 700" aria-hidden="true"></svg><svg class="L" id="ddt" viewBox="0 0 400 700" role="img" aria-label="Save the date: Friday 29 January 2027, Udaipur"></svg></div>
+  <div id="day"><div class="L" id="dscn"><svg class="L" id="dsky" viewBox="0 0 400 700" aria-hidden="true"></svg><svg class="L" id="dnoon" viewBox="0 0 400 700" aria-hidden="true"></svg><svg class="L" id="dland" viewBox="0 0 400 700" aria-hidden="true"></svg><svg class="L rp" id="drip0" viewBox="0 0 400 700" aria-hidden="true"></svg><svg class="L rp" id="drip1" viewBox="0 0 400 700" aria-hidden="true"></svg></div><svg class="L" id="dboat" viewBox="0 0 400 700" aria-hidden="true"></svg><div class="L" id="ddtw"><svg class="L" id="ddt" viewBox="0 0 400 700" role="img" aria-label="Save the date: Friday 29 January 2027, Udaipur"></svg></div></div>
 </div>
 </header>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><clipPath id="archClip" clipPathUnits="objectBoundingBox"><path id="acp"/></clipPath></defs></svg>
@@ -731,18 +736,28 @@ html.static *{transition:none!important}
     var done=clamp((fly-.93)/.07);if(done>0){g.globalAlpha=done;g.fillStyle='#f6ead2';g.fillRect(0,0,W,H);g.globalAlpha=1;}
   }
 
+  /* once the daybreak starts to cover the palace (8% of the way down the stage) the palace is no longer redrawn:
+     its last frame is scaled up instead, which the graphics chip does almost for free; scrolling back up redraws it */
+  var FREEZE=.08,frozen=0;
+  function freezeFrame(){var f=fly;fly=frozen;draw(performance.now());fly=f;cv.style.transformOrigin=Cx.toFixed(1)+'px '+Cy.toFixed(1)+'px';}
   function onScroll(){
     var range=stage.offsetHeight-hero.offsetHeight,top=stage.getBoundingClientRect().top,P=range>0?clamp(-top/range):0;
-    var q=clamp(P/.2);fly=q*q*(3-2*q)*.11;covered=P>.22;if(!covered&&visible&&!raf&&!reduce)raf=requestAnimationFrame(loop);
+    var q=clamp(P/.2);fly=q*q*(3-2*q)*.11;covered=P>.22;
+    var fz=P>FREEZE&&!reduce&&litAt!==null;
+    if(fz&&!frozen){frozen=fly;freezeFrame();}
+    if(fz)cv.style.transform='translateZ(0) scale('+((DF-frozen*CMAX)/(DF-fly*CMAX)).toFixed(4)+')';
+    else if(frozen){frozen=0;cv.style.transform='';}
+    if(!covered&&!fz&&visible&&!raf&&!reduce)raf=requestAnimationFrame(loop);
     if(P>.02&&litAt===null)ignite();
     hero.classList.toggle('flying',P>.05);
     if(reduce)draw(0);
   }
   function loop(now){
+    if(frozen){raf=0;return;}
     var dt=now-lastT;lastT=now;
     if(dt>0&&dt<250){slow=dt>24?slow+1:Math.max(0,slow-2);
       if(slow>20&&DMAX>1&&(window.devicePixelRatio||1)>1){DMAX=DMAX>1.5?1.5:1;slow=0;size();}}
-    draw(now);if(visible&&!covered)raf=requestAnimationFrame(loop);else raf=0;}
+    draw(now);if(visible&&!covered&&!frozen)raf=requestAnimationFrame(loop);else raf=0;}
   function ignite(){
     if(litAt!==null)return;
     if(held)setTimeout(release,3600);
@@ -762,7 +777,7 @@ html.static *{transition:none!important}
   }
   ['wheel','touchmove','keydown'].forEach(function(t){window.addEventListener(t,nudge,{passive:true});});
   if(window.scrollY<10&&!/[?&]y=/.test(location.search))hold();
-  function refit(){size();onScroll();if(reduce)draw(0);}
+  function refit(){size();if(frozen)freezeFrame();onScroll();if(reduce)draw(0);}   /* resizing clears the canvas, so a frozen frame is painted again */
 
   refit();
   if(reduce){litAt=-1e7;hero.classList.add('lit');draw(0);}
@@ -859,24 +874,27 @@ function shore(c) {
   const isle = (x, w) => R(x, HOR + 12, w, 9, c.isle) + R(x + w * .1, HOR + 5, w * .8, 8, c.isle) + [.2, .5, .8].map(p => `<path d="M${x + w * p - 5} ${HOR + 5}a5 5 0 0 1 10 0Z" fill="${c.sh}"/>`).join('') + C(x - 3, HOR + 14, 5, c.tree) + C(x + w + 3, HOR + 14, 5, c.tree);
   return o + isle(-250, 80) + isle(590, 60);
 }
+/* the morning lake, as separate layers (see the CSS note at #dnoon) */
 function scenery(n) {
   const c = n ? { s: ['#10163a', '#2c1f4d', '#6b3558'], h1: '#1c1f47', h2: '#242856', pal: '#e7c98f', pal2: '#d8b97e', sh: '#b08a4c', win: '#ffd879', l: ['#1b2250', '#0d1230'], tree: '#152233', isle: '#f0dcae', rp: '#ffd879' }
     : { s: ['#f6c3ba', '#fbdccf', '#fff1e2'], h1: '#bdd8c6', h2: '#a2c8b2', pal: '#f8ead0', pal2: '#f1dcc0', sh: '#dcc195', win: '#c79f77', l: ['#93d3cc', '#62b3b0'], tree: '#74a070', isle: '#fffaf0', rp: '#ffffff' };
-  const id = n ? 'n' : 'd', r = rng(5); let rip = '';
-  for (let i = 0; i < 26; i++) rip += `<rect class="rip" x="${(-300 + r() * 1000).toFixed(0)}" y="${(HOR + 8 + r() * (n ? 56 : 250)).toFixed(0)}" width="${(10 + r() * 26).toFixed(0)}" height="1.2" fill="${c.rp}" opacity="${n ? .35 : .5}"/>`;
+  const id = n ? 'n' : 'd', r = rng(5), rip = ['', ''];
+  for (let i = 0; i < 26; i++) rip[i % 2] += `<rect x="${(-300 + r() * 1000).toFixed(0)}" y="${(HOR + 8 + r() * (n ? 56 : 250)).toFixed(0)}" width="${(10 + r() * 26).toFixed(0)}" height="1.2" fill="${c.rp}" opacity="${n ? .35 : .5}"/>`;
   const pal = palace(105, HOR, 190, c);
-  return `<defs><linearGradient id="sk${id}" gradientUnits="userSpaceOnUse" x1="0" y1="-120" x2="0" y2="${HOR}">${c.s.map((k, i) => `<stop offset="${i / 2}" stop-color="${k}"/>`).join('')}</linearGradient>
-  <linearGradient id="nn${id}" gradientUnits="userSpaceOnUse" x1="0" y1="-120" x2="0" y2="${HOR}"><stop offset="0" stop-color="#bfe3ea"/><stop offset=".6" stop-color="#fdf0cf"/><stop offset="1" stop-color="#fff6e0"/></linearGradient>
-  <linearGradient id="lk${id}" gradientUnits="userSpaceOnUse" x1="0" y1="${HOR}" x2="0" y2="760"><stop offset="0" stop-color="${c.l[0]}"/><stop offset="1" stop-color="${c.l[1]}"/></linearGradient>
-  <radialGradient id="sun${id}"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>
-  ${R(-900, -900, 2200, 1320, `url(#sk${id})`)}${n ? '' : R(-900, -900, 2200, 1320, 'url(#nnd)', 'id="noon" opacity="0"')}
-  ${n ? '' : C(318, 372, 70, `url(#sun${id})`)}
-  ${hillPath(HOR, 78, 3, c.h1)}${hillPath(HOR, 46, 8, c.h2)}${shore(c)}${pal}
-  ${R(-900, HOR, 2200, 1200, `url(#lk${id})`)}<g transform="translate(0 ${2 * HOR}) scale(1 -1)" opacity="${n ? .3 : .2}">${pal}</g>${R(-900, HOR, 2200, 2, c.rp, 'opacity=".35"')}<g>${rip}</g>`;
+  return {
+    sky: `<defs><linearGradient id="sk${id}" gradientUnits="userSpaceOnUse" x1="0" y1="-120" x2="0" y2="${HOR}">${c.s.map((k, i) => `<stop offset="${i / 2}" stop-color="${k}"/>`).join('')}</linearGradient></defs>${R(-900, -900, 2200, 1320, `url(#sk${id})`)}`,
+    noon: `<defs><linearGradient id="nn${id}" gradientUnits="userSpaceOnUse" x1="0" y1="-120" x2="0" y2="${HOR}"><stop offset="0" stop-color="#bfe3ea"/><stop offset=".6" stop-color="#fdf0cf"/><stop offset="1" stop-color="#fff6e0"/></linearGradient></defs>${R(-900, -900, 2200, 1320, `url(#nn${id})`)}`,
+    scene: `<defs><linearGradient id="lk${id}" gradientUnits="userSpaceOnUse" x1="0" y1="${HOR}" x2="0" y2="760"><stop offset="0" stop-color="${c.l[0]}"/><stop offset="1" stop-color="${c.l[1]}"/></linearGradient>
+      <radialGradient id="sun${id}"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>
+      ${n ? '' : C(318, 372, 70, `url(#sun${id})`)}${hillPath(HOR, 78, 3, c.h1)}${hillPath(HOR, 46, 8, c.h2)}${shore(c)}${pal}
+      ${R(-900, HOR, 2200, 1200, `url(#lk${id})`)}<g transform="translate(0 ${2 * HOR}) scale(1 -1)" opacity="${n ? .3 : .2}">${pal}</g>${R(-900, HOR, 2200, 2, c.rp, 'opacity=".35"')}`,
+    rip
+  };
 }
 const today = new Date(); today.setHours(0, 0, 0, 0);
 const dleft = Math.round((new Date(2027, 0, 29) - today) / 864e5), dtxt = dleft > 1 ? dleft + ' DAYS TO GO' : dleft === 1 ? '1 DAY TO GO' : dleft === 0 ? 'TODAY' : '';
-$('#dscn').innerHTML = scenery(false);
+const SCN = scenery(false);
+$('#dsky').innerHTML = SCN.sky; $('#dnoon').innerHTML = SCN.noon; $('#dland').innerHTML = SCN.scene; $('#drip0').innerHTML = SCN.rip[0]; $('#drip1').innerHTML = SCN.rip[1];
 $('#ddt').innerHTML = `<text x="200" y="468" text-anchor="middle" font-size="10" letter-spacing="4.5" fill="#12454f" font-family="Jost,sans-serif">SAVE THE DATE</text><text x="200" y="510" text-anchor="middle" font-size="39" font-weight="600" fill="#7a1730">29 January 2027</text><text x="200" y="536" text-anchor="middle" font-size="15" font-style="italic" fill="#12454f">Friday · Udaipur</text>` + (dtxt ? `<rect x="${200 - (dtxt.length * 4.1 + 16)}" y="551" width="${dtxt.length * 8.2 + 32}" height="21" rx="10.5" fill="#7a1730"/><text x="200" y="565.300" text-anchor="middle" font-size="9" letter-spacing="3" fill="#fdf4e6" font-family="Jost,sans-serif" font-weight="500">${dtxt}</text>` : '');
 $('#dboat').innerHTML = `<defs><linearGradient id="wk"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".85"/></linearGradient></defs><g transform="translate(0 630)">${R(-330, 3, 290, 1.6, 'url(#wk)')}${R(-250, 9, 200, 1.2, 'url(#wk)', 'opacity=".6"')}<g class="bob" style="transform-origin:0 0"><g transform="scale(1.9)"><ellipse cx="0" cy="5" rx="27" ry="2.4" fill="#0d3a40" opacity=".18"/><path d="M-28 -1Q-30 -6 -34 -8L-22 -5H22L36 -12Q33 -3 26 2Q0 9 -26 2Z" fill="#7a1730"/><path d="M-24 -5H24" stroke="#c9a24a" stroke-width="1.3"/><path d="M-18 1Q0 5 18 1" stroke="#c9a24a" stroke-width=".8" fill="none"/>${R(-13, -24, 1.3, 19, '#c9a24a')}${R(12, -24, 1.3, 19, '#c9a24a')}<path d="M-17 -24Q0 -38 17 -24Z" fill="#d81b60"/><path d="M-17 -24h34" stroke="#c9a24a" stroke-width="1.4"/>${[-12, -6, 0, 6, 12].map(x => `<path d="M${x - 3} -23.4l3 4 3-4Z" fill="#f2a900"/>`).join('')}${R(-.5, -43, 1, 8, '#c9a24a')}<path d="M.5 -43l8 2.6-8 2.6Z" fill="#f2a900"/>${C(-25, -11, 2.2, '#b98463')}<path d="M-28 -5q3-6 6 0Z" fill="#fff"/><path d="M-26 -8L-36 6" stroke="#8a5a2a" stroke-width="1"/></g></g></g>`;
 
@@ -940,7 +958,7 @@ const Q = new URLSearchParams(location.search), STATIC = Q.has('y'), calm = STAT
 if (STATIC) document.documentElement.classList.add('static');
 const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .2 });
 document.querySelectorAll('.rv').forEach(e => io.observe(e));
-const hstage = $('#stage'), hero = $('#hero'), day = $('#day'), glow = $('#glow'), dscn = $('#dscn'), dboat = $('#dboat'), ddt = $('#ddt'), noon = $('#noon'), htop = hero.querySelector('.hero-top');
+const hstage = $('#stage'), hero = $('#hero'), day = $('#day'), glow = $('#glow'), dscn = $('#dscn'), dboat = $('#dboat'), ddt = $('#ddt'), noon = $('#dnoon'), ddtw = $('#ddtw'), htop = hero.querySelector('.hero-top');
 const ride = $('#ride'), lane = $('#lane'), rick = $('#rick'), dusk = $('#dusk'), lhint = $('#lhint'), ground = lane.querySelector('.ground'), eve = $('#eve'), nite = $('#nite');
 let VW = 1, VH = 1, U = 1, OX = 0, M = {}, cen = [];
 const absTop = el => el.getBoundingClientRect().top + scrollY;
@@ -1016,10 +1034,11 @@ function update(y) {
     const sh = M.sh * (1 - ez(seg(p, .16, .34)));
     day.style.transform = `translate3d(0,${sh.toFixed(1)}px,0)`;
     dscn.style.transform = `scale(${(1.07 - ez(seg(p, .07, .34)) * .07).toFixed(4)})`;
-    noon.setAttribute('opacity', seg(p, .3, .75).toFixed(3));
+    noon.style.opacity = seg(p, .3, .75).toFixed(3);
     const half = VW / U / 2, bx = lerp(200 - half - 80, 200 + half + 90, seg(p, .24, .9));
     dboat.style.transform = `translate3d(${(bx * U).toFixed(1)}px,0,0)`;
-    ddt.style.clipPath = calm && !STATIC ? 'none' : `inset(0 ${Math.max(0, VW - (OX + (bx - 62) * U)).toFixed(1)}px 0 0)`;
+    const cut = calm && !STATIC ? 0 : Math.max(0, VW - (OX + (bx - 62) * U));        /* the date shows only behind the boat: a window slides, the date stays put */
+    ddtw.style.transform = `translate3d(${(-cut).toFixed(1)}px,0,0)`; ddt.style.transform = `translate3d(${cut.toFixed(1)}px,0,0)`;
   }
   laneDraw(y);
   /* evening comes on over the venue */
@@ -1027,8 +1046,9 @@ function update(y) {
   nite.style.opacity = seg(e, .3, .62); eve.classList.toggle('lit', e > .16);
 }
 let cy = scrollY, last = -1;
+const EASE = matchMedia('(pointer: coarse)').matches ? .5 : .14;   /* a phone's scrolling already glides, so follow it closely; ease mouse-wheel steps on a computer */
 function frame(now) {
-  const t = scrollY; cy += (t - cy) * (calm || follow ? 1 : .14); if (Math.abs(t - cy) < .3) cy = t; if (cy !== last) { update(cy); last = cy; }
+  const t = scrollY; cy += (t - cy) * (calm || follow ? 1 : EASE); if (Math.abs(t - cy) < .3) cy = t; if (cy !== last) { update(cy); last = cy; }
   requestAnimationFrame(frame);
 }
 addEventListener('resize', () => { measure(); last = -1; }); new ResizeObserver(() => { measure(); last = -1; }).observe(document.body);
