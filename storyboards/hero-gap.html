@@ -1,0 +1,161 @@
+<meta charset="utf-8">
+<title>Space Under the Garland</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* How much space to add under the garland. Layout: one reading column; the four phones in one row at the same scale,
+   then the four computers two by two, then the numbers side by side. Previews are live copies of the site's drawing code
+   (hero-gap/scene.html) at real size (390 x 844, 1440 x 900), scaled down. */
+:root{
+  --paper:#f5eee3; --card:#fffaf3; --ink:#2a1c18; --soft:#6c5a50; --line:#e4d5c1;
+  --accent:#7a1730; --on-accent:#fff8ef; --pick:#c2185b; --pick-bg:#fbe2ec; --bezel:#1d1720; --chip:#f0e4d3;
+  --display:"Cormorant Garamond","Times New Roman",serif;
+  --body:"Jost","Avenir Next","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#17121a; --card:#211a25; --ink:#f2e7d8; --soft:#b8a797; --line:#3b3040;
+  --accent:#f2a2b6; --on-accent:#2a0f1a; --pick:#ff86b4; --pick-bg:#3d1d2c; --bezel:#050306; --chip:#2c2330; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#17121a; --card:#211a25; --ink:#f2e7d8; --soft:#b8a797; --line:#3b3040;
+  --accent:#f2a2b6; --on-accent:#2a0f1a; --pick:#ff86b4; --pick-bg:#3d1d2c; --bezel:#050306; --chip:#2c2330; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-weight:300;font-size:1.02rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+main{max-width:1180px;margin:0 auto;padding-block:clamp(28px,6vw,64px) 88px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:clamp(36px,5vw,56px)}
+h1,h2{font-family:var(--display);font-weight:500;line-height:1.1;margin:0;text-wrap:balance}
+h1{font-size:clamp(2.3rem,6.5vw,3.6rem)}
+h2{font-size:clamp(1.6rem,4vw,2.2rem)}
+p{margin:0;max-width:70ch}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.eyebrow{font-size:.72rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+.lede{color:var(--soft);font-size:1.06rem}
+header,section{display:flex;flex-direction:column;gap:16px}
+.bar{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;background:var(--paper)}
+.seg label{position:relative;display:block}
+.seg input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.seg span{display:block;padding:.3em .9em;border-radius:999px;font-size:.86rem;cursor:pointer;white-space:nowrap}
+.seg input:checked+span{background:var(--accent);color:var(--on-accent)}
+.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.btn{font:inherit;font-size:.86rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:.38em 1em;cursor:pointer;display:inline-flex;align-items:center;gap:.5em}
+.btn:hover{border-color:var(--accent)}
+.btn svg{width:13px;height:13px}
+.note{font-size:.86rem;color:var(--soft)}
+
+.row{display:grid;gap:clamp(12px,2vw,22px)}
+.phones{grid-template-columns:repeat(4,minmax(0,1fr))}
+.desks{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:760px){.phones{grid-template-columns:repeat(2,minmax(0,1fr))}.desks{grid-template-columns:minmax(0,1fr)}}
+.dev{margin:0;display:flex;flex-direction:column;gap:8px;min-width:0;padding:10px;border-radius:18px;border:1px solid transparent}
+.dev.pick{border-color:var(--pick);background:var(--card)}
+.lab{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.lab b{font-family:var(--display);font-size:1.35rem;font-weight:600;color:var(--accent);line-height:1.1}
+.lab span{font-size:.84rem;color:var(--soft);font-variant-numeric:tabular-nums}
+.tag{font-size:.62rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--pick);background:var(--pick-bg);border-radius:999px;padding:.25em .75em}
+.phone{padding:6px;border-radius:30px;background:var(--bezel);box-shadow:0 18px 36px -22px rgba(40,10,20,.55)}
+.bez{padding:7px 7px 9px;border-radius:12px 12px 4px 4px;background:var(--bezel)}
+.base{height:9px;margin:0 -3%;border-radius:0 0 12px 12px;background:linear-gradient(#d6cdc3,#a99f95)}
+.scr{position:relative;overflow:hidden;background:#070d1f}
+.phone .scr{aspect-ratio:390/844;border-radius:24px;clip-path:inset(0 round 24px)}
+.bez .scr{aspect-ratio:1440/900;border-radius:3px}
+.scr iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;display:block;background:#070d1f}
+.phone .scr iframe{width:390px;height:844px}
+.bez .scr iframe{width:1440px;height:900px}
+
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child th,tr:last-child td{border-bottom:0}
+thead th{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);font-weight:500}
+tbody th{font-weight:400;color:var(--soft)}
+td.pk{background:var(--pick-bg)}
+ul.plain{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:8px;max-width:78ch}
+</style>
+
+<main>
+<header>
+  <p class="eyebrow">Storyboard · start page spacing · waiting for your OK</p>
+  <h1>Space under the garland</h1>
+  <p class="lede">The names start just under the garland's hanging strands, with almost no gap. Each option below adds space there and moves everything under it down by the same amount: the names, the palace and the mountains. The palace and the names keep their size, so the lake gets shorter by exactly the space added. The previews also include the other fix: every diya now stays dark until the tap.</p>
+</header>
+
+<div class="bar" role="group" aria-label="Preview settings">
+  <div class="seg">
+    <label><input type="radio" name="mode" id="md-lit" value="lit" checked><span>Show it lit</span></label>
+    <label><input type="radio" name="mode" id="md-play" value="play"><span>Play the lighting</span></label>
+  </div>
+  <button class="btn" type="button" id="replay"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M13.5 8A5.5 5.5 0 1 1 11.9 4.1"/><path d="M12.5 1.5v3h-3"/></svg>Replay</button>
+  <p class="note">"Play the lighting" starts each preview dark, so you can see that no diya is lit before the tap.</p>
+</div>
+
+<section>
+  <h2>On a phone</h2>
+  <div class="row phones">
+    <figure class="dev" data-g="0" data-k="ph"><div class="lab"><b>Today</b><span>no extra space</span></div><div class="phone"><div class="scr"></div></div></figure>
+    <figure class="dev" data-g="m" data-k="ph"><div class="lab"><b>Medium</b><span>+44 px</span></div><div class="phone"><div class="scr"></div></div></figure>
+    <figure class="dev pick" data-g="y" data-k="ph"><div class="lab"><b>Yours</b><span>+52 px</span><span class="tag">Asked for</span></div><div class="phone"><div class="scr"></div></div></figure>
+    <figure class="dev" data-g="l" data-k="ph"><div class="lab"><b>Large</b><span>+64 px</span></div><div class="phone"><div class="scr"></div></div></figure>
+  </div>
+</section>
+
+<section>
+  <h2>On a computer</h2>
+  <div class="row desks">
+    <figure class="dev" data-g="0" data-k="lap"><div class="lab"><b>Today</b><span>no extra space</span></div><div class="bez"><div class="scr"></div></div><div class="base"></div></figure>
+    <figure class="dev" data-g="m" data-k="lap"><div class="lab"><b>Medium</b><span>+56 px</span></div><div class="bez"><div class="scr"></div></div><div class="base"></div></figure>
+    <figure class="dev pick" data-g="y" data-k="lap"><div class="lab"><b>Yours</b><span>+64 px</span><span class="tag">Asked for</span></div><div class="bez"><div class="scr"></div></div><div class="base"></div></figure>
+    <figure class="dev" data-g="l" data-k="lap"><div class="lab"><b>Large</b><span>+80 px</span></div><div class="bez"><div class="scr"></div></div><div class="base"></div></figure>
+  </div>
+</section>
+
+<section>
+  <h2>The numbers</h2>
+  <div class="tw">
+    <table>
+      <thead><tr><th scope="col"></th><th scope="col">Today</th><th scope="col">Medium</th><th scope="col">Yours</th><th scope="col">Large</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Space added, phone</th><td>0</td><td>44 px</td><td class="pk">52 px</td><td>64 px</td></tr>
+        <tr><th scope="row">Space added, computer</th><td>0</td><td>56 px</td><td class="pk">64 px</td><td>80 px</td></tr>
+        <tr><th scope="row">Lake on a phone</th><td>334 px, 40% of the screen</td><td>290 px, 34%</td><td class="pk">282 px, 33%</td><td>270 px, 32%</td></tr>
+        <tr><th scope="row">Lake on a computer</th><td>302 px, 34% of the screen</td><td>246 px, 27%</td><td class="pk">238 px, 26%</td><td>222 px, 25%</td></tr>
+        <tr><th scope="row">Clear air under the garland</th><td>under 10 px</td><td>about 50 px phone, 60 computer</td><td class="pk">about 60 px phone, 70 computer</td><td>about 70 px phone, 85 computer</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <ul class="plain">
+    <li>Measured on a 390 × 844 phone and a 1440 × 900 computer. The space is a share of the screen's height, so it grows and shrinks with the screen: about 6% of the height on phones and 7% on computers for yours.</li>
+    <li><b>Yours against Medium:</b> 8 px more on a phone and on a computer, so the difference is small. It sits a little closer to Large: the names have a bit more air, and the lake still holds the reflection and all eight diyas clear of "Scroll down" and the music button. Small has been taken off the page.</li>
+    <li>The move from the palace to the morning lake is lined up with the palace's waterline, so it moves down with it.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>What I need from you</h2>
+  <p>An OK on yours (52 px and 64 px), or another option. I'll then build it with the diya fix, check it on a phone and a computer, save it as v30 and deploy it.</p>
+</section>
+</main>
+
+<script>
+(function(){
+  'use strict';
+  var SCENE='hero-gap/scene.html',frames=[];
+  function mode(){var el=document.querySelector('input[name="mode"]:checked');return el?el.value:'lit';}
+  function url(r){return SCENE+'#g='+r.g+'&dmax='+r.dmax+(mode()==='lit'?'&lit=1':'');}
+  [].forEach.call(document.querySelectorAll('.dev'),function(fig){
+    var scr=fig.querySelector('.scr'),ph=fig.getAttribute('data-k')==='ph',w=ph?390:1440;
+    var f=document.createElement('iframe');f.loading='lazy';f.setAttribute('tabindex','-1');
+    f.title=fig.querySelector('.lab b').textContent+(ph?', phone':', computer');
+    scr.appendChild(f);
+    var r={f:f,g:fig.getAttribute('data-g'),dmax:ph?1.5:1};frames.push(r);f.src=url(r);
+    function fit(){f.style.transform='scale('+(scr.clientWidth/w)+')';}
+    fit();if('ResizeObserver' in window)new ResizeObserver(fit).observe(scr);else addEventListener('resize',fit);
+  });
+  function reload(){frames.forEach(function(r){var u=url(r);
+    try{r.f.contentWindow.location.replace(u);r.f.contentWindow.location.reload();}
+    catch(e){r.f.src='about:blank';setTimeout(function(){r.f.src=u;},30);}});}
+  document.getElementById('replay').addEventListener('click',reload);
+  [].forEach.call(document.querySelectorAll('input[name="mode"]'),function(i){i.addEventListener('change',reload);});
+})();
+</script>

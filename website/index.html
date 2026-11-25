@@ -42,7 +42,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offse
 .hero{position:sticky;top:0;height:100vh;height:100svh;min-height:560px;overflow:hidden;cursor:pointer;background:#070d1f;user-select:none;-webkit-user-select:none}
 .hero.lit{cursor:default}
 #scene{position:absolute;inset:0;width:100%;height:100%;display:block}
-.hero-top{position:absolute;left:0;right:0;top:clamp(58px,9vh,88px);padding:0 20px;text-align:center;pointer-events:none;display:grid;justify-items:center}
+.hero-top{position:absolute;left:0;right:0;top:calc(clamp(58px,9vh,88px) + var(--gap,0px));padding:0 20px;text-align:center;pointer-events:none;display:grid;justify-items:center}
 .pre,.post{grid-area:1/1}
 .pre{opacity:1;transition:opacity .6s ease .5s}
 .post{opacity:0;transition:opacity .5s ease}
@@ -422,18 +422,22 @@ html.static *{transition:none!important}
     W=hero.clientWidth;H=hero.clientHeight;D=Math.min(window.devicePixelRatio||1,DMAX);
     cv.width=Math.round(W*D);cv.height=Math.round(H*D);
     narrow=W<700;
-    hz=Math.round(H*(narrow?.55:.6))+(narrow?46:58);window.__hz=hz;
+    /* space under the garland: the names, the palace and the mountains all move down by G, and the lake gets G shorter.
+       It is a share of the screen height: 44 px on a 390 x 844 phone, 66 px on a 1440 x 900 computer.
+       The morning lake lines up with window.__hz, so it moves down with the palace. */
+    var G=Math.round(H*(narrow?44/844:66/900));hero.style.setProperty('--gap',G+'px');
+    hz=Math.round(H*(narrow?.55:.6))+(narrow?46:58)+G;window.__hz=hz;
     var nb=post.getBoundingClientRect().bottom-hero.getBoundingClientRect().top+16;
     PW=Math.max(240,Math.min(W*.98,920,(hz-nb)*100/37));u=PW/100;PH=Math.ceil(37*u);px0=(W-PW)/2;
     vy0=hz-(H-hz)*.9;Q=0;lastE=-1;
     var k,j,d,y;
     things=[];
     /* the quiet lake: no ghat, just eight diyas in two lines that open towards the viewer like a V, with clear water
-       round the names, "Scroll down" and the music button. The nearest on the left, just above "Tap to light the diyas",
-       is the one already lit before the tap. Each pair is [across the screen, from the palace (0) to the bottom (1)]. */
-    function fl(fx,fd,fp,sd){y=hz+24+Math.pow(fd,1.3)*(H-hz-64);
-      things.push({t:'diya',x:fx*W,y:y,d:dAt(y),s:(3+fd*6.5)*(narrow?.85:1),p:fp,seed:sd});}
-    [[.37,.1],[.27,.34],[.19,.6],[.11,.8],[.63,.18],[.72,.43],[.81,.7],[.89,.85]].forEach(function(q,n){fl(q[0],q[1],n*2.1+.7,n===3);});
+       round the names, "Scroll down" and the music button. All of them stay dark until the tap.
+       Each pair is [across the screen, from the palace (0) to the bottom (1)]. */
+    function fl(fx,fd,fp){y=hz+24+Math.pow(fd,1.3)*(H-hz-64);
+      things.push({t:'diya',x:fx*W,y:y,d:dAt(y),s:(3+fd*6.5)*(narrow?.85:1),p:fp});}
+    [[.37,.1],[.27,.34],[.19,.6],[.11,.8],[.63,.18],[.72,.43],[.81,.7],[.89,.85]].forEach(function(q,n){fl(q[0],q[1],n*2.1+.7);});
     things.sort(function(p,q){return q.d-p.d;});
   }
 
@@ -714,7 +718,7 @@ html.static *{transition:none!important}
     /* on the water: floating diyas, far to near; each fades as the camera passes it */
     if(!through)for(k=0;k<things.length;k++){o=things[k];s=at3(o.d);if(!s)continue;
       var fade=clamp((o.d-cam-.02)/.16);g.globalAlpha=fade;
-      if(o.t==='diya')diya(o.x+Math.sin(t*.35+o.p)*4,o.y+Math.sin(t*1.2+o.p)*.6,o.s,o.seed?1:lit(o.y),t,o.p,true);
+      if(o.t==='diya')diya(o.x+Math.sin(t*.35+o.p)*4,o.y+Math.sin(t*1.2+o.p)*.6,o.s,lit(o.y),t,o.p,true);
       g.globalAlpha=1;}
 
     if(at3(DT)){g.globalAlpha=clamp((DT-cam-.02)/.2);toran(ge,lit(H*.2),t);g.globalAlpha=1;}
