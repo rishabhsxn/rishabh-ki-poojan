@@ -57,16 +57,22 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offse
 .hero-bottom{position:absolute;left:clamp(18px,5vw,56px);bottom:clamp(22px,4.5vh,44px);pointer-events:none}
 .pill{pointer-events:auto;font:inherit;font-size:.8rem;font-weight:400;letter-spacing:.22em;text-transform:uppercase;color:var(--marble);background:rgba(10,18,38,.55);border:1px solid rgba(242,176,74,.7);border-radius:999px;padding:.85em 1.6em;cursor:pointer;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .pill:hover{background:rgba(242,176,74,.18)}
-#again{position:absolute;bottom:calc(clamp(22px,4.5vh,44px) + 46px);left:clamp(18px,5vw,56px);font-size:.68rem;padding:.7em 1.2em;display:none}
 .onward{pointer-events:auto;font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;color:var(--marble);padding:.85em 0;display:none;text-shadow:0 1px 10px rgba(7,13,31,.9)}
-.hero.flying .hero-bottom,.hero.flying #again{visibility:hidden}
-.totop{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:15;width:44px;height:44px;border-radius:50%;border:1px solid rgba(240,217,160,.6);background:rgba(14,22,52,.72);color:#f0d9a0;display:grid;place-items:center;cursor:pointer;opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .4s,transform .4s,background .3s;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.totop.on{opacity:1;transform:none;pointer-events:auto}
-.totop:hover{background:rgba(122,23,48,.85)}
-.totop svg{width:18px;height:18px}
+.hero.flying .hero-bottom{visibility:hidden}
+/* corner controls: the music button keeps the corner once the song starts; back-to-top stacks above it */
+.ctl{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:15;width:44px;height:44px;border-radius:50%;border:1px solid rgba(240,217,160,.6);background:rgba(14,22,52,.72);color:#f0d9a0;display:grid;place-items:center;cursor:pointer;opacity:0;--lift:0px;transform:translateY(calc(var(--lift) + 12px));pointer-events:none;transition:opacity .4s,transform .4s,background .3s;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.ctl.on{opacity:1;transform:translateY(var(--lift));pointer-events:auto}
+@media (hover:hover){.ctl:hover{background:rgba(122,23,48,.85)}}
+.ctl svg{width:18px;height:18px;overflow:visible}
+.snd.on~.totop{--lift:-54px}
+.snd .w{transition:opacity .3s}
+.snd .w2{animation:hum 1.6s ease-in-out infinite alternate}
+@keyframes hum{from{opacity:.35}}
+.snd .x{opacity:0;transition:opacity .3s}
+.snd[aria-pressed="true"] .w{opacity:0;animation:none}
+.snd[aria-pressed="true"] .x{opacity:1}
 .hero.lit #light{display:none}
 .hero.lit .onward{display:inline-block}
-.hero.lit #again{display:block}
 
 /* ---------- After the palace: everything below sits on the same night water ---------- */
 .sink{position:absolute;left:0;right:0;bottom:0;height:16%;background:linear-gradient(rgba(7,13,31,0),var(--water));pointer-events:none}
@@ -93,11 +99,13 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offse
 
 /* ---------- The lane: a cycle rickshaw rides past four doorways, one for each function ---------- */
 .ride{position:relative;--g:23%;--coral:#f3a183;--coral-d:#e2805f;--cream:#f8eedc;--pink:#d81b60;--teal:#3f7f86;--teal-d:#2c5d63;--ink:#4a2418;--soft:#7b5a4c;color:var(--ink)}
-.lane{position:sticky;top:0;height:100vh;height:100lvh;overflow:hidden;background:linear-gradient(#f6c79a,#f1a48f 60%,#e58f8f)}
+/* the lane is one screen tall and moves only sideways (swipe, drag, trackpad, arrow keys, dots); scrolling down passes it by */
+.lane{position:relative;height:100vh;height:100svh;min-height:520px;overflow:hidden;background:linear-gradient(#f6c79a,#f1a48f 60%,#e58f8f);touch-action:pan-y;-webkit-user-select:none;user-select:none;cursor:grab}
+.lane.drag{cursor:grabbing}
 .track{position:absolute;top:0;bottom:var(--g);left:0;display:flex;will-change:transform}
 .ground{position:absolute;left:0;right:0;bottom:0;height:var(--g);background:repeating-linear-gradient(90deg,transparent 0 118px,rgba(120,60,40,.07) 118px 120px),linear-gradient(#e9b9a0,#f1cdb8 30%,#edc4ad);border-top:5px solid #d99a80}
 .dusk{position:absolute;inset:0;background:linear-gradient(rgba(40,20,70,.55),rgba(120,40,70,.35));opacity:0;pointer-events:none}
-.pn{position:relative;flex:0 0 min(100vw,620px);background:var(--wall,var(--coral));--shade:var(--coral-d);overflow:hidden}
+.pn{position:relative;flex:0 0 min(calc(100vw - 36px),620px);background:var(--wall,var(--coral));--shade:var(--coral-d);overflow:hidden}
 .pn.fill{flex-basis:60vw}
 .pn::before{content:"";position:absolute;left:0;right:0;top:0;height:8%;background:radial-gradient(circle at 50% 0,var(--shade) 9px,transparent 10px) 0 100%/22px 12px repeat-x,linear-gradient(var(--shade),var(--shade)) 0 0/100% calc(100% - 11px) no-repeat;opacity:.75}
 .pn::after{content:"";position:absolute;right:0;top:0;bottom:0;width:12px;background:var(--shade);opacity:.55}
@@ -135,9 +143,90 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offse
 .ev .dress{width:58cqw;display:block;margin:1.5cqw auto 0}
 .rick{position:absolute;bottom:5%;left:max(4%,calc(50% - 330px));height:24%;aspect-ratio:220/150;will-change:transform;pointer-events:none}
 .rick svg{width:100%;height:100%;overflow:visible}
-.lhint{position:absolute;right:5%;bottom:1.6%;font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:#8e3a2a;font-weight:500;transition:opacity .6s}
-.lhint::after{content:"→";margin-left:.6em;display:inline-block;animation:nudge 1.8s ease-in-out infinite}
-@keyframes nudge{50%{transform:translateX(6px)}}
+.lhint{position:absolute;left:50%;top:max(14px,2.2%);z-index:3;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:8px 16px 8px 10px;border-radius:999px;background:rgba(43,20,28,.84);color:#fff6e9;font-size:.74rem;line-height:1.3;letter-spacing:.04em;white-space:nowrap;pointer-events:none;transition:opacity .6s}
+.lhint svg{flex:none;width:28px;height:28px;overflow:visible}
+.lhint .dt{animation:slide 2.2s ease-in-out infinite}
+@keyframes slide{0%{transform:translateX(7px);opacity:0}15%{opacity:1}75%{transform:translateX(-9px);opacity:1}100%{transform:translateX(-9px);opacity:0}}
+.lhint .fine{display:none}
+@media (hover:hover) and (pointer:fine){.lhint .fine{display:inline}.lhint .coarse{display:none}}
+.lhint.gone{opacity:0}
+.ldots{position:absolute;left:0;right:0;bottom:max(6px,1.2%);z-index:3;display:flex;justify-content:center;gap:2px}
+.ldots button{position:relative;width:26px;height:26px;border:0;padding:0;background:none;display:grid;place-items:center;cursor:pointer}
+.ldots i{width:8px;height:8px;border-radius:50%;background:rgba(122,23,48,.28);transition:background .3s,transform .3s}
+.ldots .on i{background:#7a1730;transform:scale(1.3)}
+.ldots button::after{content:attr(data-name);position:absolute;bottom:100%;left:50%;transform:translate(-50%,4px);padding:4px 9px;border-radius:6px;background:#4a2418;color:#fff6e9;font-size:.68rem;letter-spacing:.06em;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+@media (hover:hover){.ldots button:hover::after{opacity:1;transform:translate(-50%,0)}}
+.ldots button:focus-visible::after{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- Photographs: a marigold-ring cover that opens the photos as stories ---------- */
+.pics{position:relative;overflow:hidden;padding:clamp(76px,12vh,120px) 20px clamp(84px,13vh,130px);text-align:center;color:#7a1730;background:linear-gradient(#fdf4e8,#f9e3cc 62%,#f3b98d)}
+.pstr{position:absolute;left:0;top:0;width:100%;height:60px;pointer-events:none}
+.pics .eb{color:#7a1730}
+.pics .pt{font-size:clamp(2.7rem,9vw,3.5rem);margin:.22em 0 .05em}
+.pdv{position:relative;display:block;width:96px;height:1px;margin:6px auto 34px;background:linear-gradient(90deg,transparent,#c9a24a 30%,#c9a24a 70%,transparent)}
+.pdv::after{content:"";position:absolute;left:50%;top:-3.5px;width:7px;height:7px;margin-left:-3.5px;background:#c9a24a;transform:rotate(45deg)}
+.pcov{position:relative;display:block;width:clamp(230px,64vw,284px);aspect-ratio:1;margin:0 auto;padding:0;border:0;border-radius:50%;background:none;cursor:pointer}
+.pcov[disabled]{cursor:default}
+.pcov:focus-visible{outline:2px solid #7a1730;outline-offset:6px}
+.pring{position:absolute;inset:0;width:100%;height:100%;animation:spin 70s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pcov.seen .bd{fill:#dcc8a0}
+.pimg{position:absolute;inset:8.5%;overflow:hidden;border-radius:50%;background:#ead9c4 center/cover}
+.pimg img{display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s,transform .6s cubic-bezier(.2,.7,.2,1)}
+.pimg img.ld{opacity:1}
+@media (hover:hover){.pcov:not([disabled]):hover .pimg img{transform:scale(1.05)}}
+.pics .pst{font-size:clamp(2.1rem,7vw,2.6rem);margin:.5em 0 .1em}
+.pmeta{margin:0;font-size:.72rem;font-weight:500;letter-spacing:.3em;text-transform:uppercase}
+
+/* the stories viewer: full screen on a phone; on a computer, a card the shape of each photo */
+html.svopen{overflow:hidden}
+.sv{position:fixed;inset:0;z-index:50;color:#fff;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.sv[hidden]{display:none}
+.sv-bk{position:absolute;inset:0;background:#0f080c}
+.sv-card{position:absolute;overflow:hidden;background:#140b10;touch-action:none;cursor:pointer}
+.sv.card .sv-card{border-radius:14px;box-shadow:0 30px 80px -24px rgba(0,0,0,.7)}
+.sv.card.ready .sv-card{transition:left .45s cubic-bezier(.3,.7,.2,1),top .45s cubic-bezier(.3,.7,.2,1),width .45s cubic-bezier(.3,.7,.2,1),height .45s cubic-bezier(.3,.7,.2,1)}
+.sv-slides,.sv-sl{position:absolute;inset:0}
+.sv-sl{visibility:hidden}
+.sv-sl.cur{visibility:visible}
+.sv-sl img{position:absolute;display:block;max-width:none;pointer-events:none;-webkit-user-drag:none}
+.sv-sl .bk{left:0;top:0;width:100%;height:100%;object-fit:cover;transform:scale(1.12)}
+.sv-sl .fg{object-fit:cover;opacity:0;transition:opacity .25s}
+.sv.card .sv-sl .fg{left:0;top:0;width:100%;height:100%}
+.sv-sl.ld .fg{opacity:1}
+.sv-sl.kb .fg{animation:svkb calc(var(--dur,7s) + .4s) linear forwards}
+@keyframes svkb{to{transform:scale(1.045)}}
+.sv-ui{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s}
+.sv.ready .sv-ui{opacity:1}
+.sv.hold .sv-ui{opacity:0;transition-delay:.15s}
+.sv-ui::before{content:"";position:absolute;left:0;right:0;top:0;height:120px;background:linear-gradient(rgba(10,5,8,.42),rgba(10,5,8,0))}
+.sv-bars{position:absolute;left:10px;right:10px;top:max(10px,env(safe-area-inset-top));display:flex;gap:4px}
+.sv-bars i{flex:1;height:2.5px;border-radius:2px;overflow:hidden;background:rgba(255,255,255,.32)}
+.sv-bars b{display:block;height:100%;background:#f0d9a0;transform:scaleX(0);transform-origin:0 50%}
+.sv-bars i.done b{transform:scaleX(1)}
+.sv-bars i.run b{animation:svfill var(--dur,7s) linear forwards}
+@keyframes svfill{to{transform:scaleX(1)}}
+.sv.hold .sv-bars i.run b,.sv.hold .sv-sl.kb .fg{animation-play-state:paused}
+.sv-head{position:absolute;left:12px;right:6px;top:calc(max(10px,env(safe-area-inset-top)) + 12px);display:flex;align-items:center;gap:10px;pointer-events:auto}
+.sv-av{flex:none;width:34px;height:34px;border-radius:50%;background:#7a1730;box-shadow:0 0 0 1.5px #f0d9a0;display:grid;place-items:center}
+.sv-av svg{width:28px;height:28px}
+.sv-name{flex:1;margin:0;font-size:.86rem;font-weight:500;line-height:1.25;letter-spacing:.02em;text-shadow:0 1px 6px rgba(0,0,0,.45)}
+.sv-name small{display:block;font-size:.74rem;font-weight:400;opacity:.8}
+.sv-btn{flex:none;width:40px;height:40px;border:0;padding:0;background:none;color:#fff;display:grid;place-items:center;cursor:pointer;filter:drop-shadow(0 1px 4px rgba(0,0,0,.5))}
+.sv-btn svg{width:22px;height:22px}
+.sv-btn[hidden]{display:none}
+.sv-cap{position:absolute;left:0;right:0;bottom:0;margin:0;padding:70px 22px calc(28px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(0,0,0,.55));font-family:var(--display);font-style:italic;font-size:1.35rem;line-height:1.25}
+.sv-cap::before{content:"";display:block;width:34px;height:1px;margin-bottom:10px;background:#f0d9a0}
+.sv-cap[hidden]{display:none}
+.sv-load{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid rgba(240,217,160,.25);border-top-color:#f0d9a0;opacity:0;transition:opacity .2s;animation:spin .9s linear infinite;pointer-events:none}
+.sv-load.on{opacity:1}
+.sv-arr,.sv-xx{position:absolute;z-index:2;width:44px;height:44px;border:0;padding:0;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;display:none;place-items:center;cursor:pointer;opacity:0;transition:opacity .3s,background .2s}
+.sv-arr svg,.sv-xx svg{width:20px;height:20px}
+.sv-arr:hover,.sv-xx:hover{background:rgba(255,255,255,.28)}
+.sv-xx{top:18px;right:18px}
+.sv.card .sv-arr,.sv.card .sv-xx{display:grid}
+.sv.ready .sv-arr,.sv.ready .sv-xx{opacity:1}
+.sv.card .sv-x{display:none}
 
 /* ---------- The place, getting there, and the close ---------- */
 .eve{position:relative;color:#fff6e9}
@@ -179,7 +268,8 @@ html.static *{transition:none!important}
   html{scroll-behavior:auto}
   .pre,.post,.hero.lit .pre,.hero.lit .post{transition:none}
   .rv,.pn .r{transition:none;opacity:1;transform:none;filter:none}
-  .water i,.lamp,#boat .bob,.lhint::after,}
+  .lamp,#day .rip,#day .bob,#night .rip,.lhint .dt,.snd .w2,.pring,.sv-sl.kb .fg{animation:none}
+}
 </style>
 </head>
 <body>
@@ -198,7 +288,6 @@ html.static *{transition:none!important}
       <p class="when">Udaipur</p>
     </div>
   </div>
-  <button id="again" class="pill" type="button">Close it again</button>
   <div class="hero-bottom">
     <button id="light" class="pill" type="button">Tap to light the diyas</button>
     <span class="onward">Scroll down ↓</span>
@@ -215,8 +304,22 @@ html.static *{transition:none!important}
     <div class="ground"></div>
     <div class="rick" id="rick" aria-hidden="true"></div>
     <div class="dusk" id="dusk"></div>
-    <div class="lhint" id="lhint">Scroll to ride</div>
+    <div class="lhint" id="lhint" aria-hidden="true"><svg viewBox="0 0 28 28"><path d="M5 14H23" stroke="#fff6e9" stroke-opacity=".35" stroke-width="1.6" stroke-dasharray="2 2.5"/><circle class="dt" cx="14" cy="14" r="4.5" fill="#fff6e9"/></svg><span class="coarse">Swipe sideways to see<br>all four functions</span><span class="fine">Drag sideways or use ← →<br>to see all four functions</span></div>
+    <div class="ldots" id="ldots" role="group" aria-label="The functions"></div>
   </div>
+</section>
+
+<section class="pics" id="pics" aria-label="Photographs">
+  <svg class="pstr" id="pstr" viewBox="0 0 1600 60" preserveAspectRatio="xMidYMin slice" aria-hidden="true"></svg>
+  <p class="eb">Photographs</p>
+  <h2 class="sc pt">Us, so far</h2>
+  <span class="pdv" aria-hidden="true"></span>
+  <button class="pcov" id="pcov" type="button" aria-label="Watch our story" disabled>
+    <svg class="pring" id="pring" viewBox="0 0 284 284" aria-hidden="true"></svg>
+    <span class="pimg"><img id="pcimg" alt="" decoding="async"></span>
+  </button>
+  <p class="sc pst">Our story</p>
+  <p class="pmeta" id="pmeta">Photos</p>
 </section>
 
 <section class="eve" id="eve">
@@ -245,7 +348,8 @@ html.static *{transition:none!important}
   </div>
 </section>
 
-<button class="totop" id="totop" type="button" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+<button class="ctl snd" id="snd" type="button" aria-label="Mute music" aria-pressed="false" title="Mute music"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 9.5h3.5l5-4v13l-5-4H3.5Z" fill="currentColor" stroke-width="1.4"/><path class="w" d="M15.5 9a4.2 4.2 0 0 1 0 6"/><path class="w w2" d="M18.5 6.5a8 8 0 0 1 0 11"/><path class="x" d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button>
+<button class="ctl totop" id="totop" type="button" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 <script>
 /* Back to top: scrolls up only; the lit palace and the song carry on as they are. */
 (function(){
@@ -255,20 +359,34 @@ html.static *{transition:none!important}
   b.addEventListener('click',function(){window.scrollTo({top:0,behavior:calm?'auto':'smooth'});});
 })();
 /* Music: a clip of Vaaroon (0:20 to 2:55 of the song, with a fade in and out made into the file).
-   It starts when the diyas are lit and comes round again when it ends. */
+   It starts when the diyas are lit and comes round again when it ends.
+   The speaker button in the corner fades it out and pauses it, and picks it up again from the same spot;
+   the choice is kept while the tab stays open. */
 (function(){
-  var a=new Audio(),want=false;
+  var a=new Audio(),want=false,off=false,tm=0,b=document.getElementById('snd'),KEY='rp-music-off';
+  try{off=sessionStorage.getItem(KEY)==='1';}catch(e){}
   a.preload='auto';a.loop=true;a.src='media/vaaroon-clip.mp3';a.load();
-  function go(){
-    if(!want){a.pause();return;}
-    var pr=a.play();if(pr&&pr.catch)pr.catch(function(){});   /* blocked until the first tap; retried below */
+  /* a third-of-a-second volume fade; iPhones ignore volume, so there the song simply stops or starts */
+  function ramp(to,then){
+    clearInterval(tm);var from=a.volume,t0=Date.now();
+    tm=setInterval(function(){var k=Math.min(1,(Date.now()-t0)/350);a.volume=from+(to-from)*k;if(k>=1){clearInterval(tm);if(then)then();}},20);
   }
-  ['pointerdown','keydown'].forEach(function(ev){window.addEventListener(ev,function(){if(want&&a.paused)go();});});
-  window.__music={play:function(){want=true;go();},stop:function(){want=false;a.pause();a.currentTime=0;}};
+  function go(){
+    if(!want||off){ramp(0,function(){a.pause();});return;}
+    var pr=a.play();if(pr&&pr.catch)pr.catch(function(){});   /* blocked until the first tap; retried below */
+    ramp(1);
+  }
+  /* the photo viewer has its own speaker button; it listens for "musicchange" to stay in step */
+  function show(){b.setAttribute('aria-pressed',off?'true':'false');b.title=off?'Play music':'Mute music';document.dispatchEvent(new Event('musicchange'));}
+  function toggle(){off=!off;try{sessionStorage.setItem(KEY,off?'1':'0');}catch(e){}show();go();}
+  b.addEventListener('click',toggle);
+  ['pointerdown','keydown'].forEach(function(ev){window.addEventListener(ev,function(){if(want&&!off&&a.paused)go();});});
+  window.__music={play:function(){want=true;b.classList.add('on');go();show();},toggle:toggle,get off(){return off;},get on(){return want;}};
+  show();
 })();
 (function(){
   var stage=document.getElementById('stage'),hero=document.getElementById('hero'),cv=document.getElementById('scene'),g=cv.getContext('2d');
-  var btn=document.getElementById('light'),again=document.getElementById('again'),post=hero.querySelector('.post');
+  var btn=document.getElementById('light'),post=hero.querySelector('.post');
   var topBox=hero.querySelector('.hero-top');
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var W=0,H=0,D=1,hz=0,u=1,PW=0,PH=0,px0=0,vy0=0,Q=1,lastE=-1,narrow=false;
@@ -631,12 +749,6 @@ html.static *{transition:none!important}
     litAt=reduce?-1e7:performance.now();nextFw=litAt+2700;shots=0;hero.classList.add('lit');
     if(reduce)draw(0);
   }
-  function close(){
-    if(window.scrollY<10)hold();
-    if(window.__music)window.__music.stop();
-    litAt=null;sparks=[];rockets=[];hero.classList.remove('lit');
-    if(reduce)draw(0);
-  }
   /* the page stays on the palace until the diyas have been lit and the light has climbed to the top;
      trying to scroll before that lights them instead of skipping past */
   var held=false,root=document.documentElement;
@@ -665,11 +777,10 @@ html.static *{transition:none!important}
   window.addEventListener('scroll',onScroll,{passive:true});
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(refit);
   hero.addEventListener('pointerdown',function(ev){
-    if(ev.target.closest&&ev.target.closest('a,#again'))return;
+    if(ev.target.closest&&ev.target.closest('a'))return;
     ignite();
   });
   btn.addEventListener('click',ignite);
-  again.addEventListener('click',close);
 
 })();
 
@@ -782,7 +893,6 @@ EVENTS.forEach(e => P.push(`<div class="pn ev${e.lit ? ' lit' : ''}${e.dress ? '
 const track = $('#track'), fillPn = s => `<div class="pn fill"${s ? ` style="${s}"` : ''}><div class="dado"></div></div>`;
 track.innerHTML = fillPn('') + P.join('') + fillPn('--wall:#b9606a;--shade:#9a4a58');
 const panels = [...track.children].slice(1, -1);
-$('#ride').style.height = (panels.length * 92) + 'vh';
 
 const spokes = Array.from({ length: 8 }, (_, i) => `<path d="M0 0L${(24 * Math.cos(i * .785)).toFixed(1)} ${(24 * Math.sin(i * .785)).toFixed(1)}" stroke="#7d8b98" stroke-width="1"/>`).join('');
 const wheel = (x, id) => `<g transform="translate(${x} 122)"><g id="${id}"><circle r="25" fill="none" stroke="#4d5a68" stroke-width="3.4"/>${spokes}<circle r="3.4" fill="#4d5a68"/></g></g>`;
@@ -829,15 +939,73 @@ if (STATIC) document.documentElement.classList.add('static');
 const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .2 });
 document.querySelectorAll('.rv').forEach(e => io.observe(e));
 const hstage = $('#stage'), hero = $('#hero'), day = $('#day'), glow = $('#glow'), dscn = $('#dscn'), dboat = $('#dboat'), ddt = $('#ddt'), noon = $('#noon'), htop = hero.querySelector('.hero-top');
-const ride = $('#ride'), lane = $('#lane'), rick = $('#rick'), dusk = $('#dusk'), lhint = $('#lhint'), ground = lane.querySelector('.ground'), eve = $('#eve'), nite = $('#nite');
+const lane = $('#lane'), rick = $('#rick'), dusk = $('#dusk'), lhint = $('#lhint'), ground = lane.querySelector('.ground'), eve = $('#eve'), nite = $('#nite');
 let VW = 1, VH = 1, U = 1, OX = 0, M = {}, cen = [];
 const absTop = el => el.getBoundingClientRect().top + scrollY;
 function measure() {
   VW = hero.clientWidth; VH = hero.clientHeight; U = Math.min(VW / 400, VH / 700); OX = (VW - 400 * U) / 2;
   const oy = (VH - 700 * U) / 2, hz = window.__hz || VH * .6;
-  M = { ht: absTop(hstage), hl: hstage.offsetHeight - VH, sh: hz - (oy + HOR * U), rt: absTop(ride), rl: ride.offsetHeight - lane.offsetHeight, lw: lane.clientWidth, et: absTop(eve), el: eve.offsetHeight - innerHeight };
-  cen = panels.map(p => p.offsetLeft + p.offsetWidth / 2);
+  M = { ht: absTop(hstage), hl: hstage.offsetHeight - VH, sh: hz - (oy + HOR * U), lw: lane.clientWidth, et: absTop(eve), el: eve.offsetHeight - innerHeight };
+  cen = panels.map(p => p.offsetLeft + p.offsetWidth / 2); ldirty = true;
 }
+
+/* ----- the lane: sideways only. lp is where the lane is (in doorways), lt where it is heading; scrolling down passes it by ----- */
+const NAMES = ['Blessings', ...EVENTS.map(e => e.name)], LAST = panels.length - 1;
+const dotEls = NAMES.map((n, k) => { const b = document.createElement('button'); b.type = 'button'; b.dataset.name = n; b.setAttribute('aria-label', n); b.innerHTML = '<i></i>'; b.addEventListener('click', () => laneGo(k)); $('#ldots').append(b); return b; });
+let lp = 0, lt = 0, ldrag = 0, lvis = 0, lseen = false, nudged = false, nudgeT = 0, ldirty = true, ld = null, wt = 0;
+function laneTouched() { if (!lseen) { lseen = true; lhint.classList.add('gone'); } nudgeT = 0; }
+function laneGo(k) { lt = clamp(Math.round(k), 0, LAST); ldirty = true; laneTouched(); }
+function centerAt(f) { const i = Math.min(panels.length - 2, Math.max(0, Math.floor(f))); return lerp(cen[i], cen[i + 1], clamp(f - i)); }
+function laneDraw(now) {
+  let nu = 0;
+  if (nudgeT) { const u = (now - nudgeT) / 1100; if (u >= 1) nudgeT = 0; else if (u > 0) nu = -64 * Math.sin(Math.PI * u); }
+  const c = centerAt(lp), x = M.lw / 2 - c + ldrag + nu;
+  track.style.transform = `translate3d(${x.toFixed(1)}px,0,0)`; ground.style.backgroundPosition = `${x.toFixed(1)}px 0,0 0`;
+  rick.style.transform = `translate3d(0,${(Math.sin(x / 34) * 1.2).toFixed(2)}px,0)`;
+  const s = rick.clientHeight / 150 || 1, ang = -x / (25 * s), deg = ang * 57.2958;
+  w1.setAttribute('transform', `rotate(${deg.toFixed(1)})`); w2.setAttribute('transform', `rotate(${deg.toFixed(1)})`); crank.setAttribute('transform', `rotate(${(deg * .5).toFixed(1)})`);
+  leg(legA, ang * .5); leg(legB, ang * .5 + Math.PI);
+  const mid = M.lw / 2 - x;
+  if (lvis > .25) panels.forEach((el, k) => { if (!el.classList.contains('on') && Math.abs(cen[k] - mid) < M.lw * .5) el.classList.add('on'); });
+  dusk.style.opacity = seg(lp, panels.length - 2.6, panels.length - 1) * .3;
+  const on = Math.round(lt); dotEls.forEach((b, k) => b.classList.toggle('on', k === on));
+}
+/* a sideways swipe or mouse drag moves it; an up-down swipe is left to the page */
+lane.addEventListener('pointerdown', e => { if (e.button > 0 || e.target.closest('button')) return; ld = { x: e.clientX, y: e.clientY, id: e.pointerId, lock: null }; });
+lane.addEventListener('pointermove', e => {
+  if (!ld || e.pointerId !== ld.id) return;
+  const dx = e.clientX - ld.x, dy = e.clientY - ld.y;
+  if (!ld.lock) {
+    if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) { ld.lock = 'x'; try { lane.setPointerCapture(e.pointerId); } catch (_) {} lane.classList.add('drag'); laneTouched(); }
+    else if (Math.abs(dy) > 8) { ld = null; return; }
+  }
+  if (ld.lock === 'x') { const edge = (lt <= 0 && dx > 0) || (lt >= LAST && dx < 0); ldrag = edge ? dx * .35 : dx; ldirty = true; }
+});
+function laneUp() {
+  if (!ld) return; const sideways = ld.lock === 'x', dx = ldrag; ld = null; lane.classList.remove('drag'); if (!sideways) return;
+  lp = clamp(lp - dx / panels[0].offsetWidth, 0, LAST); ldrag = 0;            /* keep where the finger left it, then ease to the doorway */
+  laneGo(Math.abs(dx) > 40 ? lt + (dx < 0 ? 1 : -1) : lt);
+}
+lane.addEventListener('pointerup', laneUp); lane.addEventListener('pointercancel', laneUp);
+/* a trackpad's sideways scroll follows the fingers, then settles on a doorway in the direction it was going */
+let wFrom = null;
+lane.addEventListener('wheel', e => {
+  if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+  e.preventDefault(); laneTouched();
+  if (wFrom === null) wFrom = Math.round(lt);
+  lp = clamp(lp + e.deltaX / panels[0].offsetWidth, 0, LAST); lt = lp; ldirty = true;
+  clearTimeout(wt); wt = setTimeout(() => { const m = lp - wFrom, from = wFrom; wFrom = null;
+    laneGo(Math.abs(m) < .12 ? from : from + Math.sign(m) * Math.max(1, Math.round(Math.abs(m)))); }, 180);
+}, { passive: false });
+addEventListener('keydown', e => {
+  if (lvis < .5 || e.altKey || e.ctrlKey || e.metaKey || document.documentElement.classList.contains('svopen') || /^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName)) return;
+  if (e.key === 'ArrowRight') { laneGo(lt + 1); e.preventDefault(); } else if (e.key === 'ArrowLeft') { laneGo(lt - 1); e.preventDefault(); }
+});
+/* once, as the lane arrives: a small sideways nudge to show there is more to the side */
+new IntersectionObserver(es => {
+  lvis = es[0].intersectionRatio; ldirty = true;
+  if (lvis >= .6 && !nudged && !lseen && !calm) { nudged = true; nudgeT = performance.now() + 250; }
+}, { threshold: [0, .25, .5, .6, .8, 1] }).observe(lane);
 function update(y) {
   /* daybreak over the same lake, then the boat crosses and the date is left in its wake */
   const p = clamp((y - M.ht) / M.hl);
@@ -854,24 +1022,238 @@ function update(y) {
     dboat.style.transform = `translate3d(${(bx * U).toFixed(1)}px,0,0)`;
     ddt.style.clipPath = calm && !STATIC ? 'none' : `inset(0 ${Math.max(0, VW - (OX + (bx - 62) * U)).toFixed(1)}px 0 0)`;
   }
-  /* lane */
-  const q = clamp((y - M.rt) / M.rl), f = q * (panels.length - 1), i = Math.min(panels.length - 2, Math.floor(f)), c = lerp(cen[i], cen[i + 1], ez(f - i)), x = M.lw / 2 - c;
-  track.style.transform = `translate3d(${x.toFixed(1)}px,0,0)`; ground.style.backgroundPosition = `${x.toFixed(1)}px 0,0 0`;
-  rick.style.transform = `translate3d(0,${(Math.sin(x / 34) * 1.2).toFixed(2)}px,0)`;
-  const s = rick.clientHeight / 150 || 1, ang = -x / (25 * s), deg = ang * 57.2958;
-  w1.setAttribute('transform', `rotate(${deg.toFixed(1)})`); w2.setAttribute('transform', `rotate(${deg.toFixed(1)})`); crank.setAttribute('transform', `rotate(${(deg * .5).toFixed(1)})`);
-  leg(legA, ang * .5); leg(legB, ang * .5 + Math.PI);
-  panels.forEach((el, k) => { if (!el.classList.contains('on') && cen[k] - c < M.lw * .5 && y > M.rt - VH * .5) el.classList.add('on'); });
-  dusk.style.opacity = seg(f, panels.length - 2.6, panels.length - 1) * .3; lhint.style.opacity = q > .02 ? 0 : 1;
   /* evening comes on over the venue */
   const e = clamp((y - M.et) / M.el);
   nite.style.opacity = seg(e, .3, .62); eve.classList.toggle('lit', e > .16);
 }
 let cy = scrollY, last = -1;
-function frame() { const t = scrollY; cy += (t - cy) * (calm ? 1 : .14); if (Math.abs(t - cy) < .3) cy = t; if (cy !== last) { update(cy); last = cy; } requestAnimationFrame(frame); }
+function frame(now) {
+  const t = scrollY; cy += (t - cy) * (calm ? 1 : .14); if (Math.abs(t - cy) < .3) cy = t; if (cy !== last) { update(cy); last = cy; }
+  const d = lt - lp; if (Math.abs(d) > .0005) { lp += d * (calm ? 1 : .12); ldirty = true; } else if (lp !== lt) { lp = lt; ldirty = true; }
+  if (ldirty || nudgeT) { laneDraw(now || 0); ldirty = false; }
+  requestAnimationFrame(frame);
+}
 addEventListener('resize', () => { measure(); last = -1; }); new ResizeObserver(() => { measure(); last = -1; }).observe(document.body);
 function start() { measure(); if (STATIC) { scrollTo(0, +Q.get('y') * (document.documentElement.scrollHeight - innerHeight)); cy = scrollY; } requestAnimationFrame(frame); }
 (document.fonts ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]) : Promise.resolve()).then(start);
+})();
+
+/* ===== Photographs, shown as stories.
+   The list comes from photos/photos.js, written by scripts/build_photos.py (see CLAUDE.md).
+   Nothing is fetched until the section is near; the viewer then loads only the photo on screen and the next one,
+   each at the size the screen needs (srcset), over a tiny pre-blurred copy that shows at once. ===== */
+(function () {
+const PHOTOS_BASE = 'photos/';            /* saved copies in versions/ point this at ../../photos/ */
+const DUR = 7000;                         /* each photo shows this long; holding a finger on it pauses it */
+const $ = s => document.querySelector(s);
+const sec = $('#pics'), cov = $('#pcov'), cimg = $('#pcimg'), meta = $('#pmeta');
+const calm = matchMedia('(prefers-reduced-motion: reduce)').matches, fine = matchMedia('(hover: hover) and (pointer: fine)');
+const XI = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const AL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const AN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const SND = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3.5 9.5h3.5l5-4v13l-5-4H3.5Z" fill="currentColor" stroke-width="1.4"/><path class="w" d="M15.5 9a4.2 4.2 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/><path class="x" d="M16 9.5l5 5M21 9.5l-5 5"/></svg>';
+const KALASH = '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6q8 6 4.5 15h-9Q24 12 32 6Z" fill="#8a5a2a"/><path d="M32 22q-11-7-16-1q9 2 16 1ZM32 22q11-7 16-1q-9 2-16 1ZM32 22q-7-11-13-9q6 6 13 9ZM32 22q7-11 13-9q-6 6-13 9Z" fill="#6fae52"/><rect x="23" y="21" width="18" height="5" rx="2" fill="#e8c26a"/><path d="M15 40q0-14 17-14t17 14q0 16-17 18q-17-2-17-18Z" fill="#f0c24e"/><path d="M32 37v12M26 43h12M32 37h5M32 49h-5M26 43v-5M38 43v5" stroke="#c8202a" stroke-width="2" fill="none" stroke-linecap="square"/><circle cx="28.5" cy="40" r="1" fill="#c8202a"/><circle cx="35.5" cy="40" r="1" fill="#c8202a"/><circle cx="28.5" cy="46" r="1" fill="#c8202a"/><circle cx="35.5" cy="46" r="1" fill="#c8202a"/></svg>';
+
+/* the marigold ring round the cover, and the string along the top of the section */
+(function () {
+  const S = 284, R = 132, n = Math.round(2 * Math.PI * R / 12.4); let o = '';
+  for (let i = 0; i < n; i++) { const a = i / n * 6.2832, x = (S / 2 + R * Math.cos(a)).toFixed(1), y = (S / 2 + R * Math.sin(a)).toFixed(1);
+    o += i % 8 === 7 ? `<ellipse cx="${x}" cy="${y}" rx="7.5" ry="3.2" fill="#5f8f45" transform="rotate(${(a * 57.3 + 90).toFixed(0)} ${x} ${y})"/>` : `<circle class="bd" cx="${x}" cy="${y}" r="6.2" fill="${i % 2 ? '#f08a2e' : '#f2a900'}"/>`; }
+  $('#pring').innerHTML = o;
+  let s = ''; const sg = 400;
+  for (let k = 0; k < 4; k++) for (let j = 0; j <= 18; j++) { const t = j / 18; s += `<circle cx="${(k * sg + sg * t).toFixed(1)}" cy="${(3 + Math.sin(Math.PI * t) * 22).toFixed(1)}" r="5" fill="${(j + k) % 2 ? '#f08a2e' : '#f2a900'}"/>`; }
+  for (let k = 0; k <= 4; k++) { for (let j = 1; j < 4; j++) s += `<circle cx="${k * sg}" cy="${3 + j * 8.5}" r="4.4" fill="${j % 2 ? '#f2a900' : '#f08a2e'}"/>`; s += `<path d="M${k * sg} ${35}q-5 8 0 14q5-6 0-14z" fill="#5f8f45"/>`; }
+  $('#pstr').innerHTML = s;
+})();
+
+let list = [], sig = '';
+const srcset = p => p.widths.map(w => `${PHOTOS_BASE}${p.file}-${w}.webp ${w}w`).join(', ');
+const smallest = p => `${PHOTOS_BASE}${p.file}-${p.widths[0]}.webp`;
+function whenReady(img) { return (img.decode ? img.decode() : new Promise((ok, no) => { img.onload = ok; img.onerror = no; })).catch(() => {}); }
+/* the list is a small script (photos/photos.js) rather than JSON, so it also loads when the page is opened straight from the folder */
+function loadList() {
+  const s = document.createElement('script'); s.src = PHOTOS_BASE + 'photos.js';
+  s.onload = () => { try { useList(window.__PHOTOS || {}); } catch (e) { sec.hidden = true; } };
+  s.onerror = () => { sec.hidden = true; };
+  document.head.append(s);
+}
+function useList(d) {
+    list = d.photos || []; if (!list.length) throw 0;
+    sig = list.map(p => p.source).join('|');
+    const c = list[d.cover || 0];
+    cimg.parentNode.style.backgroundImage = `url(${c.lqip})`;
+    cimg.style.objectPosition = c.focus || '50% 45%';
+    cimg.sizes = Math.ceil(cov.offsetWidth * .83) + 'px'; cimg.srcset = srcset(c); cimg.src = smallest(c);
+    whenReady(cimg).then(() => cimg.classList.add('ld'));
+    meta.textContent = `${list.length} photos · ${fine.matches ? 'click' : 'tap'} to watch`;
+    cov.disabled = false; cov.setAttribute('aria-label', `Watch our story, ${list.length} photos`);
+    try { if (localStorage.getItem('rp-story-seen') === sig) cov.classList.add('seen'); } catch (e) {}
+}
+const near = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { near.disconnect(); loadList(); } }, { rootMargin: '1200px 0px' });
+near.observe(sec);
+
+/* ---------- the viewer ---------- */
+let sv, bk, card, ui, bars, cap, sndB, loader, prevB, nextB, slides = [];
+let mode = 'phone', cur = 0, open = false, closing = false, held = false, pushed = false, token = 0, loadT = 0;
+const pickMode = () => innerWidth < 760 ? 'phone' : 'card';      /* a phone: full screen; anything wider: the shaped card */
+function build() {
+  sv = document.createElement('div'); sv.className = 'sv'; sv.hidden = true;
+  sv.setAttribute('role', 'dialog'); sv.setAttribute('aria-modal', 'true'); sv.setAttribute('aria-label', 'Our story');
+  sv.innerHTML = `<div class="sv-bk"></div><div class="sv-card"><div class="sv-slides"></div><span class="sv-load"></span>
+    <div class="sv-ui"><div class="sv-bars">${list.map(() => '<i><b></b></i>').join('')}</div>
+      <div class="sv-head"><span class="sv-av">${KALASH}</span><p class="sv-name">Rishabh &amp; Poojan<small>Our story</small></p>
+        <button type="button" class="sv-btn snd sv-snd" aria-label="Mute music" aria-pressed="false">${SND}</button>
+        <button type="button" class="sv-btn sv-x" aria-label="Close">${XI}</button></div>
+      <p class="sv-cap" hidden></p></div></div>
+    <button type="button" class="sv-arr" aria-label="Previous photo">${AL}</button><button type="button" class="sv-arr" aria-label="Next photo">${AN}</button>
+    <button type="button" class="sv-xx" aria-label="Close">${XI}</button>`;
+  document.body.append(sv); sv.style.setProperty('--dur', DUR + 'ms');
+  const q = s => sv.querySelector(s);
+  bk = q('.sv-bk'); card = q('.sv-card'); ui = q('.sv-ui'); bars = [...sv.querySelectorAll('.sv-bars i')]; cap = q('.sv-cap'); sndB = q('.sv-snd'); loader = q('.sv-load');
+  [prevB, nextB] = sv.querySelectorAll('.sv-arr');
+  slides = list.map((p, i) => {
+    const el = document.createElement('div'); el.className = 'sv-sl';
+    el.innerHTML = `<img class="bk" alt="" src="${p.lqip}"><img class="fg" alt="Photo ${i + 1} of ${list.length}${p.caption ? ': ' + p.caption.replace(/"/g, '&quot;') : ''}" decoding="async">`;
+    q('.sv-slides').append(el); return { el, fg: el.querySelector('.fg'), p, ready: null };
+  });
+  /* taps, holding, swipes */
+  let pd = null, holdT = 0, dragging = false, dy = 0;
+  card.addEventListener('pointerdown', e => {
+    if (!open || closing || e.button > 0 || e.target.closest('button')) return;
+    pd = { x: e.clientX, y: e.clientY, id: e.pointerId }; dragging = false; dy = 0;
+    clearTimeout(holdT); holdT = setTimeout(() => { if (pd && !dragging) setHold(true); }, 180);
+    try { card.setPointerCapture(e.pointerId); } catch (_) {}
+  });
+  card.addEventListener('pointermove', e => {
+    if (!pd || e.pointerId !== pd.id) return;
+    const dx = e.clientX - pd.x, ddy = e.clientY - pd.y;
+    if (!dragging && ddy > 12 && ddy > Math.abs(dx) * 1.2) { dragging = true; clearTimeout(holdT); setHold(true); }
+    if (dragging) { dy = Math.max(0, ddy); card.style.transform = `translate3d(0,${dy.toFixed(1)}px,0) scale(${(1 - dy / 1600).toFixed(4)})`; bk.style.opacity = String(1 - Math.min(.7, dy / 500)); }
+  });
+  card.addEventListener('pointerup', e => {
+    if (!pd || e.pointerId !== pd.id) return;
+    clearTimeout(holdT); const dx = e.clientX - pd.x, ddy = e.clientY - pd.y, wasHeld = held; pd = null;
+    if (dragging) {
+      dragging = false;
+      if (dy > 110) { closeUI(); return; }
+      const from = card.style.transform; card.style.transform = ''; bk.style.opacity = '';
+      if (!calm) card.animate([{ transform: from }, { transform: 'none' }], { duration: 220, easing: 'ease-out' });
+      setHold(false); return;
+    }
+    if (wasHeld) { setHold(false); return; }                                   /* letting go after holding just carries on */
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(ddy)) { dx < 0 ? next() : prev(); return; }
+    const r = card.getBoundingClientRect(); (e.clientX - r.left) < r.width * .3 ? prev() : next();
+  });
+  card.addEventListener('pointercancel', () => { pd = null; clearTimeout(holdT); if (dragging) { dragging = false; card.style.transform = ''; bk.style.opacity = ''; } setHold(false); });
+  sv.addEventListener('contextmenu', e => e.preventDefault());                /* a long press holds the photo; no menu */
+  q('.sv-x').addEventListener('click', closeUI); q('.sv-xx').addEventListener('click', closeUI);
+  prevB.addEventListener('click', prev); nextB.addEventListener('click', next);
+  sndB.addEventListener('click', () => { if (window.__music) window.__music.toggle(); });
+  bars.forEach((b, i) => b.addEventListener('animationend', () => { if (open && !closing && i === cur) next(); }));
+  syncSound();
+}
+function syncSound() {
+  if (!sndB) return; const m = window.__music;
+  sndB.hidden = !(m && m.on); const off = !!(m && m.off);
+  sndB.setAttribute('aria-pressed', off ? 'true' : 'false');                  /* the icon follows the same rules as the corner button */
+}
+document.addEventListener('musicchange', syncSound);
+
+/* where the card sits: the whole screen on a phone; on a computer, the photo's own shape as large as the screen allows */
+function cardRect(i) {
+  const W = innerWidth, H = innerHeight;
+  if (mode !== 'card') return { x: 0, y: 0, w: W, h: H };
+  const p = list[i], ar = p.w / p.h, mw = Math.min(W - 180, 1500); let h = H * .88, w = h * ar;
+  if (w > mw) { w = mw; h = w / ar; }
+  return { x: (W - w) / 2, y: (H - h) / 2, w, h };
+}
+function layout() {
+  sv.classList.remove('phone', 'card'); sv.classList.add(mode);
+  const r = cardRect(cur);
+  Object.assign(card.style, { left: r.x + 'px', top: r.y + 'px', width: r.w + 'px', height: r.h + 'px' });
+  slides.forEach((s, i) => {
+    let w, h, l = 0, t = 0;
+    if (mode === 'card') { const ri = cardRect(i); w = ri.w; h = ri.h; s.fg.style.cssText = ''; }
+    else { const ar = s.p.w / s.p.h; w = r.w; h = w / ar; if (h > r.h) { h = r.h; w = h * ar; } l = (r.w - w) / 2; t = (r.h - h) / 2;
+      s.fg.style.cssText = `left:${l.toFixed(1)}px;top:${t.toFixed(1)}px;width:${w.toFixed(1)}px;height:${h.toFixed(1)}px`; }
+    s.fg.sizes = Math.ceil(w) + 'px';                                          /* the browser picks the file for this width and the screen's density */
+  });
+  if (mode === 'card') { prevB.style.cssText = `left:${Math.max(10, r.x - 64)}px;top:${r.y + r.h / 2 - 22}px`; nextB.style.cssText = `left:${Math.min(innerWidth - 54, r.x + r.w + 20)}px;top:${r.y + r.h / 2 - 22}px`; }
+}
+function ensure(i) {
+  const s = slides[i]; if (!s || s.ready) return;
+  s.fg.srcset = srcset(s.p); s.fg.src = smallest(s.p);
+  s.ready = whenReady(s.fg).then(() => s.el.classList.add('ld'));
+}
+function show(i) {
+  if (i >= list.length) { finish(); return; }
+  cur = Math.max(0, i); const s = slides[cur], my = ++token;
+  slides.forEach((x, k) => { x.el.classList.toggle('cur', k === cur); if (k !== cur) x.el.classList.remove('kb'); });
+  bars.forEach((b, k) => { b.className = k < cur ? 'done' : ''; });
+  cap.textContent = s.p.caption || ''; cap.hidden = !s.p.caption;
+  layout();
+  ensure(cur); ensure(cur + 1); ensure(cur - 1);                               /* the one on screen, and its neighbours ready for a quick cut */
+  clearTimeout(loadT); loader.classList.remove('on');
+  loadT = setTimeout(() => { if (my === token && !s.el.classList.contains('ld')) loader.classList.add('on'); }, 300);
+  s.ready.then(() => {                                                         /* the 7 seconds start once the photo is actually showing */
+    if (my !== token || !open) return; loader.classList.remove('on');
+    void bars[cur].offsetWidth; bars[cur].className = 'run';
+    s.el.classList.remove('kb'); void s.el.offsetWidth; s.el.classList.add('kb');
+  });
+}
+function next() { if (cur >= list.length - 1) finish(); else show(cur + 1); }
+function prev() { if (cur > 0) show(cur - 1); else show(0); }
+function finish() { try { localStorage.setItem('rp-story-seen', sig); } catch (e) {} cov.classList.add('seen'); closeUI(); }
+function setHold(on) { held = on; sv.classList.toggle('hold', on); }
+
+/* opening grows the viewer out of the cover; closing shrinks it back in */
+function fromCover() {
+  const c = cov.querySelector('.pimg').getBoundingClientRect(), w = card.offsetWidth, h = card.offsetHeight, m = Math.min(w, h);
+  const dx = c.left + c.width / 2 - (card.offsetLeft + w / 2), dy = c.top + c.height / 2 - (card.offsetTop + h / 2);
+  return { t: `translate3d(${dx.toFixed(1)}px,${dy.toFixed(1)}px,0) scale(${(c.width / m).toFixed(4)})`, small: `circle(${(m / 2).toFixed(1)}px at 50% 50%)`, big: `circle(${(Math.hypot(w, h) / 2 + 2).toFixed(1)}px at 50% 50%)` };
+}
+function openStory() {
+  if (open || closing || !list.length) return;
+  if (!sv) build();
+  mode = pickMode(); setHold(false); sv.classList.remove('ready'); sv.hidden = false; card.style.transform = ''; bk.style.opacity = '';
+  document.documentElement.classList.add('svopen'); open = true;
+  show(0); syncSound();
+  const f = fromCover();
+  if (!calm) { card.animate([{ transform: f.t, clipPath: f.small }, { transform: 'none', clipPath: f.big }], { duration: 480, easing: 'cubic-bezier(.22,.8,.2,1)' }); bk.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 380 }); }
+  setTimeout(() => { if (open) sv.classList.add('ready'); }, calm ? 0 : 380);
+  try { history.pushState({ story: 1 }, ''); pushed = true; } catch (e) { pushed = false; }
+  sv.querySelector(mode === 'phone' ? '.sv-x' : '.sv-xx').focus({ preventScroll: true });
+}
+function closeUI() { if (!open || closing) return; if (pushed) { pushed = false; history.back(); } else doClose(); }
+addEventListener('popstate', () => { if (open) { pushed = false; doClose(); } });    /* the phone's back gesture closes it too */
+function doClose() {
+  if (!open || closing) return; closing = true; token++; clearTimeout(loadT); loader.classList.remove('on');
+  sv.classList.remove('ready'); setHold(true);
+  const f = fromCover(), from = card.style.transform || 'none', bo = getComputedStyle(bk).opacity;
+  const done = () => {
+    sv.hidden = true; card.style.transform = ''; bk.style.opacity = ''; setHold(false); open = false; closing = false;
+    slides.forEach(s => s.el.classList.remove('kb')); bars.forEach(b => { b.className = ''; });
+    document.documentElement.classList.remove('svopen'); cov.focus({ preventScroll: true });
+  };
+  if (calm) { done(); return; }
+  bk.animate([{ opacity: bo }, { opacity: 0 }], { duration: 360, fill: 'forwards' });
+  const a = card.animate([{ transform: from, clipPath: f.big }, { transform: f.t, clipPath: f.small }], { duration: 380, easing: 'cubic-bezier(.4,0,.7,1)', fill: 'forwards' });
+  a.onfinish = () => { done(); bk.getAnimations().forEach(x => x.cancel()); a.cancel(); };
+}
+cov.addEventListener('click', openStory);
+let primed = false;
+cov.addEventListener('pointerenter', () => { if (primed || !list.length || open) return; primed = true; if (!sv) build(); mode = pickMode(); cur = 0; layout(); ensure(0); });   /* sized first, so it fetches the right file */   /* start loading the first photo on intent */
+addEventListener('keydown', e => {
+  if (!open) return;
+  if (e.key === 'ArrowRight') { next(); e.preventDefault(); }
+  else if (e.key === 'ArrowLeft') { prev(); e.preventDefault(); }
+  else if (e.key === 'Escape') { closeUI(); e.preventDefault(); }
+  else if (e.key === ' ' && !(e.target.closest && e.target.closest('button'))) { setHold(!held); e.preventDefault(); }
+  else if (e.key === 'Tab') { const f = [...sv.querySelectorAll('button')].filter(b => b.offsetParent && !b.hidden); const i = f.indexOf(document.activeElement);
+    if (e.shiftKey && i <= 0) { f[f.length - 1].focus(); e.preventDefault(); } else if (!e.shiftKey && i === f.length - 1) { f[0].focus(); e.preventDefault(); } }
+});
+document.addEventListener('visibilitychange', () => { if (open) setHold(document.hidden); });
+addEventListener('resize', () => { if (!open) return; mode = pickMode(); layout(); });
 })();
 </script>
 </body>

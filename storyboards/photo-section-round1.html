@@ -1,0 +1,623 @@
+<meta charset="utf-8">
+<title>Photo Section Storyboard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+/* Layout: one reading column. Each option is a phone preview beside its notes; they stack on narrow screens.
+   The previews are small working versions of the site's photo section, drawn in a 360 x 740 phone and scaled to fit. */
+:root{
+  --paper:#f5eee3; --card:#fffaf3; --ink:#2a1c18; --soft:#6c5a50; --line:#e4d5c1;
+  --accent:#7a1730; --pick:#c2185b; --pick-bg:#fbe2ec; --bezel:#1d1720; --chip:#f0e4d3;
+  --display:"Cormorant Garamond","Times New Roman",serif;
+  --body:"Jost","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --script:"Pinyon Script","Snell Roundhand",cursive;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#17121a; --card:#211a25; --ink:#f2e7d8; --soft:#b8a797; --line:#3b3040;
+  --accent:#f2a2b6; --pick:#ff86b4; --pick-bg:#3d1d2c; --bezel:#050306; --chip:#2c2330; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#17121a; --card:#211a25; --ink:#f2e7d8; --soft:#b8a797; --line:#3b3040;
+  --accent:#f2a2b6; --pick:#ff86b4; --pick-bg:#3d1d2c; --bezel:#050306; --chip:#2c2330; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-weight:300;font-size:1.02rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+main{max-width:1100px;margin:0 auto;padding-block:clamp(28px,6vw,64px) 88px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:clamp(40px,7vw,72px)}
+h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.1;margin:0;text-wrap:balance}
+h1{font-size:clamp(2.4rem,7vw,3.8rem)}
+h2{font-size:clamp(1.7rem,4.4vw,2.4rem)}
+h3{font-size:1.45rem}
+p{margin:0;max-width:66ch}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.eyebrow{font-size:.72rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+.lede{color:var(--soft);font-size:1.08rem}
+header{display:flex;flex-direction:column;gap:14px}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;padding:0;list-style:none}
+.jump a{display:inline-block;text-decoration:none;color:var(--ink);background:var(--chip);border-radius:999px;padding:.35em .95em;font-size:.85rem}
+.jump a:hover{background:var(--pick-bg)}
+.jump .pk{box-shadow:inset 0 0 0 1px var(--pick)}
+section{display:flex;flex-direction:column;gap:16px}
+
+/* the page order */
+.route{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:4px 0 0;padding:0;list-style:none;counter-reset:r}
+.route li{counter-increment:r;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.route li::before{content:counter(r);display:flex;align-items:flex-end;height:58px;padding:0 10px 6px;background:var(--sky);font-family:var(--display);font-size:1.5rem;line-height:1;color:var(--num,#fff7ea)}
+.route b{font-weight:500;padding:8px 10px 0;font-size:.95rem}
+.route span{padding:0 10px 10px;font-size:.84rem;color:var(--soft);line-height:1.4}
+.route .new{border-color:var(--pick);box-shadow:0 0 0 1px var(--pick)}
+.route .new b::after{content:" · new";color:var(--pick);font-weight:500}
+@media (max-width:820px){.route{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:460px){.route{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.alts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.alts p{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:.93rem;max-width:none}
+.alts strong{font-weight:500}
+
+/* one option */
+.opt{display:grid;grid-template-columns:296px minmax(0,1fr);gap:clamp(20px,4vw,48px);align-items:start;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(16px,3vw,30px);scroll-margin-top:16px}
+.opt.pick{border-color:var(--pick);box-shadow:0 0 0 1px var(--pick)}
+.notes{display:flex;flex-direction:column;gap:14px;min-width:0}
+.head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.head .id{font-family:var(--display);font-size:1.25rem;color:var(--accent);font-weight:600}
+.tag{font-size:.66rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--pick);background:var(--pick-bg);border-radius:999px;padding:.3em .85em;align-self:center}
+.idea{font-family:var(--display);font-style:italic;font-size:1.3rem;line-height:1.35;color:var(--ink)}
+.steps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:1.9em minmax(0,1fr);gap:4px;font-size:.96rem}
+.steps li::before{content:counter(s);font-family:var(--display);font-size:1.35rem;line-height:1.15;color:var(--accent)}
+.steps b{font-weight:500}
+.facts{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:6px 16px;margin:0;font-size:.92rem;border-top:1px solid var(--line);padding-top:12px}
+.facts dt{color:var(--soft)}
+.facts dd{margin:0}
+.trade{font-size:.95rem;border-left:3px solid var(--line);padding-left:12px}
+.trade b{font-weight:500}
+@media (max-width:780px){.opt{grid-template-columns:minmax(0,1fr)}.demo{justify-self:center}}
+@media (max-width:420px){.facts{grid-template-columns:minmax(0,1fr)}.facts dd{margin-bottom:6px}}
+
+/* the phone preview */
+.demo{margin:0;width:100%;max-width:296px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.phone{padding:9px;border-radius:40px;background:var(--bezel);box-shadow:0 22px 44px -22px rgba(40,10,20,.55)}
+.screen{position:relative;aspect-ratio:360/740;max-width:100%;border-radius:31px;overflow:hidden;clip-path:inset(0 round 31px);background:#000}
+.ctl{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px}
+.pp{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0}
+.pp:hover{border-color:var(--accent)}
+.pp svg{width:14px;height:14px}
+.ctl input{width:100%;accent-color:var(--accent);margin:0}
+.now{font-size:.86rem;color:var(--soft);min-height:2.8em;line-height:1.4;text-align:center;max-width:none}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:.93rem}
+th,td{text-align:left;padding:.7em .9em;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font-weight:500;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+td:first-child{font-weight:500;white-space:nowrap}
+tr.pk td:first-child{color:var(--pick)}
+.need{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px;max-width:72ch}
+.verdict{background:var(--card);border:1px solid var(--pick);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.verdict p{max-width:72ch}
+
+/* ---------- inside the previews: fixed colours, since this is the site itself ---------- */
+.stage{position:absolute;left:0;top:0;width:360px;height:740px;transform-origin:0 0;font-family:var(--body);overflow:hidden;-webkit-font-smoothing:antialiased}
+.stage .page{position:absolute;left:0;top:0;width:360px;will-change:transform}
+.stage .blk{position:absolute;left:0;width:360px;height:740px;overflow:hidden}
+.stage .pin{position:absolute;left:0;top:0;width:360px;height:740px;overflow:hidden;will-change:transform}
+.stage .full{position:absolute;left:0;top:0;width:360px;height:740px;display:block}
+.stage .gold{background:radial-gradient(rgba(255,255,255,.2) 2px,transparent 2.6px) 0 0/20px 20px,linear-gradient(#f8d7aa,#f1b793)}
+.stage .d-eb{position:absolute;left:0;right:0;margin:0;max-width:none;text-align:center;font:500 9.5px/1 var(--body);letter-spacing:.34em;text-transform:uppercase;color:#7a1730}
+.stage .d-sc{position:absolute;left:0;right:0;margin:0;max-width:none;text-align:center;font:400 46px/1.15 var(--script);color:#7a1730}
+.stage .d-ct{position:absolute;left:0;right:0;margin:0;max-width:none;text-align:center;font:500 10px/1 var(--body);letter-spacing:.24em;color:#7a1730}
+.stage .ph{position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden}
+.stage .ph::after{content:"";position:absolute;inset:0;background:rgba(48,14,24,var(--dim,0));pointer-events:none}
+.stage img{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;object-fit:cover;display:block}
+.stage .finger{position:absolute;left:-17px;top:-17px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.6);box-shadow:0 0 0 7px rgba(255,255,255,.22),0 2px 10px rgba(0,0,0,.25);opacity:0;z-index:60;pointer-events:none}
+.stage .trim{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.stage .trim path{fill:none;stroke:#c9a24a;stroke-width:4}
+/* carousel */
+.stage .ca{position:absolute;left:0;top:0;width:236px;height:315px;will-change:transform}
+.stage .dots,.stage .thumbs{position:absolute;left:0;right:0;display:flex;justify-content:center;gap:6px}
+.stage .dots svg{width:10px;height:12.5px;overflow:visible}
+.stage .thumbs svg{width:11px;height:14px;overflow:visible}
+.stage .dots path,.stage .thumbs path{fill:none;stroke:#7a1730;stroke-width:1.3}
+.stage .dots .on path{fill:#7a1730}
+.stage .thumbs .on path{fill:#c9a24a;stroke:#a8781f}
+/* window */
+.stage .wall{background:repeating-linear-gradient(180deg,transparent 0 45px,rgba(140,80,40,.11) 45px 46px),linear-gradient(#f3d2a6,#e8ba8d)}
+.stage .tint{position:absolute;inset:0;background:linear-gradient(rgba(214,110,120,.5),rgba(150,60,90,.45));opacity:0;pointer-events:none}
+.stage .op{position:absolute;perspective:760px}
+.stage .stack{position:absolute;inset:0;overflow:hidden;background:#3a2418}
+.stage .sh{position:absolute;top:0;height:100%;width:50%;background:radial-gradient(circle,#e8c56b 0 2px,transparent 2.6px) 5px 9px/19px 22px,linear-gradient(90deg,#2d656d,#41838b 50%,#2d656d);box-shadow:inset 0 0 0 5px #24555c,inset 0 0 0 6.5px #d9b45c;will-change:transform}
+.stage .sh.l{left:0;transform-origin:0 50%}
+.stage .sh.r{right:0;transform-origin:100% 50%}
+.stage .cap{position:absolute;left:0;right:0;margin:0;max-width:none;text-align:center;font:italic 500 17px/1.2 var(--display);color:#5b2a1d}
+/* lane */
+.stage .trk{position:absolute;left:0;top:0;height:570px;display:flex;will-change:transform}
+.stage .pn{position:relative;flex:0 0 360px;height:570px;overflow:hidden}
+.stage .ground{position:absolute;left:0;right:0;bottom:0;height:170px;background:repeating-linear-gradient(90deg,transparent 0 118px,rgba(120,60,40,.07) 118px 120px),linear-gradient(#e9b9a0,#f1cdb8 30%,#edc4ad);border-top:5px solid #d99a80}
+.stage .rk{position:absolute;left:14px;bottom:37px;width:261px;height:178px;overflow:visible}
+.stage .dk{position:absolute;inset:0;background:linear-gradient(rgba(40,20,70,.55),rgba(120,40,70,.35));opacity:0;pointer-events:none}
+.stage .fr{position:absolute;will-change:transform;filter:drop-shadow(0 7px 6px rgba(16,22,60,.38))}
+.stage .fr .fs{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible}
+.stage .fs .o{fill:none;stroke:#c3922f;stroke-width:11}
+.stage .fs .i{fill:none;stroke:#f3d68e;stroke-width:3}
+.stage .nail{position:absolute;left:50%;top:-19px;width:1.4px;height:19px;margin-left:-.7px;background:#2c2418}
+.stage .nail::before{content:"";position:absolute;left:-2.6px;top:-3px;width:6.4px;height:6.4px;border-radius:50%;background:#d4ad55}
+.stage .plq{position:absolute;left:96px;top:44px;width:168px;padding:9px 0 6px;background:#fdf6e8;border-radius:8px;box-shadow:inset 0 0 0 1px #3f7f86,inset 0 0 0 4px #fdf6e8,inset 0 0 0 5px rgba(63,127,134,.5);text-align:center}
+.stage .plq .d-eb,.stage .plq .d-sc{position:static;color:#2c5d63}
+.stage .plq .d-sc{font-size:30px;color:#a3154d;margin-top:2px}
+/* facade */
+.stage .win{position:absolute;perspective:620px}
+.stage .glo{position:absolute;border-radius:50%;background:radial-gradient(closest-side,rgba(255,220,150,.75),rgba(255,220,150,0));pointer-events:none;opacity:0}
+/* prints */
+.stage .print{position:absolute;left:0;top:0;width:200px;height:250px;background:#fffdf8;box-shadow:0 12px 24px -10px rgba(40,20,10,.5),0 1px 2px rgba(0,0,0,.18);will-change:transform}
+.stage .print .ph{left:8px;top:8px;width:184px;height:196px}
+.stage .print p{position:absolute;left:0;right:0;bottom:15px;margin:0;max-width:none;text-align:center;font:italic 500 15px/1 var(--display);color:#4a3428}
+.stage .band{position:absolute;left:0;width:360px;height:170px;will-change:transform}
+.stage .bi{position:absolute;left:0;top:0;width:128px;height:170px;will-change:transform}
+.stage .pill{position:absolute;left:50%;transform:translateX(-50%);margin:0;max-width:none;padding:.9em 1.6em;border-radius:999px;background:#7a1730;color:#fff;font:500 8.5px/1 var(--body);letter-spacing:.22em;text-transform:uppercase;white-space:nowrap}
+/* tap to look closer */
+.stage .lbk{position:absolute;inset:0;background:#120b10;opacity:0;pointer-events:none}
+.stage .lbc{position:absolute;overflow:hidden;visibility:hidden}
+.stage .lbt{position:absolute;left:0;right:0;top:70px;display:flex;justify-content:space-between;padding:0 24px;color:#f3e6cd;font:500 10.5px/1 var(--body);letter-spacing:.22em;opacity:0}
+.stage .lbt i{font-style:normal;font-size:20px;letter-spacing:0;line-height:.6}
+</style>
+
+<main>
+<header>
+  <p class="eyebrow">Storyboard · nothing here is built yet</p>
+  <h1>The photo section</h1>
+  <p class="lede">Six ways to show your nine or ten pre-wedding photos, one for each photo style in your inspiration reels. Each preview is set into the site as it runs now: it starts at the Shubh Vivah doorway at the end of the rickshaw lane and finishes at Shakti Vilas. The previews play on their own; drag the slider under one to move through it the way scrolling would. The pictures are drawn stand-ins until your photos arrive. My pick is marked.</p>
+  <ul class="jump" aria-label="Jump to">
+    <li><a href="#where">Where it goes</a></li>
+    <li><a href="#p1">P1 Carousel</a></li>
+    <li><a class="pk" href="#p2">P2 Window · my pick</a></li>
+    <li><a href="#p3">P3 Lane wall</a></li>
+    <li><a href="#p4">P4 Windows</a></li>
+    <li><a href="#p5">P5 Prints</a></li>
+    <li><a href="#p6">P6 Bands</a></li>
+    <li><a href="#tap">Tapping a photo</a></li>
+    <li><a href="#compare">Side by side</a></li>
+    <li><a href="#need">What I need</a></li>
+  </ul>
+</header>
+
+<section id="where">
+  <h2>Where it goes</h2>
+  <p>The sky already moves from night to morning to dusk as you scroll. The photos fit between the rickshaw lane and Shakti Vilas, in golden-hour light. The invitation and the four functions still come first, and the venue, travel notes and calendar button stay near the end where guests look for them.</p>
+  <ol class="route">
+    <li style="--sky:linear-gradient(#060b1e,#141d4c 55%,#a05a6c)"><b>Palace at night</b><span>Tap to light; the song starts</span></li>
+    <li style="--sky:linear-gradient(#f6c3ba,#fbdccf 50%,#93d3cc);--num:#7a1730"><b>Daybreak</b><span>The boat brings the date</span></li>
+    <li style="--sky:linear-gradient(#f3a183,#ea93a8 40%,#8171b5 70%,#cf5148);"><b>Rickshaw lane</b><span>Blessings, then the four functions</span></li>
+    <li class="new" style="--sky:linear-gradient(#fbd9a8,#f2a77f);--num:#7a1730"><b>Photos</b><span>Golden hour</span></li>
+    <li style="--sky:linear-gradient(#f3b98d,#e79490 45%,#b0607a)"><b>Shakti Vilas</b><span>Dusk: map and getting there</span></li>
+    <li style="--sky:linear-gradient(#10163a,#2c1f4d 55%,#6b3558)"><b>Close</b><span>Night: add to calendar</span></li>
+  </ol>
+  <div class="alts">
+    <p><strong>Before the lane instead.</strong> Straight after the boat and the date. The photos would come before your families' invitation, which reads a little backwards.</p>
+    <p><strong>After Shakti Vilas instead.</strong> It would be night and the last thing on the page. Fewer people scroll that far.</p>
+  </div>
+</section>
+
+<section id="options" aria-label="The six options" style="gap:clamp(28px,5vw,44px)"></section>
+
+<section id="tap">
+  <h2>Tapping a photo, in every option</h2>
+  <article class="opt">
+    <figure class="demo" data-demo="lightbox"></figure>
+    <div class="notes">
+      <p class="idea">The photo grows out of its frame to fill the screen, and goes back into its frame when you close it.</p>
+      <ol class="steps">
+        <li><span><b>Opening.</b> A tap grows the photo from its frame to full screen over a dark ground. The frame's arch flattens into a plain edge as it grows. A counter shows which photo it is.</span></li>
+        <li><span><b>Next photo.</b> Swipe sideways, or use the arrow keys on a computer.</span></li>
+        <li><span><b>Closing.</b> Swipe down, tap ×, or press Esc. The photo shrinks back into the frame it belongs to.</span></li>
+      </ol>
+      <p class="trade">The song and the mute button carry on as they are.</p>
+    </div>
+  </article>
+</section>
+
+<section id="compare">
+  <h2>Side by side</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Option</th><th>Photo size on a phone</th><th>Do guests see all ten?</th><th>Scrolling it adds</th><th>How you move through it</th><th>Work to build</th></tr></thead>
+    <tbody>
+      <tr><td>P1 · Carousel</td><td>Large, one at a time</td><td>Only if they swipe</td><td>One screen</td><td>Swipe or arrows</td><td>Small</td></tr>
+      <tr class="pk"><td>P2 · Window</td><td>Large, one at a time</td><td>Yes, in order</td><td>About five screens</td><td>Scrolling</td><td>Medium</td></tr>
+      <tr><td>P3 · Lane wall</td><td>Small to medium, two or three at once</td><td>Yes, in passing</td><td>About four screens of riding</td><td>Scrolling rides sideways</td><td>Medium</td></tr>
+      <tr><td>P4 · Windows</td><td>Small, two side by side</td><td>Yes, all at once at the end</td><td>About two and a half screens</td><td>Scrolling</td><td>Most drawing</td></tr>
+      <tr><td>P5 · Prints</td><td>Large as each lands, small in the final grid</td><td>Yes, in order</td><td>About four screens</td><td>Scrolling</td><td>Medium</td></tr>
+      <tr><td>P6 · Bands</td><td>Small and always moving</td><td>In passing</td><td>About one screen</td><td>Drifts by itself</td><td>Small</td></tr>
+    </tbody>
+  </table></div>
+  <div class="verdict">
+    <p class="eyebrow" style="color:var(--pick)">My pick: P2, the jharokha window</p>
+    <p>It shows all ten photos large and in order, one at a time, inside a Rajasthani frame, and its motion runs the same way as your scroll. It is calm, which suits your "not cluttered", and the shutters give it one memorable moment without another tap-to-start.</p>
+    <p>If you would rather keep the page shorter, P1 does the same job in one screen, but guests have to swipe. Options can also be mixed, for example P2's window ending in P5's spread-out grid so guests get a last look at all ten together.</p>
+  </div>
+</section>
+
+<section id="need">
+  <h2>What I need from you</h2>
+  <ul class="need">
+    <li>The option you want (or a mix), and anything you would change in it.</li>
+    <li>The photos at full size. Portrait photos suit the arch options (P1, P2, P4, P6), since the arch covers the top corners. Landscape photos are fine in P3 and P5.</li>
+    <li>The order, and which photo should come first.</li>
+    <li>A short caption for each, if you want them: a place, a date or a line. They are optional.</li>
+    <li>Anything you would rather not have public. The site is open to anyone with the link.</li>
+  </ul>
+  <p class="lede" style="font-size:.95rem">I will resize each photo to about 1600 px on the long side and save it as WebP, around 200 KB each. They load only when the section comes near, so the palace at the start opens as quickly as it does now.</p>
+</section>
+</main>
+
+<script>
+(function(){
+'use strict';
+const clamp=(v,a=0,b=1)=>v<a?a:v>b?b:v, ez=t=>t*t*(3-2*t), lerp=(a,b,t)=>a+(b-a)*t, seg=(v,a,b)=>clamp((v-a)/(b-a));
+const eo=t=>1-Math.pow(1-t,3), mod=(a,m)=>((a%m)+m)%m, n2=v=>Math.round(v*100)/100;
+const rng=s=>()=>(s=(s*16807)%2147483647)/2147483647;
+function cruise(u){const a=.12;return u<a?u*u/(2*a*(1-a)):u>1-a?1-(1-u)*(1-u)/(2*a*(1-a)):(u-a/2)/(1-a);}
+/* a keyframe track: [[time, value, easing], ...]; eases between keys, holds where two keys share a value */
+function track(keys){return t=>{if(t<=keys[0][0])return keys[0][1];
+  for(let i=1;i<keys.length;i++){const k=keys[i];if(t<=k[0]){const p=keys[i-1],u=(t-p[0])/((k[0]-p[0])||1),e=k[2]==='lin'?u:k[2]==='cruise'?cruise(u):ez(u);return p[1]+(k[1]-p[1])*e;}}
+  return keys[keys.length-1][1];};}
+/* the cusped arch used by the site's event doorways */
+function archD(cx,top,w,bottom,sh){
+  const x0=cx-w/2,x1=cx+w/2,h=sh-top,a=[x0+w*.07,sh-h*.42],b=[x0+w*.22,sh-h*.78],r=n2;
+  return `M${r(x0)} ${r(bottom)}V${r(sh)}Q${r(x0)} ${r(a[1])} ${r(a[0])} ${r(a[1])}Q${r(a[0])} ${r(b[1])} ${r(b[0])} ${r(b[1])}Q${r(cx-w*.04)} ${r(top+h*.2)} ${r(cx)} ${r(top)}Q${r(cx+w*.04)} ${r(top+h*.2)} ${r(x1-w*.22)} ${r(b[1])}Q${r(x1-w*.07)} ${r(b[1])} ${r(x1-w*.07)} ${r(a[1])}Q${r(x1)} ${r(a[1])} ${r(x1)} ${r(sh)}V${r(bottom)}Z`;}
+const archBox=(w,h,k=.32)=>archD(w/2,0,w,h,h*k);
+/* one half of the arch, for a shutter that is w/2 wide */
+function halfArch(w,h,side){const sh=h*.32,a=[w*.07,sh-sh*.42],b=[w*.22,sh-sh*.78],c=w/2,r=n2;
+  return side<0?`M0 ${r(h)}V${r(sh)}Q0 ${r(a[1])} ${r(a[0])} ${r(a[1])}Q${r(a[0])} ${r(b[1])} ${r(b[0])} ${r(b[1])}Q${r(c-w*.04)} ${r(sh*.2)} ${r(c)} 0V${r(h)}Z`
+    :`M${r(c)} ${r(h)}V${r(sh)}Q${r(c)} ${r(a[1])} ${r(c-a[0])} ${r(a[1])}Q${r(c-a[0])} ${r(b[1])} ${r(c-b[0])} ${r(b[1])}Q${r(w*.04)} ${r(sh*.2)} 0 0V${r(h)}Z`;}
+function shapeD(s,w,h){return s==='arch'?archBox(w,h):s==='rect'?`M0 0H${w}V${h}H0Z`:`M0 ${h/2}A${w/2} ${h/2} 0 1 1 ${w} ${h/2}A${w/2} ${h/2} 0 1 1 0 ${h/2}Z`;}
+let uid=0;
+
+/* ---------- ten stand-in photographs (drawn, portrait 3:4) ---------- */
+const lg=(id,st)=>`<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">${st.map(([o,c])=>`<stop offset="${o}" stop-color="${c}"/>`).join('')}</linearGradient>`;
+function ridge(base,amp,fill,seed,op=1){const r=rng(seed),a=r()*6,b=r()*6;let d=`M0 800L0 ${base}`;for(let x=0;x<=600;x+=15)d+=`L${x} ${(base-amp*(.55+.3*Math.sin(x/70+a)+.15*Math.sin(x/27+b))).toFixed(1)}`;return `<path d="${d}L600 800Z" fill="${fill}" opacity="${op}"/>`;}
+function palaceSil(x,base,w,fill){const k=w/200;let o='';
+  [[0,24,30,1],[22,26,46,2],[46,18,38,0],[62,36,62,2],[96,22,46,1],[116,30,54,2],[144,20,36,0],[162,24,44,1],[184,16,28,1]].forEach(([bx,bw,bh,t])=>{const X=x+bx*k,W=bw*k,H=bh*k,Y=base-H;
+    o+=`<rect x="${X.toFixed(1)}" y="${Y.toFixed(1)}" width="${W.toFixed(1)}" height="${H.toFixed(1)}"/>`;if(t)o+=`<path d="M${(X+W*.2).toFixed(1)} ${Y.toFixed(1)}a${(W*.3).toFixed(1)} ${(W*.34).toFixed(1)} 0 0 1 ${(W*.6).toFixed(1)} 0z"/>`;});
+  return `<g fill="${fill}">${o}</g>`;}
+function couple(x,y,s,fill){return `<g transform="translate(${x} ${y}) scale(${s})" fill="${fill}"><path d="M-41 -72h11v72h-11zM-25 -72h11v72h-11z"/><path d="M-48 -142q21-6 42 0l3 78q-24 6-48 0z"/><rect x="-33" y="-152" width="8" height="12"/><circle cx="-29" cy="-162" r="11"/><path d="M-44 -165q1-17 16-17q14 0 15 15q-15-8-31 2z"/><path d="M-43 -163q-9 16-5 42l5-1q-3-22 4-37z"/><path d="M-10 -134l19 27-5 4-18-25z"/><path d="M13 -100h30l26 100h-83z"/><path d="M17 -100h22l-2-42h-18z"/><rect x="24" y="-151" width="7" height="11"/><circle cx="28" cy="-158" r="10"/><path d="M15 -158q2-19 17-17q12 2 12 18l12 62q-5 3-9 0l-9-58z"/><path d="M19 -134l-12 27 5 3 13-25z"/><circle cx="7" cy="-105" r="4.6"/></g>`;}
+function boug(list,seed,k=1){const r=rng(seed),pk=['#c2185b','#d81b60','#e2508f','#a3154d','#ef7fb0'],gr=['#4f7a3a','#6b9450','#3e6630'];let o='';
+  list.forEach(([cx,cy,rx,ry,n])=>{for(let i=0;i<n;i++){const a=r()*6.283,d=Math.sqrt(r()),x=(cx+Math.cos(a)*rx*d).toFixed(1),y=(cy+Math.sin(a)*ry*d).toFixed(1);
+    o+=r()<.24?`<ellipse cx="${x}" cy="${y}" rx="${((4+r()*4)*k).toFixed(1)}" ry="${(2.2*k).toFixed(1)}" fill="${gr[i%3]}" transform="rotate(${(r()*180).toFixed(0)} ${x} ${y})"/>`:`<circle cx="${x}" cy="${y}" r="${((2.5+r()*4)*k).toFixed(1)}" fill="${pk[Math.floor(r()*5)]}"/>`;}});return o;}
+const BOAT=`<path d="M-28 -1Q-30 -6 -34 -8L-22 -5H22L36 -12Q33 -3 26 2Q0 9 -26 2Z" fill="#7a1730"/><path d="M-24 -5H24" stroke="#c9a24a" stroke-width="1.3"/><path d="M-18 1Q0 5 18 1" stroke="#c9a24a" stroke-width=".8" fill="none"/><rect x="-13" y="-24" width="1.3" height="19" fill="#c9a24a"/><rect x="12" y="-24" width="1.3" height="19" fill="#c9a24a"/><path d="M-17 -24Q0 -38 17 -24Z" fill="#d81b60"/><path d="M-17 -24h34" stroke="#c9a24a" stroke-width="1.4"/>${[-12,-6,0,6,12].map(x=>`<path d="M${x-3} -23.4l3 4 3-4Z" fill="#f2a900"/>`).join('')}<rect x="-.5" y="-43" width="1" height="8" fill="#c9a24a"/><path d="M.5 -43l8 2.6-8 2.6Z" fill="#f2a900"/><circle cx="-25" cy="-11" r="2.2" fill="#b98463"/><path d="M-28 -5q3-6 6 0Z" fill="#fff"/><path d="M-26 -8L-36 6" stroke="#8a5a2a" stroke-width="1"/>`;
+const SCENES=[
+ ()=>`<defs>${lg('s',[[0,'#e38a7a'],[.45,'#f4bd92'],[.66,'#fde1bb']])}${lg('w',[[0,'#f0b496'],[1,'#7f5274']])}</defs><rect width="600" height="800" fill="url(#s)"/><circle cx="420" cy="452" r="46" fill="#fff4d8"/>${ridge(520,46,'#c48c93',3,.85)}${palaceSil(60,520,330,'#b06f7d')}<rect y="520" width="600" height="280" fill="url(#w)"/>${[0,1,2,3,4,5,6,7].map(i=>`<rect x="${400+(i%2)*6+i*1.5}" y="${532+i*13}" width="${40-i*3.5}" height="3" fill="#fff4d8" opacity="${(.75-i*.07).toFixed(2)}"/>`).join('')}<path d="M0 690L600 658V800H0Z" fill="#4b2b38"/><path d="M0 714L600 684M0 740L600 712M0 766L600 740" stroke="#6b4151" stroke-width="3"/>${couple(250,694,1.35,'#2e1a26')}`,
+ ()=>{const a=archD(300,110,400,800,110+690*.32);return `<defs>${lg('s',[[0,'#a8d6e6'],[.75,'#f7ecda']])}${lg('w',[[0,'#7cc6c2'],[1,'#4f9e9e']])}</defs><rect width="600" height="800" fill="url(#s)"/>${ridge(520,40,'#a7c9b5',5)}${palaceSil(320,520,180,'#f7e9cf')}<rect y="520" width="600" height="280" fill="url(#w)"/><path d="M0 0H600V800H0Z${a}" fill="#e2b383" fill-rule="evenodd"/><path d="${a}" fill="none" stroke="#c48a55" stroke-width="16"/><path d="${a}" fill="none" stroke="#f4d8ac" stroke-width="4"/><rect y="724" width="600" height="76" fill="#efe3cf"/><path d="M0 724H600" stroke="#d6c0a0" stroke-width="3"/>${[0,1,2,3,4,5,6,7,8].map(i=>`<path d="M${i*75} 800L${300+(i*75-300)*.62} 724" stroke="#dcc9ad" stroke-width="2"/>`).join('')}${couple(310,742,1.45,'#2b2230')}`;},
+ ()=>`<rect width="600" height="800" fill="#5a79b0"/>${Array.from({length:14},(_,i)=>`<rect x="${(i*97)%560}" y="${(i*131)%760}" width="${40+(i*37)%60}" height="${20+(i*13)%30}" fill="#fff" opacity=".05"/>`).join('')}<path d="${archD(300,236,264,782,236+546*.3)}" fill="#efe0bf"/><path d="${archD(300,262,216,782,262+520*.3)}" fill="#86c9c3"/><path d="M300 300V782" stroke="#5c9e98" stroke-width="4"/>${Array.from({length:20},(_,i)=>`<circle cx="${222+(i%4)*52}" cy="${430+Math.floor(i/4)*68}" r="4.5" fill="#e7c46a"/>`).join('')}<rect y="782" width="600" height="18" fill="#d8b494"/>${boug([[70,40,190,120,170],[560,140,90,250,130]],9,2.2)}<path d="M120 0V196" stroke="#6b5a3a" stroke-width="2.5"/><circle cx="120" cy="226" r="40" fill="#ffd879" opacity=".25"/><path d="M104 198h32l-5 52h-22z" fill="#c9a24a"/>${couple(300,792,1.5,'#1d2140')}`,
+ ()=>`<defs>${lg('s',[[0,'#fde2d2'],[1,'#e2f2ef']])}${lg('w',[[0,'#88d0cb'],[1,'#3e9796']])}</defs><rect width="600" height="800" fill="url(#s)"/>${ridge(430,64,'#bcd8c7',7)}${ridge(430,36,'#a3c8b3',11)}${palaceSil(360,430,170,'#fbf3e4')}<rect y="430" width="600" height="370" fill="url(#w)"/>${Array.from({length:22},(_,i)=>{const r=rng(40+i);return `<rect x="${(r()*560).toFixed(0)}" y="${(450+r()*330).toFixed(0)}" width="${(16+r()*40).toFixed(0)}" height="2.4" fill="#fff" opacity=".5"/>`;}).join('')}<g transform="translate(300 664) scale(5 -1.5)" opacity=".16"><path d="M-28 -1Q-30 -6 -34 -8L-22 -5H22L36 -12Q33 -3 26 2Q0 9 -26 2Z" fill="#2a1020"/></g><g transform="translate(300 622) scale(5)">${BOAT}</g>${couple(296,597,.46,'#2a2030')}`,
+ ()=>`<defs>${lg('s',[[0,'#f2a05e'],[.6,'#fbd69a'],[1,'#fde8c2']])}</defs><rect width="600" height="800" fill="url(#s)"/><circle cx="300" cy="440" r="72" fill="#fff1cc" opacity=".95"/><path d="M0 520Q150 470 300 505T600 490V800H0Z" fill="#eaa565"/><path d="M0 600Q180 540 340 590T600 570V800H0Z" fill="#d98a4c"/><g transform="translate(150 574)" fill="#7a4024"><ellipse cx="0" cy="-30" rx="34" ry="14"/><path d="M-14 -40q11-24 24 0z"/><path d="M26 -36q14-6 15-30h9q2 24-16 40z"/><ellipse cx="48" cy="-68" rx="10" ry="5.5"/><path d="M-26 -22h5v28h-5zM-14 -22h5v28h-5zM12 -22h5v28h-5zM22 -22h5v28h-5z"/></g><path d="M0 690Q200 640 400 690T600 680V800H0Z" fill="#b9693a"/>${couple(380,714,1.25,'#4a2212')}`,
+ ()=>`<defs>${lg('s',[[0,'#181a3c'],[1,'#3e2a58']])}<radialGradient id="g"><stop offset="0" stop-color="#ffcf8a" stop-opacity=".55"/><stop offset="1" stop-color="#ffcf8a" stop-opacity="0"/></radialGradient></defs><rect width="600" height="800" fill="url(#s)"/><circle cx="300" cy="600" r="320" fill="url(#g)"/>${Array.from({length:16},(_,i)=>{const r=rng(60+i);return `<circle cx="${(r()*600).toFixed(0)}" cy="${(200+r()*420).toFixed(0)}" r="${(10+r()*24).toFixed(0)}" fill="#ffd9a0" opacity=".12"/>`;}).join('')}${[0,1,2].map(c=>Array.from({length:13},(_,i)=>{const t=i/12,x=-20+i*53,y=80+c*96+70*4*t*(1-t)+c*8;return `<circle cx="${x}" cy="${y.toFixed(0)}" r="16" fill="#ffe6a8" opacity=".22"/><circle cx="${x}" cy="${y.toFixed(0)}" r="5.5" fill="#fff0c4"/>`;}).join('')+`<path d="M-20 ${80+c*96+c*8}Q300 ${80+c*96+c*8+140} 620 ${80+c*96+c*8}" fill="none" stroke="#6a5a7a" stroke-width="1.5"/>`).join('')}${couple(300,772,1.55,'#120f22')}`,
+ ()=>{const fl=(lo,hi)=>{let o='';for(let r=0;r<12;r++){const y=512+r*r*2.2+r*8;if(y<lo||y>=hi)continue;const rad=4+r*1.7,sp=14+r*5;for(let x=(r%2)*sp/2;x<620;x+=sp)o+=`<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${rad.toFixed(1)}" fill="${['#f5a623','#f08a24','#f7c33c'][(Math.round(x/sp)+r)%3]}"/>`;}return o;};
+   return `<defs>${lg('s',[[0,'#fff3da'],[1,'#fde3bd']])}</defs><rect width="600" height="800" fill="url(#s)"/>${Array.from({length:12},(_,i)=>`<circle cx="${i*55}" cy="${470+(i%3)*12}" r="${40+(i%4)*10}" fill="${i%2?'#6f9a58':'#577f45'}"/>`).join('')}<rect y="500" width="600" height="300" fill="#6f9a4c"/>${fl(0,690)}${couple(300,712,1.3,'#5a2a17')}${fl(690,900)}`;},
+ ()=>`<defs>${lg('s',[[0,'#d5e3dd'],[1,'#f3f6ee']])}</defs><rect width="600" height="800" fill="url(#s)"/><path d="M0 520Q200 470 330 330Q420 270 470 300Q540 340 600 360V800H0Z" fill="#a9c4ad"/><g fill="#f7f4ec" transform="translate(420 302)"><rect x="-38" y="-34" width="76" height="34"/><rect x="-22" y="-52" width="44" height="18"/><path d="M-12 -52a12 13 0 0 1 24 0z"/><rect x="-46" y="-42" width="10" height="42"/><rect x="36" y="-42" width="10" height="42"/></g><ellipse cx="300" cy="470" rx="380" ry="26" fill="#fff" opacity=".45"/><path d="M0 600Q200 520 380 560T600 540V800H0Z" fill="#7fa688"/><ellipse cx="200" cy="600" rx="340" ry="20" fill="#fff" opacity=".35"/><path d="M0 720Q150 735 260 745T600 700V800H0Z" fill="#5a8766"/>${couple(190,744,1.1,'#25332a')}`,
+ ()=>`<defs>${lg('s',[[0,'#ff9e86'],[.55,'#ffc79b'],[1,'#ffe4b8']])}</defs><rect width="600" height="800" fill="url(#s)"/>${[[120,140,40,'#d81b60'],[262,92,30,'#3f7f86'],[432,170,46,'#f2a900'],[524,84,28,'#7a1730'],[342,250,34,'#e2508f'],[180,300,26,'#5a79b0']].map(([x,y,s,c])=>`<path d="M${x} ${y+s}Q${x+40} ${y+s+120} ${x+140} ${y+400}" stroke="#7a4a3a" stroke-width="1" fill="none" opacity=".35"/><path d="M${x} ${y-s}L${x+s*.75} ${y}L${x} ${y+s}L${x-s*.75} ${y}Z" fill="${c}"/><path d="M${x} ${y-s}V${y+s}" stroke="#fff" stroke-width="1.2" opacity=".5"/>`).join('')}${Array.from({length:20},(_,i)=>`<rect x="${i*31}" y="${600-((i*37)%40)}" width="30" height="${40+((i*37)%40)}" fill="#e6a58a"/>`).join('')}${couple(320,718,1.25,'#3a1c27')}<rect y="632" width="600" height="168" fill="#b86a55"/>${Array.from({length:20},(_,i)=>`<rect x="${i*32}" y="618" width="16" height="16" fill="#b86a55"/>`).join('')}<g fill="#9e5240"><rect x="44" y="560" width="8" height="60"/><rect x="108" y="560" width="8" height="60"/><rect x="36" y="552" width="88" height="10"/><path d="M42 552a38 34 0 0 1 76 0z"/></g>`,
+ ()=>`<rect width="600" height="800" fill="#8a2a38"/>${[0,1,2].map(r=>Array.from({length:7},(_,c)=>`<path d="${archD(45+c*85,30+r*130,58,130+r*130,30+r*130+100*.3)}" fill="none" stroke="#d9a84e" stroke-width="3" opacity=".5"/>`).join('')).join('')}<path d="${archD(300,220,340,724,220+504*.3)}" fill="#f4e4c3"/><path d="${archD(300,220,340,724,220+504*.3)}" fill="none" stroke="#e0b45a" stroke-width="9"/><rect y="724" width="600" height="76" fill="#efe2cb"/>${Array.from({length:9},(_,i)=>`<ellipse cx="${60+i*60}" cy="770" rx="11" ry="4" fill="#7a4124"/><path d="M${60+i*60} 754q-4 8 0 12q4-4 0-12z" fill="#ffb238"/>`).join('')}${couple(300,732,1.4,'#3a1520')}`
+];
+const CAPS=['Lake Pichola, at sunset','Under the arch','The blue door','Out on the lake','The dunes, golden hour','Fairy lights','In the marigolds','The Monsoon Palace hills','Kites on the roof','The palace courtyard'];
+const PH=SCENES.map(f=>'data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice">${f()}</svg>`));
+const pic=(i,extra='')=>`<div class="ph"${extra}><img src="${PH[i]}" alt=""></div>`;
+
+/* ---------- pieces of the site, redrawn small ---------- */
+function leg(th){const H=[110,80],F=[120+9*Math.cos(th),122+9*Math.sin(th)],a=25,b=27,dx=F[0]-H[0],dy=F[1]-H[1],d=Math.min(a+b-.5,Math.hypot(dx,dy)),ph=Math.atan2(dy,dx),al=Math.acos((a*a+d*d-b*b)/(2*a*d));
+  const K=[H[0]+a*Math.cos(ph-al),H[1]+a*Math.sin(ph-al)];return `M${H}L${K[0].toFixed(1)} ${K[1].toFixed(1)}L${F[0].toFixed(1)} ${F[1].toFixed(1)}l6 0`;}
+function rickshaw(){const sp=Array.from({length:8},(_,i)=>`<path d="M0 0L${(24*Math.cos(i*.785)).toFixed(1)} ${(24*Math.sin(i*.785)).toFixed(1)}" stroke="#7d8b98" stroke-width="1"/>`).join('');
+  const wh=(x,c)=>`<g transform="translate(${x} 122)"><g class="${c}"><circle r="25" fill="none" stroke="#4d5a68" stroke-width="3.4"/>${sp}<circle r="3.4" fill="#4d5a68"/></g></g>`;
+  return `<ellipse cx="112" cy="148" rx="96" ry="4" fill="#7a3a2a" opacity=".18"/><path d="M14 102Q6 26 62 22L100 24L97 60H88Q70 40 38 58Z" fill="#f08a2e"/><path d="M14 102Q6 26 62 22" fill="none" stroke="#c9722b" stroke-width="2.4"/>${[[30,62],[26,44],[44,36],[60,30],[80,34],[48,50],[70,44],[22,82]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="2.6" fill="#ffe7a8"/>`).join('')}<rect x="28" y="62" width="11" height="38" rx="5" fill="#b5612a"/><rect x="30" y="92" width="66" height="11" rx="5" fill="#c9722b"/><path d="M96 100h20v8" fill="none" stroke="#c9722b" stroke-width="4"/>${wh(56,'w1')}<path d="M56 122H120L170 122M120 122L112 80M120 122L158 74M154 64L170 122" fill="none" stroke="#d05a2a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><rect x="100" y="76" width="22" height="5" rx="2.5" fill="#4a2418"/><path d="M146 62l14 4" stroke="#4a2418" stroke-width="4" stroke-linecap="round"/><path class="legB" d="${leg(Math.PI)}" fill="none" stroke="#e3d8c8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>${wh(170,'w2')}<g transform="translate(120 122)"><g class="crank"><path d="M-9 0H9" stroke="#4a2418" stroke-width="3"/><path d="M5 0h9M-14 0h9" stroke="#4a2418" stroke-width="5" stroke-linecap="round"/></g></g><path d="M104 80Q104 50 124 40L136 46Q124 60 120 80Z" fill="#fff"/><path d="M128 46L154 64" stroke="#fff" stroke-width="7" stroke-linecap="round"/><circle cx="154" cy="64" r="3.6" fill="#b98463"/><path class="legA" d="${leg(0)}" fill="none" stroke="#fff" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="133" cy="31" r="9" fill="#b98463"/><path d="M122 30Q124 14 138 16Q148 18 144 30Q134 22 122 30Z" fill="#e8552e"/><path d="M124 27Q112 30 110 42l6-2q1-7 8-9Z" fill="#e8552e"/><path d="M137.5 34.5q3 2.6 6.5 .5" stroke="#2b1a12" stroke-width="2" fill="none" stroke-linecap="round"/>`;}
+const lantern=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle class="lg" cx="15" cy="42" r="26" fill="#ffd879" fill-opacity=".28"/><path d="M15 0V22" stroke="#8a6a2a" stroke-width="1.5"/><path d="M9 22h12l3 6H6Z" fill="#8a6a2a"/><path d="M6 28h18l-3 26H9Z" fill="#c9a24a"/><path d="M8 30h14l-2.4 22H10.4Z" fill="#ffe9a8"/><path d="M15 28V54M6 28h18" stroke="#8a6a2a" stroke-width="1"/><path d="M9 54h12l-2 6h-8Z" fill="#8a6a2a"/></g>`;
+function scallop(y,c){let o=`<rect width="360" height="${y-10}" fill="${c}" opacity=".75"/>`;for(let x=11;x<370;x+=22)o+=`<circle cx="${x}" cy="${y-10}" r="10" fill="${c}" opacity=".75"/>`;return o;}
+function toran(w,n){let o='';const sg=w/n;for(let k=0;k<n;k++)for(let j=0;j<=15;j++){const t=j/15;o+=`<circle cx="${(k*sg+sg*t).toFixed(1)}" cy="${(-2+Math.sin(Math.PI*t)*sg*.17).toFixed(1)}" r="5.2" fill="${(j+k)%2?'#f08a2e':'#f2a900'}"/>`;}
+  for(let k=0;k<=n;k++)for(let j=1;j<(k%n?4:8);j++)o+=`<circle cx="${k*sg}" cy="${-2+j*9}" r="5" fill="${j%2?'#f2a900':'#f08a2e'}"/>`;return o;}
+const KALASH=`<path d="M40 6q10 9 6 22H34q-4-13 6-22Z" fill="#8a5a2a"/>${[-34,-17,17,34].map(a=>`<ellipse cx="40" cy="22" rx="4" ry="11" fill="#5c8a4a" transform="rotate(${a} 40 34)"/>`).join('')}<rect x="29" y="30" width="22" height="6" rx="2" fill="#b08a3a"/><path d="M23 47q0-11 17-11t17 11q0 21-17 23q-17-2-17-23Z" fill="#c9a24a"/><path d="M24 50h32" stroke="#7a1730" stroke-width="2.5"/><circle cx="40" cy="58" r="3" fill="#7a1730"/>`;
+/* the Shubh Vivah wall: the last doorway of the lane (360 x 570) */
+function vivahWall(){const ap=archD(180,167,302,570,167+403*.32);
+  return `<rect width="360" height="570" fill="#cf5148"/>${scallop(46,'#a8322c')}${Array.from({length:9},(_,i)=>{const x=22+i*39.5,h=34+(i*37)%40;return `<path d="M${x} 44V${44+h}" stroke="#3a2c5a" stroke-width="1"/><circle cx="${x}" cy="${50+h}" r="11" fill="#ffd879" opacity=".25"/><circle cx="${x}" cy="${50+h}" r="4.6" fill="#ffd879"/>`;}).join('')}<path d="${ap}" fill="#f8eedc"/><path d="${ap}" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="5"/><g transform="translate(152 296) scale(.7)">${KALASH}</g><text x="180" y="398" text-anchor="middle" font-family="Pinyon Script,cursive" font-size="50" fill="#8e1b2c">Shubh Vivah</text><text x="180" y="428" text-anchor="middle" font-family="Jost,sans-serif" font-weight="500" font-size="10.4" letter-spacing="2.2" fill="#2c5d63">FRI 29 JAN · EVENING</text><text x="180" y="456" text-anchor="middle" font-family="Cormorant Garamond,serif" font-style="italic" font-size="17" fill="#4a2418">The wedding</text>${lantern(4,171,.96)}${lantern(327,171,.96)}<rect y="534" width="360" height="36" fill="#a8322c" opacity=".45"/>`;}
+function laneEnd(){const g='le'+(uid++);return `<svg class="full" viewBox="0 0 360 740" aria-hidden="true"><defs><linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9b9a0"/><stop offset=".3" stop-color="#f1cdb8"/><stop offset="1" stop-color="#edc4ad"/></linearGradient></defs>${vivahWall()}<rect y="570" width="360" height="170" fill="url(#${g})"/><rect y="570" width="360" height="5" fill="#d99a80"/><g transform="translate(14 525) scale(1.187)">${rickshaw()}</g><rect width="360" height="740" fill="#3a1a50" opacity=".13"/></svg>`;}
+function facade(){const W='#f6e2c0',S='#dbb98a',L='#ffd879',R=(x,y,w,h,f)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}"/>`;let o='';
+  const win=(x,y,w,h)=>`<path d="M${x} ${y+h}V${y+h*.35}Q${x} ${y} ${x+w/2} ${y}Q${x+w} ${y} ${x+w} ${y+h*.35}V${y+h}Z" fill="${L}"/>`,dome=(cx,y,r)=>`<path d="M${cx-r} ${y}a${r} ${r} 0 0 1 ${2*r} 0Z" fill="${S}"/>`+R(cx-1,y-r-9,2,10,S)+R(cx-r-3,y-2,2*r+6,4,W);
+  o+=R(40,120,520,160,W)+R(34,114,532,8,S)+R(40,196,520,3,S);[64,104,144,184,394,434,474,514].forEach(x=>o+=win(x,140,22,40)+win(x,214,22,48));
+  [[20,90],[540,90]].forEach(([x,y])=>o+=R(x,y,40,190,W)+R(x-4,y-4,48,6,S)+dome(x+20,y-4,18)+win(x+10,y+22,20,36)+win(x+10,y+112,20,40));
+  o+=R(220,80,160,200,W)+R(214,74,172,8,S)+dome(300,74,34)+dome(236,74,13)+dome(364,74,13)+win(234,96,16,26)+win(350,96,16,26);
+  const a=archD(300,132,96,280,190);return o+`<path d="${a}" fill="${L}"/><path d="${a}" fill="none" stroke="${S}" stroke-width="4"/>`+R(0,280,600,20,S);}
+function venue(){const g='ve'+(uid++);return `<svg class="full" viewBox="0 0 360 740" aria-hidden="true"><defs><linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3b98d"/><stop offset=".45" stop-color="#e79490"/><stop offset="1" stop-color="#b0607a"/></linearGradient></defs><rect width="360" height="740" fill="url(#${g})"/><text x="180" y="104" text-anchor="middle" font-family="Jost,sans-serif" font-weight="500" font-size="9.5" letter-spacing="3.4" fill="#fff6e9" opacity=".85">THE PLACE</text><text x="180" y="168" text-anchor="middle" font-family="Pinyon Script,cursive" font-size="50" fill="#fff6e9">Shakti Vilas</text><text x="180" y="202" text-anchor="middle" font-family="Jost,sans-serif" font-size="10.5" letter-spacing=".5" fill="#fff6e9">by Trulyy · Debari, Udaipur, Rajasthan</text><g transform="translate(30 236) scale(.5)">${facade()}</g><text x="180" y="424" text-anchor="middle" font-family="Cormorant Garamond,serif" font-style="italic" font-size="15" fill="#fff6e9">Exact timings will be added here soon.</text><rect x="92" y="446" width="176" height="36" rx="18" fill="#7a1730"/><text x="180" y="467.5" text-anchor="middle" font-family="Jost,sans-serif" font-weight="500" font-size="8.4" letter-spacing="1.8" fill="#fff">OPEN IN GOOGLE MAPS</text>${[0,1].map(i=>`<rect x="24" y="${520+i*92}" width="312" height="78" rx="10" fill="#fff8ee" opacity=".93"/><text x="42" y="${550+i*92}" font-family="Cormorant Garamond,serif" font-weight="600" font-size="17" fill="#7a1730">${['By air','By train'][i]}</text><rect x="42" y="${562+i*92}" width="${[230,250][i]}" height="3" rx="1.5" fill="#3b2417" opacity=".35"/><rect x="42" y="${572+i*92}" width="${[160,190][i]}" height="3" rx="1.5" fill="#3b2417" opacity=".35"/>`).join('')}</svg>`;}
+const fingerAt=(el,x,y,o,s=1)=>{el.style.opacity=o.toFixed(3);el.style.transform=`translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) scale(${s})`;};
+const tag=(st,sel)=>[...st.querySelectorAll(sel)];
+
+/* ================= the options ================= */
+const DEMOS={};
+
+/* P1: one big arch, neighbours peeking in; guests swipe */
+DEMOS.carousel=(()=>{
+  const W=236,H=315,CY=246,AP=archBox(W,H);
+  const yk=[[0,0],[.5,0],[1.9,740]],ck=[[0,0],[2.7,0]];let t=2.7;
+  for(let k=1;k<10;k++){t+=.5;ck.push([t,k]);t+=.6;ck.push([t,k]);}
+  yk.push([t+.3,740],[t+1.7,1480],[t+2.9,1480]);
+  const Y=track(yk),C=track(ck),T=t+2.9;
+  return {T,poster:2.8,
+    build(st){
+      st.innerHTML=`<div class="page"><div class="blk" style="top:0">${laneEnd()}</div>
+        <div class="blk gold" style="top:740px"><svg class="full" viewBox="0 0 360 740" aria-hidden="true">${toran(360,3)}<ellipse cx="180" cy="566" rx="104" ry="7" fill="#7a3a2a" opacity=".16"/></svg>
+          <p class="d-eb" style="top:72px">Photographs</p><p class="d-sc" style="top:88px">Us, so far</p>
+          ${PH.map((_,i)=>`<div class="ca"><div class="ph" style="clip-path:path('${AP}')"><img src="${PH[i]}" alt=""></div><svg class="trim" viewBox="0 0 ${W} ${H}" aria-hidden="true"><path d="${AP}"/></svg></div>`).join('')}
+          <p class="d-ct" style="top:590px"></p><div class="dots" style="top:620px">${PH.map(()=>`<svg viewBox="0 0 10 12.5"><path d="${archBox(10,12.5)}"/></svg>`).join('')}</div><div class="finger"></div></div>
+        <div class="blk" style="top:1480px">${venue()}</div></div>`;
+      const x={page:st.querySelector('.page'),cards:tag(st,'.ca'),phs:tag(st,'.ca .ph'),imgs:tag(st,'.ca img'),trims:tag(st,'.ca .trim path'),ct:st.querySelector('.d-ct'),dots:tag(st,'.dots svg'),fing:st.querySelector('.finger'),ttl:tag(st,'.gold .d-eb,.gold .d-sc')};
+      x.len=x.trims[0].getTotalLength()||1100;x.trims.forEach(p=>p.style.strokeDasharray=x.len);return x;},
+    render(x,t){
+      const y=Y(t),c=C(t),en=clamp(1-(740-y)/520);
+      x.page.style.transform=`translate3d(0,${-y.toFixed(1)}px,0)`;
+      x.ttl.forEach((e,i)=>{const v=seg(en,.05+i*.12,.45+i*.12);e.style.opacity=v;e.style.transform=`translateY(${((1-v)*14).toFixed(1)}px)`;});
+      const draw=seg(en,.2,.75),rev=seg(en,.5,1),slide=1-ez(seg(en,.55,1));
+      x.cards.forEach((el,k)=>{const d=k-c,ad=Math.abs(d),sg=Math.sign(d),m=Math.min(ad,1);
+        if(ad>2.4){el.style.visibility='hidden';return;}el.style.visibility='visible';
+        const px=180+sg*(m*226+Math.max(ad-1,0)*190+slide*90),s=1-.24*m;
+        el.style.transform=`translate3d(${(px-W/2).toFixed(1)}px,${CY}px,0) scale(${s.toFixed(4)})`;el.style.zIndex=String(10-Math.round(ad*3));
+        x.phs[k].style.setProperty('--dim',(.3*m).toFixed(3));x.phs[k].style.opacity=rev;x.phs[k].style.filter=rev<1?`blur(${((1-rev)*7).toFixed(1)}px)`:'none';
+        x.imgs[k].style.transform=`translate3d(${(-d*44).toFixed(1)}px,${((1-rev)*18).toFixed(1)}px,0) scale(1.17)`;
+        x.trims[k].style.strokeDashoffset=(x.len*(1-draw)).toFixed(1);});
+      const i=Math.round(c);x.ct.textContent=`${i+1} / 10`;x.ct.style.opacity=rev;x.dots.forEach((e,k)=>e.classList.toggle('on',k===i));
+      const f=c-Math.floor(c);fingerAt(x.fing,262-160*f,CY+200,f>.005&&f<.995?Math.sin(Math.PI*f):0);},
+    label(t){const y=Y(t),c=C(t),f=c-Math.floor(c);
+      if(y<10)return 'The rickshaw lane ends at the Shubh Vivah doorway';if(y<735)return 'Coming in: the arch draws its gold outline, then the photo sharpens into it';
+      if(y>745)return 'Going out: the page scrolls on to Shakti Vilas';if(f>.01&&f<.99)return `Swipe: photo ${Math.floor(c)+2} slides in, the one inside moving slower than its frame`;return `Photo ${Math.round(c)+1} of 10, with the next ones peeking in`;}
+  };})();
+
+/* P2: one jharokha; scrolling opens it, then brings each photo up through it */
+DEMOS.window=(()=>{
+  const OPEN=320,STEP=300,HOLD=200,CLOSE=320,L=OPEN+9*STEP+HOLD+CLOSE,SH=740+L,VT=740+SH,OX=55,OY=212,OW=250,OH=330;
+  const yk=[[0,0],[.5,0],[1.8,740]];let t=1.8;t+=1.3;yk.push([t,740+OPEN]);t+=.8;yk.push([t,740+OPEN]);
+  for(let i=1;i<10;i++){t+=.6;yk.push([t,740+OPEN+i*STEP]);t+=.6;yk.push([t,740+OPEN+i*STEP]);}
+  t+=.3;yk.push([t,740+OPEN+9*STEP+HOLD]);t+=1.1;yk.push([t,740+L]);t+=.2;yk.push([t,740+L]);t+=1.4;yk.push([t,VT]);t+=1.2;yk.push([t,VT]);
+  const Y=track(yk),T=t;
+  const frame=()=>{const a=archD(180,OY,OW,OY+OH,OY+OH*.32),b=archD(180,OY-15,OW+30,OY+OH,OY-15+(OH+15)*.32);
+    return `<path d="${b}" fill="#f2d6ad"/><path d="${b}" fill="none" stroke="#c48b58" stroke-width="2"/><path d="${a}" fill="#3a2418"/>
+    <path d="M70 186Q180 104 290 186Z" fill="#dca877"/><path d="M70 186Q180 104 290 186" fill="none" stroke="#b97f4f" stroke-width="2"/><g transform="translate(166 108) scale(.36)">${KALASH}</g>
+    <path d="M38 205L322 205L302 184L58 184Z" fill="#c48a58"/><rect x="38" y="205" width="284" height="5" fill="#a8703f"/>
+    <rect x="26" y="${OY+OH}" width="308" height="16" fill="#c48a58"/><rect x="26" y="${OY+OH+16}" width="308" height="4" fill="#a8703f"/>
+    ${[56,118,242,304].map(x=>`<path d="M${x-12} ${OY+OH+20}h24l-6 22h-12z" fill="#d9a372"/>`).join('')}
+    ${boug([[0,150,58,70,70],[360,128,52,60,60],[6,560,30,40,24],[354,570,28,36,22]],21,1.1)}`;};
+  return {T,poster:3.6,
+    build(st){
+      st.innerHTML=`<div class="page"><div class="blk" style="top:0">${laneEnd()}</div>
+        <div class="blk" style="top:740px;height:${SH}px"><div class="pin wall"><svg class="full" viewBox="0 0 360 740" aria-hidden="true">${frame()}</svg>
+          <p class="d-eb" style="top:32px">Photographs</p><p class="d-sc" style="top:46px;font-size:40px">Us, so far</p>
+          <div class="op" style="left:${OX}px;top:${OY}px;width:${OW}px;height:${OH}px"><div class="stack" style="clip-path:path('${archBox(OW,OH)}')">${PH.map((_,i)=>pic(i)).join('')}</div>
+            <div class="sh l" style="clip-path:path('${halfArch(OW,OH,-1)}')"></div><div class="sh r" style="clip-path:path('${halfArch(OW,OH,1)}')"></div></div>
+          <p class="cap" style="top:${OY+OH+52}px"></p><div class="thumbs" style="top:${OY+OH+86}px">${PH.map(()=>`<svg viewBox="0 0 11 14"><path d="${archBox(11,14)}"/></svg>`).join('')}</div>
+          <div class="tint"></div></div></div>
+        <div class="blk" style="top:${VT}px">${venue()}</div></div>`;
+      return {page:st.querySelector('.page'),pin:st.querySelector('.pin'),stack:st.querySelector('.stack'),phs:tag(st,'.stack .ph'),shL:st.querySelector('.sh.l'),shR:st.querySelector('.sh.r'),cap:st.querySelector('.cap'),th:tag(st,'.thumbs svg'),tint:st.querySelector('.tint'),ttl:tag(st,'.pin .d-eb,.pin .d-sc')};},
+    render(x,t){
+      const y=Y(t),s=clamp(y-740,0,L);x.page.style.transform=`translate3d(0,${-y.toFixed(1)}px,0)`;x.pin.style.transform=`translate3d(0,${s.toFixed(1)}px,0)`;
+      const op=ez(seg(s,0,OPEN))*(1-ez(seg(s,L-CLOSE,L))),ang=op*162;
+      x.shL.style.transform=`rotateY(${(-ang).toFixed(2)}deg)`;x.shR.style.transform=`rotateY(${ang.toFixed(2)}deg)`;
+      x.shL.style.filter=x.shR.style.filter=`brightness(${(1-op*.4).toFixed(3)})`;
+      x.stack.style.filter=`brightness(${(.45+.55*op).toFixed(3)})`;
+      const fr=clamp((s-OPEN)/STEP,0,9),fl=Math.floor(fr),f=fl+ez(fr-fl);
+      x.phs.forEach((e,k)=>{const r=k-f;if(r>=1||r<=-1){e.style.visibility='hidden';return;}e.style.visibility='visible';e.style.zIndex=String(k);
+        if(r>0){e.style.transform=`translate3d(0,${(r*OH).toFixed(1)}px,0)`;e.style.setProperty('--dim','0');}
+        else{e.style.transform=`translate3d(0,${(r*OH*.32).toFixed(1)}px,0) scale(${(1-r*.06).toFixed(4)})`;e.style.setProperty('--dim',(-r*.55).toFixed(3));}});
+      const i=Math.round(f);x.cap.textContent=CAPS[i];x.cap.style.opacity=(op*(1-clamp(Math.abs(f-i)*3))).toFixed(3);x.th.forEach((e,k)=>e.classList.toggle('on',k===i&&op>.5));
+      x.tint.style.opacity=(s/L*.55).toFixed(3);},
+    label(t){const y=Y(t),s=y-740;if(y<10)return 'The rickshaw lane ends at the Shubh Vivah doorway';if(s<0)return 'Coming in: the jharokha rises into view and stays put';
+      if(s<OPEN-3)return 'The shutters swing open and the first photo brightens';
+      if(s<=OPEN+9*STEP+HOLD){const fr=Math.min(9,(s-OPEN)/STEP),i=Math.round(fr);return Math.abs(fr-i)<.03?`Photo ${i+1} of 10, with its caption on the sill`:`Photo ${Math.floor(fr)+2} slides up over photo ${Math.floor(fr)+1}`;}
+      if(s<L)return 'Going out: after the tenth the shutters close; the wall has turned from gold to rose';return 'The page moves on to Shakti Vilas at dusk';}
+  };})();
+
+/* P3: the rickshaw rides on past a haveli wall of framed photos */
+DEMOS.lane=(()=>{
+  const RIDE=680,RL=4*RIDE,SH=740+RL,VT=SH;
+  const FR=[[1,'arch',22,170,160,214],[1,'oval',206,150,132,160],[1,'rect',206,338,132,96],[2,'rect',22,128,150,220],[2,'arch',188,128,150,220],[3,'rect',40,104,280,176],[3,'round',52,312,118,118],[3,'arch',196,300,116,152],[4,'arch',24,140,150,212],[4,'arch',186,140,150,212]];
+  const yk=[[0,0],[.8,0]];let t=.8;for(let i=1;i<=4;i++){t+=1;yk.push([t,i*RIDE]);t+=1.3;yk.push([t,i*RIDE]);}t+=1.5;yk.push([t,VT]);t+=1.2;yk.push([t,VT]);
+  const Y=track(yk),T=t;
+  const wall=(i)=>`<svg class="full" style="height:570px" viewBox="0 0 360 570" aria-hidden="true"><rect width="360" height="570" fill="#5a78ad"/>${Array.from({length:10},(_,k)=>`<rect x="${(k*83+i*41)%330}" y="${(k*127+i*59)%520}" width="${30+(k*29)%50}" height="${14+(k*11)%20}" fill="#fff" opacity=".05"/>`).join('')}${scallop(46,'#46659a')}<rect y="534" width="360" height="36" fill="#46659a" opacity=".55"/>${i===4?`<g transform="translate(0 64)">${toran(360,2)}</g>`:''}</svg>`;
+  return {T,poster:2.3,
+    build(st){
+      const frames=FR.map(([p,sh,fx,fy,w,h],k)=>`<div class="fr" data-k="${k}" style="left:${p*360+fx}px;top:${fy}px;width:${w}px;height:${h}px;transform-origin:50% -19px"><div class="ph" style="clip-path:path('${shapeD(sh,w,h)}')"><img src="${PH[k]}" alt=""></div><svg class="fs" viewBox="0 0 ${w} ${h}" aria-hidden="true"><path class="o" d="${shapeD(sh,w,h)}"/><path class="i" d="${shapeD(sh,w,h)}"/></svg><i class="nail"></i></div>`).join('');
+      st.innerHTML=`<div class="page"><div class="blk" style="top:0;height:${SH}px"><div class="pin">
+          <div class="trk"><div class="pn"><svg class="full" style="height:570px" viewBox="0 0 360 570" aria-hidden="true">${vivahWall()}</svg></div>${[1,2,3,4].map(i=>`<div class="pn">${wall(i)}</div>`).join('')}<div class="pn" style="background:#b9606a"></div>
+            <div class="plq" style="left:${360+96}px"><p class="d-eb">Photographs</p><p class="d-sc">Us, so far</p></div>${frames}</div>
+          <div class="ground"></div><svg class="rk" viewBox="0 0 220 150" aria-hidden="true">${rickshaw()}</svg><div class="dk"></div></div></div>
+        <div class="blk" style="top:${VT}px">${venue()}</div></div>`;
+      return {page:st.querySelector('.page'),pin:st.querySelector('.pin'),trk:st.querySelector('.trk'),ground:st.querySelector('.ground'),frs:tag(st,'.fr'),imgs:tag(st,'.fr img'),dk:st.querySelector('.dk'),w1:st.querySelector('.w1'),w2:st.querySelector('.w2'),crank:st.querySelector('.crank'),legA:st.querySelector('.legA'),legB:st.querySelector('.legB'),lgs:tag(st,'.trk .lg')};},
+    render(x,t){
+      const y=Y(t),s=clamp(y,0,RL),fr=s/RIDE,fl=Math.floor(fr),f=Math.min(4,fl+ez(fr-fl)),D=f*360;
+      x.page.style.transform=`translate3d(0,${-y.toFixed(1)}px,0)`;x.pin.style.transform=`translate3d(0,${s.toFixed(1)}px,0)`;
+      x.trk.style.transform=`translate3d(${(-D).toFixed(1)}px,0,0)`;x.ground.style.backgroundPosition=`${(-D).toFixed(1)}px 0,0 0`;
+      const ang=D/29.7,deg=ang*57.2958;x.w1.setAttribute('transform',`rotate(${deg.toFixed(1)})`);x.w2.setAttribute('transform',`rotate(${deg.toFixed(1)})`);x.crank.setAttribute('transform',`rotate(${(deg*.5).toFixed(1)})`);
+      x.legA.setAttribute('d',leg(ang*.5));x.legB.setAttribute('d',leg(ang*.5+Math.PI));
+      x.frs.forEach((e,k)=>{const [p,,fx,,w]=FR[k],sx=p*360+fx+w/2-D,dev=clamp((400-sx)/220);
+        e.style.transform=`rotate(${((1-ez(dev))*3).toFixed(2)}deg)`;
+        x.imgs[k].style.filter=dev>=1?'none':`sepia(${(1-dev).toFixed(3)}) saturate(${(.55+.45*dev).toFixed(3)}) brightness(${(.9+.1*dev).toFixed(3)})`;});
+      const dusk=seg(f,2.6,4);x.dk.style.opacity=(dusk*.3).toFixed(3);x.lgs.forEach(g=>g.setAttribute('fill-opacity',(.1+.4*dusk).toFixed(3)));},
+    label(t){const y=Y(t);if(y>RL+5)return 'Going out: the lane ends and the page moves on to Shakti Vilas';const f=y/RIDE,p=Math.round(f);
+      if(f<.02)return 'Shubh Vivah, the last doorway in the lane';if(Math.abs(f-p)<.02)return ['','Coming in: a blue haveli wall with a small "Us, so far" plaque; photos 1 to 3','Photos 4 and 5: each warms from sepia to colour as it reaches the middle','Photos 6 to 8','Photos 9 and 10, as dusk falls and the lanterns light'][p];return 'The rickshaw rides on; each frame settles straight on its nail';}
+  };})();
+
+/* P4: a tall haveli front; each window opens on a photo as you scroll past */
+DEMOS.facade=(()=>{
+  const ROOF=270,FLOOR=270,GROUND=300,F=ROOF+5*FLOOR+GROUND,VT=740+F,WX=[30,202],WW=128,WH=168,WY=58;
+  const Y=track([[0,0],[.6,0],[11,VT,'cruise'],[12.3,VT]]),T=12.3;
+  function face(){let o=`<defs><linearGradient id="fsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fcdcaa"/><stop offset="1" stop-color="#f4b48c"/></linearGradient></defs><rect width="360" height="${ROOF}" fill="url(#fsky)"/><circle cx="292" cy="196" r="34" fill="#fff1d2" opacity=".8"/>`;
+    o+=`<rect y="${ROOF-40}" width="360" height="${F-ROOF+40}" fill="#ecc597"/>`;for(let yy=ROOF;yy<F;yy+=46)o+=`<rect y="${yy}" width="360" height="1" fill="#a86c3c" opacity=".14"/>`;
+    for(let x=4;x<360;x+=22)o+=`<rect x="${x}" y="${ROOF-54}" width="12" height="16" fill="#e2b787"/>`;
+    o+=`<rect y="${ROOF-40}" width="360" height="12" fill="#d7a676"/>`;
+    [[56,1],[304,1],[180,1.12]].forEach(([cx,k])=>{const b=ROOF-54;o+=`<g fill="#d9a674">${[-1.9,-.65,.6,1.55].map(p=>`<rect x="${cx+p*13*k}" y="${b-34*k}" width="${4.5*k}" height="${34*k}"/>`).join('')}<rect x="${cx-34*k}" y="${b-40*k}" width="${68*k}" height="${7*k}"/><path d="M${cx-24*k} ${b-40*k}C${cx-30*k} ${b-62*k} ${cx-6*k} ${b-70*k} ${cx} ${b-82*k}C${cx+6*k} ${b-70*k} ${cx+30*k} ${b-62*k} ${cx+24*k} ${b-40*k}Z"/><rect x="${cx-1.2}" y="${b-92*k}" width="2.4" height="${12*k}"/></g>`;});
+    for(let i=0;i<5;i++){const ft=ROOF+i*FLOOR;o+=`<rect y="${ft+FLOOR-10}" width="360" height="10" fill="#d7a676"/>`;
+      WX.forEach(wx=>{const cx=wx+WW/2,top=ft+WY;o+=`<path d="${archD(cx,top-12,WW+24,top+WH,top-12+(WH+12)*.32)}" fill="#f4dcb4"/><path d="M${wx-18} ${top-14}L${wx+WW+18} ${top-14}L${wx+WW+4} ${top-34}L${wx-4} ${top-34}Z" fill="#c48a58"/><rect x="${wx-14}" y="${top+WH}" width="${WW+28}" height="11" fill="#c48a58"/>${[wx+16,wx+WW-16].map(bx=>`<path d="M${bx-9} ${top+WH+11}h18l-5 16h-8z" fill="#d9a372"/>`).join('')}<g transform="translate(${wx} ${top-30})">${Array.from({length:9},(_,j)=>`<circle cx="${(j*WW/8).toFixed(1)}" cy="${(Math.sin(Math.PI*j/8)*9).toFixed(1)}" r="3.4" fill="${j%2?'#f08a2e':'#f2a900'}"/>`).join('')}</g>`;});}
+    const gt=ROOF+5*FLOOR,da=archD(180,gt+56,150,F,gt+56+(F-gt-56)*.32);
+    o+=`<path d="${archD(180,gt+40,178,F,gt+40+(F-gt-40)*.32)}" fill="#f4dcb4"/><path d="${da}" fill="#7a4a2a"/><path d="M180 ${gt+80}V${F}" stroke="#5d361d" stroke-width="3"/>${Array.from({length:24},(_,i)=>`<circle cx="${128+(i%6)*21}" cy="${gt+140+Math.floor(i/6)*36}" r="2.6" fill="#e7c46a"/>`).join('')}`;
+    [42,318].forEach(px=>o+=`<path d="M${px-20} ${F-56}h40l-6 50h-28z" fill="#b5612a"/><circle cx="${px-8}" cy="${F-68}" r="15" fill="#5f8f45"/><circle cx="${px+10}" cy="${F-72}" r="13" fill="#6f9f50"/><circle cx="${px}" cy="${F-86}" r="12" fill="#4f7a3a"/><circle cx="${px+4}" cy="${F-80}" r="4" fill="#d81b60"/><circle cx="${px-10}" cy="${F-74}" r="3.6" fill="#f2a900"/>`);
+    return o+lantern(86,gt+60,.9)+lantern(246,gt+60,.9);}
+  return {T,poster:5.4,
+    build(st){
+      st.innerHTML=`<div class="page"><div class="blk" style="top:0">${laneEnd()}</div>
+        <div class="blk" style="top:740px;height:${F}px"><svg class="full" style="height:${F}px" viewBox="0 0 360 ${F}" aria-hidden="true">${face()}</svg>
+          <p class="d-eb" style="top:34px">Photographs</p><p class="d-sc" style="top:48px">Us, so far</p>
+          ${PH.map((_,k)=>{const fl=Math.floor(k/2),wx=WX[k%2],top=ROOF+fl*FLOOR+WY;return `<div class="glo" style="left:${wx-30}px;top:${top+WH-40}px;width:${WW+60}px;height:120px"></div><div class="win" style="left:${wx}px;top:${top}px;width:${WW}px;height:${WH}px"><div class="stack" style="clip-path:path('${archBox(WW,WH)}')">${pic(k)}</div><div class="sh l" style="clip-path:path('${halfArch(WW,WH,-1)}');background-size:15px 17px,100% 100%"></div><div class="sh r" style="clip-path:path('${halfArch(WW,WH,1)}');background-size:15px 17px,100% 100%"></div></div>`;}).join('')}</div>
+        <div class="blk" style="top:${VT}px">${venue()}</div></div>`;
+      return {page:st.querySelector('.page'),wins:tag(st,'.win'),glo:tag(st,'.glo'),ttl:tag(st,'.d-eb,.d-sc')};},
+    render(x,t){
+      const y=Y(t),top=740-y;x.page.style.transform=`translate3d(0,${-y.toFixed(1)}px,0)`;
+      x.wins.forEach((w,k)=>{const fl=Math.floor(k/2),cy=top+ROOF+fl*FLOOR+WY+WH/2,o=ez(clamp((560-cy-(k%2)*40)/170)),a=o*106;
+        w.children[1].style.transform=`rotateY(${(-a).toFixed(2)}deg)`;w.children[2].style.transform=`rotateY(${a.toFixed(2)}deg)`;
+        w.children[1].style.filter=w.children[2].style.filter=`brightness(${(1-o*.4).toFixed(3)})`;
+        const ph=w.firstChild.firstChild;ph.style.transform=`scale(${(1.12-.12*o).toFixed(4)})`;ph.style.setProperty('--dim',((1-o)*.55).toFixed(3));x.glo[k].style.opacity=(o*.75).toFixed(3);});},
+    label(t){const y=Y(t),top=740-y;if(y<10)return 'The rickshaw lane ends at the Shubh Vivah doorway';if(top>-60)return 'Coming in: the roofline and its chhatris rise against a golden sky';
+      let n=0;for(let k=0;k<10;k++){const cy=top+ROOF+Math.floor(k/2)*FLOOR+WY+WH/2;if((560-cy-(k%2)*40)/170>=1)n++;}
+      if(n<10)return `Floor ${Math.floor(n/2)+1}: the windows open, left then right, as they reach the middle`;if(y<VT-10)return 'All ten windows are open; the street door is at the bottom';return 'Going out: the page moves on to Shakti Vilas';}
+  };})();
+
+/* P5: prints drop onto a block-printed cloth, then spread into an album page */
+DEMOS.prints=(()=>{
+  const DROP=240,FALL=200,SP0=10*DROP+120,SP=360,L=SP0+SP+200,SH=740+L,VT=740+SH,r=rng(77);
+  const land=PH.map((_,k)=>({x:180+(r()-.5)*68,y:404+(r()-.5)*46,a:(r()-.5)*18,sd:k%2?1:-1}));
+  const grid=PH.map((_,k)=>({x:k<9?72+(k%3)*108:180,y:212+Math.floor(k/3)*140,a:(r()-.5)*5}));
+  const yk=[[0,0],[.5,0],[1.7,740]];let t=1.7;for(let k=0;k<10;k++){t+=.65;yk.push([t,740+k*DROP+FALL]);t+=.45;yk.push([t,740+k*DROP+FALL]);}
+  t+=1.2;yk.push([t,740+SP0+SP]);t+=1.4;yk.push([t,740+SP0+SP]);t+=.3;yk.push([t,740+L]);t+=1.4;yk.push([t,VT]);t+=1.2;yk.push([t,VT]);
+  const Y=track(yk),T=t;
+  const buti=`url('data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><g fill="#34477f" opacity=".5"><g transform="translate(10 10)"><circle r="2"/><ellipse cy="-4.6" rx="1.9" ry="3"/><ellipse cy="4.6" rx="1.9" ry="3"/><ellipse cx="-4.6" rx="3" ry="1.9"/><ellipse cx="4.6" rx="3" ry="1.9"/></g><g transform="translate(30 30)"><circle r="2"/><ellipse cy="-4.6" rx="1.9" ry="3"/><ellipse cy="4.6" rx="1.9" ry="3"/><ellipse cx="-4.6" rx="3" ry="1.9"/><ellipse cx="4.6" rx="3" ry="1.9"/></g><circle cx="30" cy="10" r="1.2"/><circle cx="10" cy="30" r="1.2"/></g></svg>')}')`;
+  const border=y=>`<rect y="${y}" width="360" height="16" fill="#9c2f2f"/>${Array.from({length:30},(_,i)=>`<path d="M${i*12} ${y+11}l6-6 6 6" fill="none" stroke="#f4e7d0" stroke-width="1.4"/>`).join('')}`;
+  return {T,poster:6.2,
+    build(st){
+      st.innerHTML=`<div class="page"><div class="blk" style="top:0">${laneEnd()}</div>
+        <div class="blk" style="top:740px;height:${SH}px"><div class="pin" style="background:${buti} 0 0/40px 40px,#f4e7d0"><svg class="full" viewBox="0 0 360 740" aria-hidden="true">${border(0)}${border(724)}</svg>
+          <p class="d-eb" style="top:42px">Photographs</p><p class="d-sc" style="top:56px;font-size:42px">Us, so far</p>
+          ${PH.map((_,k)=>`<div class="print">${pic(k)}<p>${CAPS[k]}</p></div>`).join('')}</div></div>
+        <div class="blk" style="top:${VT}px">${venue()}</div></div>`;
+      return {page:st.querySelector('.page'),pin:st.querySelector('.pin'),pr:tag(st,'.print'),phs:tag(st,'.print .ph'),ttl:tag(st,'.pin .d-eb,.pin .d-sc')};},
+    render(x,t){
+      const y=Y(t),s=clamp(y-740,0,L),sp=ez(seg(s,SP0,SP0+SP));x.page.style.transform=`translate3d(0,${-y.toFixed(1)}px,0)`;x.pin.style.transform=`translate3d(0,${s.toFixed(1)}px,0)`;
+      x.pr.forEach((e,k)=>{const d=eo(seg(s,k*DROP,k*DROP+FALL));if(d<=0){e.style.visibility='hidden';return;}e.style.visibility='visible';
+        let above=0;for(let j=k+1;j<10;j++)above+=seg(s,j*DROP+FALL*.5,j*DROP+FALL);above=Math.min(above,4);
+        const Lk=land[k],G=grid[k],px=lerp(Lk.x+Lk.sd*80,Lk.x,d),py=lerp(-360,Lk.y,d),pa=lerp(Lk.a+Lk.sd*30,Lk.a,d),ps=1-above*.025;
+        const X=lerp(px,G.x,sp),Yy=lerp(py,G.y,sp),A=lerp(pa,G.a,sp),S=lerp(ps,.5,sp);
+        e.style.transform=`translate3d(${(X-100).toFixed(1)}px,${(Yy-125).toFixed(1)}px,0) rotate(${A.toFixed(2)}deg) scale(${S.toFixed(4)})`;e.style.zIndex=String(k);
+        x.phs[k].style.setProperty('--dim',((1-sp)*above*.06).toFixed(3));});},
+    label(t){const y=Y(t),s=y-740;if(y<10)return 'The rickshaw lane ends at the Shubh Vivah doorway';if(s<0)return 'Coming in: a block-printed cloth comes up and stays put';
+      if(s<SP0){const k=Math.min(9,Math.floor(s/DROP));return seg(s,k*DROP,k*DROP+FALL)<1?`Print ${k+1} turns as it falls`:`Print ${k+1} of 10 has landed; the ones underneath dim a little`;}
+      if(s<SP0+SP-2)return 'After the tenth, the pile spreads out into an album page';if(s<L)return 'All ten at a glance';return 'Going out: the page moves on to Shakti Vilas';}
+  };})();
+
+/* P6: two rows of arch photos drifting in opposite directions */
+DEMOS.band=(()=>{
+  const SEC=820,VT=740+SEC,AW=128,AH=170,P=142,LOOP=10*P,AP=archBox(AW,AH);
+  const Y=track([[0,0],[.5,0],[2.2,740],[6.2,740],[7.8,VT],[9,VT]]),T=9;
+  return {T,poster:3,
+    build(st){
+      const band=(off,cls)=>`<div class="band ${cls}" style="top:${off}px">${Array.from({length:10},(_,i)=>`<div class="bi"><div class="ph" style="clip-path:path('${AP}')"><img src="${PH[(cls==='a'?0:5)+i%5]}" alt=""></div><svg class="trim" viewBox="0 0 ${AW} ${AH}" aria-hidden="true"><path d="${AP}" style="stroke-width:3"/></svg></div>`).join('')}</div>`;
+      st.innerHTML=`<div class="page"><div class="blk" style="top:0">${laneEnd()}</div>
+        <div class="blk gold" style="top:740px;height:${SEC}px"><svg class="full" viewBox="0 0 360 740" aria-hidden="true">${toran(360,3)}</svg>
+          <p class="d-eb" style="top:78px">Photographs</p><p class="d-sc" style="top:94px">Us, so far</p>${band(214,'a')}${band(410,'b')}<p class="pill" style="top:616px">See all ten photos</p></div>
+        <div class="blk" style="top:${VT}px">${venue()}</div></div>`;
+      return {page:st.querySelector('.page'),a:st.querySelector('.band.a'),b:st.querySelector('.band.b'),ia:tag(st,'.band.a .bi'),ib:tag(st,'.band.b .bi')};},
+    render(x,t){
+      const y=Y(t),en=clamp(1-(740-y)/560),extra=(1-ez(en))*300,v=(Y(t+.03)-y)/.03,sk=clamp(-v/110,-8,8),dr=t*24+y*.3;
+      x.page.style.transform=`translate3d(0,${-y.toFixed(1)}px,0)`;x.a.style.transform=x.b.style.transform=`skewX(${sk.toFixed(2)}deg)`;
+      x.ia.forEach((e,i)=>e.style.transform=`translate3d(${(mod(i*P-dr,LOOP)-P+extra).toFixed(1)}px,0,0)`);
+      x.ib.forEach((e,i)=>e.style.transform=`translate3d(${(mod(i*P+dr,LOOP)-P-extra).toFixed(1)}px,0,0)`);},
+    label(t){const y=Y(t),v=Math.abs(Y(t+.03)-y);if(y<10)return 'The rickshaw lane ends at the Shubh Vivah doorway';if(y<735)return 'Coming in: the two rows slide in from opposite sides';
+      if(y>745)return v>1?'Scrolling speeds the rows up and leans them; on to Shakti Vilas':'Going out: Shakti Vilas';return 'Both rows drift by themselves; "See all ten" opens the full-screen view';}
+  };})();
+
+/* Tapping a photo: it grows out of its frame to fill the screen */
+DEMOS.lightbox=(()=>{
+  const FW=96,FH=128,FY=270,FX=[70,180,290],FULL={x:0,y:130,w:360,h:480};
+  const O=track([[0,0],[1.4,0],[2.15,1],[5.4,1],[6.15,0],[7.6,0]]),X=track([[0,2],[3.3,2],[4,3],[7.6,3]]),T=7.6;
+  const rect=k=>({x:FX[k-1]-FW/2,y:FY,w:FW,h:FH});
+  return {T,poster:2.6,
+    build(st){
+      st.innerHTML=`<div class="blk gold" style="top:0"><svg class="full" viewBox="0 0 360 740" aria-hidden="true">${toran(360,3)}</svg>
+        <p class="d-eb" style="top:150px">Photographs</p><p class="d-sc" style="top:166px">Us, so far</p>
+        ${[1,2,3].map(k=>`<div class="fr" style="left:${FX[k-1]-FW/2}px;top:${FY}px;width:${FW}px;height:${FH}px;filter:none"><div class="ph" style="clip-path:path('${archBox(FW,FH)}')"><img src="${PH[k]}" alt=""></div><svg class="trim" viewBox="0 0 ${FW} ${FH}" aria-hidden="true"><path d="${archBox(FW,FH)}" style="stroke-width:3"/></svg></div>`).join('')}
+        <p class="d-ct" style="top:436px;letter-spacing:.16em">Tap any photo</p>
+        <div class="lbk"></div><div class="lbc">${[1,2,3,4].map(k=>pic(k)).join('')}</div><div class="lbt"><span class="n">3 / 10</span><i>×</i></div><div class="finger"></div></div>`;
+      return {frs:tag(st,'.fr'),lbk:st.querySelector('.lbk'),lbc:st.querySelector('.lbc'),phs:tag(st,'.lbc .ph'),lbt:st.querySelector('.lbt'),n:st.querySelector('.lbt .n'),fing:st.querySelector('.finger')};},
+    render(x,t){
+      const o=O(t),xi=X(t),k=Math.round(xi),fr=rect(k),r={x:lerp(fr.x,FULL.x,o),y:lerp(fr.y,FULL.y,o),w:lerp(fr.w,FULL.w,o),h:lerp(fr.h,FULL.h,o)};
+      x.lbk.style.opacity=(o*.94).toFixed(3);x.lbt.style.opacity=seg(o,.6,1).toFixed(3);x.n.textContent=`${Math.round(xi)+1} / 10`;
+      x.frs.forEach((e,i)=>e.style.opacity=o>0&&i+1===k?0:1);
+      if(o<=0){x.lbc.style.visibility='hidden';}else{x.lbc.style.visibility='visible';
+        Object.assign(x.lbc.style,{left:r.x.toFixed(1)+'px',top:r.y.toFixed(1)+'px',width:r.w.toFixed(1)+'px',height:r.h.toFixed(1)+'px',clipPath:`path('${archD(r.w/2,0,r.w,r.h,r.h*.32*(1-o))}')`});
+        x.phs.forEach((e,i)=>{e.style.transform=`translate3d(${((i+1-xi)*(r.w+24)).toFixed(1)}px,0,0)`;});}
+      if(t>1&&t<1.5)fingerAt(x.fing,180,FY+FH/2,Math.sin(Math.PI*seg(t,1,1.5)),1-.15*Math.sin(Math.PI*seg(t,1,1.5)));
+      else if(t>3.2&&t<4.1){const u=seg(t,3.3,4);fingerAt(x.fing,270-170*u,380,Math.sin(Math.PI*seg(t,3.2,4.1)));}
+      else if(t>5.3&&t<6.2){const u=seg(t,5.4,6.15);fingerAt(x.fing,180+40*u,330+150*u,Math.sin(Math.PI*seg(t,5.3,6.2)));}
+      else x.fing.style.opacity=0;},
+    label(t){if(t<1.4)return 'Tap a photo';if(t<2.15)return 'It grows out of its frame, the arch flattening as it goes';if(t<3.3)return 'Photo 3 of 10, full screen';if(t<4)return 'Swipe sideways for the next photo';if(t<5.4)return 'Photo 4 of 10';if(t<6.15)return 'Swipe down and it shrinks back into its own frame';return 'Back on the page';}
+  };})();
+
+/* ---------- the six option cards ---------- */
+const OPTS=[
+ {id:'p1',demo:'carousel',name:'Jharokha carousel',idea:'One big photo in an arch, with the next ones peeking in at the sides. Guests swipe.',
+  steps:[['Coming in','As the section scrolls up from the lane, the gold outline of the arch draws itself, then the first photo sharpens into it and the neighbours slide in from the edges.'],
+   ['Between photos','A swipe, the arrows, or a slow automatic turn every few seconds slides the row along. The arriving arch grows to full size while the leaving one shrinks and dims. The photo inside each arch moves a little slower than its frame, like looking through a window.'],
+   ['Going out','Ordinary scrolling carries on to Shakti Vilas.'],['Tapping a photo','Opens it full screen.']],
+  facts:[['From your reels','diya-light ("Us, so far" in arch frames). The arch is the same one as the event doorways in the lane.'],['Scrolling it adds','One screen'],['Photo size on a phone','Large, one at a time'],['On a computer','Three arches in a row, the middle one largest, with arrows at the sides']],
+  trade:'Quickest to use and to build. Guests have to swipe, and many will stop after two or three photos.'},
+ {id:'p2',demo:'window',pick:true,name:'The jharokha window',idea:'One carved window holds the photos. Scrolling opens its shutters and brings the photos up through it, one at a time.',
+  steps:[['Coming in','A sandstone jharokha framed by bougainvillea rises into view and stays put. Its teal shutters swing open and fold back against the wall, and the first photo brightens as the light comes in.'],
+   ['Between photos','Each bit of scrolling brings the next photo up from the sill, over the last one, which drifts up more slowly and darkens. Ten small arches under the window show where you are, and a caption sits on the sill.'],
+   ['Going out','After the tenth photo the shutters close and the page moves on. The wall turns from gold to rose on the way, so it meets the dusk at Shakti Vilas.'],['Tapping a photo','Opens it full screen.']],
+  facts:[['From your reels','scroll-message-themes (one photo in an ornate frame, with thumbnails), udaipur-window-view and train-window (a fixed frame with the view changing inside it)'],['Scrolling it adds','About five screens'],['Photo size on a phone','Large, one at a time'],['On a computer','The window sits in the middle, with bougainvillea and lanterns filling the sides']],
+  trade:'Everyone who scrolls sees all ten, large and in order, with nothing else on screen. It is the longest section on the page, and the arch covers the top corners of each photo.'},
+ {id:'p3',demo:'lane',name:'A photo wall in the lane',idea:'The rickshaw does not stop at Shubh Vivah. It rides on past a blue haveli wall hung with framed photos.',
+  steps:[['Coming in','No new section. After the Shubh Vivah doorway the lane keeps going, and a Jodhpur-blue wall begins, with a small "Us, so far" plaque.'],
+   ['Between photos','Gold frames in different shapes (arch, oval, round, plain) hang two or three to a wall. Each starts in old sepia and warms into full colour as it reaches the middle, settling straight on its nail.'],
+   ['Going out','Dusk falls along the wall, the lanterns light, and the lane ends at Shakti Vilas as it does now.'],['Tapping a photo','Opens it full screen.']],
+  facts:[['From your reels','gate-palace (gold frames), rickshaw, and the haveli-ki-gali concept (frames on the wall)'],['Scrolling it adds','About four screens of riding'],['Photo size on a phone','Small to medium, two or three at once'],['On a computer','Five or six frames in view at once, like walking past a gallery wall']],
+  trade:'The most continuous with the site you have: the ride just carries on. The photos are smaller, and the lane becomes by far the longest part of the page.'},
+ {id:'p4',demo:'facade',name:'Windows that open',idea:'A tall haveli front with two windows on each floor. Each window opens on a photo as you scroll down past it.',
+  steps:[['Coming in','The roofline and its chhatris come up against a golden sky, with the title in the sky above them.'],
+   ['Between photos','As each floor reaches the middle of the screen, its two windows swing open, left then right. The photo inside settles from slightly zoomed and dim to sharp, and warm light spills onto the wall below.'],
+   ['Going out','At street level there is a studded door between two potted plants; the page moves on to Shakti Vilas.'],['Tapping a photo','Opens it full screen.']],
+  facts:[['From your reels','gate-palace ("The Royal Couple" in jharokha frames with doors)'],['Scrolling it adds','About two and a half screens'],['Photo size on a phone','Small, two side by side'],['On a computer','Four or five windows to a floor, so two floors hold all ten']],
+  trade:'The most Rajasthani and the most playful, and at the end the whole front shows every photo at once. On a phone each photo is small until tapped, and it is the most drawing to build.'},
+ {id:'p5',demo:'prints',name:'Loose prints',idea:'Prints drop one at a time onto a block-printed cloth, then spread out into a neat album page.',
+  steps:[['Coming in','An indigo-on-cream block-printed cloth, with a red printed border, fills the screen and stays put.'],
+   ['Between photos','Each bit of scrolling drops the next print in from above. It turns as it falls and lands on the pile at its own angle. The prints underneath dim slightly, so the newest always reads first. Each print has a short caption.'],
+   ['Going out','After the tenth, the pile spreads into a tidy grid of all ten, then the page moves on to Shakti Vilas.'],['Tapping a photo','Opens it full screen.']],
+  facts:[['From your reels','south-indian-style (photos tumbling onto the page), and the pichwai-panna concept (loose prints)'],['Scrolling it adds','About four screens'],['Photo size on a phone','Large as each lands, small in the final grid'],['On a computer','The pile spreads across the width, like prints on a table']],
+  trade:'The warmest and most personal; it feels like a family album. The pile is untidy on purpose, which goes against "not cluttered" until it spreads out at the end.'},
+ {id:'p6',demo:'band',name:'Arch bands',idea:'Two rows of small arch photos drift past in opposite directions.',
+  steps:[['Coming in','The two rows slide in from opposite sides as the section arrives.'],
+   ['Between photos','Both rows drift on their own all the time. Scrolling speeds them up and leans them slightly in the direction of travel; they settle when you stop. "See all ten photos" opens the full-screen view.'],
+   ['Going out','Ordinary scrolling carries on to Shakti Vilas.'],['Tapping a photo','Opens it full screen.']],
+  facts:[['From your reels','scroll-animation (a strip of arch-shaped photos)'],['Scrolling it adds','About one screen'],['Photo size on a phone','Small and always moving'],['On a computer','The rows run edge to edge, with seven or eight arches in view']],
+  trade:'Compact, and everyone sees every photo in passing. The photos never stand still, so it works more as decoration than as a gallery, and it is the least Rajasthani in feel.'}];
+document.getElementById('options').innerHTML=OPTS.map((o,i)=>`<article class="opt${o.pick?' pick':''}" id="${o.id}">
+  <figure class="demo" data-demo="${o.demo}"></figure>
+  <div class="notes"><div class="head"><span class="id">P${i+1}</span><h2>${o.name}</h2>${o.pick?'<span class="tag">My pick</span>':''}</div>
+    <p class="idea">${o.idea}</p>
+    <ol class="steps">${o.steps.map(([b,s])=>`<li><span><b>${b}.</b> ${s}</span></li>`).join('')}</ol>
+    <dl class="facts">${o.facts.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>
+    <p class="trade"><b>Trade-off.</b> ${o.trade}</p></div></article>`).join('');
+
+/* ---------- running the previews ---------- */
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const ICON={pause:'<svg viewBox="0 0 14 14" aria-hidden="true"><rect x="2.5" y="1.5" width="3.2" height="11" rx="1" fill="currentColor"/><rect x="8.3" y="1.5" width="3.2" height="11" rx="1" fill="currentColor"/></svg>',play:'<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3.5 1.8v10.4L12 7z" fill="currentColor"/></svg>'};
+const all=[];
+document.querySelectorAll('.demo').forEach(fig=>{
+  const spec=DEMOS[fig.dataset.demo];if(!spec)return;
+  fig.innerHTML=`<div class="phone"><div class="screen"><div class="stage"></div></div></div><div class="ctl"><button type="button" class="pp" aria-label="Play the preview">${ICON.play}</button><input type="range" min="0" max="1000" value="0" aria-label="Move through the preview"></div><p class="now"></p>`;
+  const screen=fig.querySelector('.screen'),stage=fig.querySelector('.stage'),pp=fig.querySelector('.pp'),rg=fig.querySelector('input'),now=fig.querySelector('.now');
+  const d={spec,t:spec.poster,playing:false,user:false,seen:false};
+  d.ctx=spec.build(stage);
+  d.show=()=>{spec.render(d.ctx,d.t);rg.value=Math.round(d.t/spec.T*1000);const l=spec.label(d.t);if(now.textContent!==l)now.textContent=l;};
+  d.set=p=>{d.playing=p;pp.innerHTML=p?ICON.pause:ICON.play;pp.setAttribute('aria-label',p?'Pause the preview':'Play the preview');};
+  const fit=()=>{stage.style.transform=`scale(${screen.clientWidth/360})`;};
+  new ResizeObserver(fit).observe(screen);fit();
+  pp.addEventListener('click',()=>{d.user=d.playing;d.set(!d.playing);});
+  rg.addEventListener('input',()=>{d.user=true;d.set(false);d.t=rg.value/1000*spec.T;d.show();});
+  d.fig=fig;d.show();all.push(d);
+});
+if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>es.forEach(e=>{const d=all.find(v=>v.fig===e.target);if(!d)return;
+  if(e.isIntersecting){if(!d.user&&!reduce)d.set(true);}else if(d.playing)d.set(false);}),{threshold:.35});all.forEach(d=>io.observe(d.fig));}
+let last=0;(function loop(now){const dt=Math.min(.05,(now-last)/1000||0);last=now;
+  for(const d of all)if(d.playing){d.t+=dt;if(d.t>=d.spec.T)d.t-=d.spec.T;d.show();}
+  requestAnimationFrame(loop);})(0);
+window.__sb={all,at(name,t){const d=all.find(v=>v.fig.dataset.demo===name);d.user=true;d.set(false);d.t=t;d.show();return d.spec.label(t);},T:n=>all.find(v=>v.fig.dataset.demo===n).spec.T};
+})();
+</script>

@@ -1,5 +1,5 @@
 # Publishes the wedding site to GitHub Pages on every push to main.
-# Only the live page (and the song clip, if it has been added to the repo) is published;
+# Only the live page, the song clip and the photos (website/photos) are published;
 # old versions, storyboards and concepts stay out of the public site.
 name: Deploy site
 on:
@@ -27,6 +27,8 @@ jobs:
           cp website/index.html _site/
           touch _site/.nojekyll
           if [ -f website/media/vaaroon-clip.mp3 ]; then cp website/media/vaaroon-clip.mp3 _site/media/; fi
+          # the photos (WebP sizes and their list), made by scripts/build_photos.py
+          if [ -f website/photos/photos.js ]; then mkdir -p _site/photos && cp website/photos/photos.js website/photos/*.webp _site/photos/; fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
