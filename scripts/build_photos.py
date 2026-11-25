@@ -10,7 +10,7 @@ What it does, for every .jpg/.jpeg/.png in the folder (sorted by name unless --o
     the original), keeping the Display P3 colour profile and dropping all other metadata (camera
     details, location),
   * makes a tiny, pre-blurred and darkened copy, embedded as text in the list; the site shows it
-    instantly as the soft background behind a photo and as a placeholder while the photo loads,
+    instantly in the photo's place while the full photo loads,
   * writes website/photos/photos.js, the list the page reads (a script, so it also works when the
     page is opened straight from the folder).
 

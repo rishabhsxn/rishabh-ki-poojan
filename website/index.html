@@ -99,8 +99,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offse
 
 /* ---------- The lane: a cycle rickshaw rides past four doorways, one for each function ---------- */
 .ride{position:relative;--g:23%;--coral:#f3a183;--coral-d:#e2805f;--cream:#f8eedc;--pink:#d81b60;--teal:#3f7f86;--teal-d:#2c5d63;--ink:#4a2418;--soft:#7b5a4c;color:var(--ink)}
-/* the lane is one screen tall and moves only sideways (swipe, drag, trackpad, arrow keys, dots); scrolling down passes it by */
-.lane{position:relative;height:100vh;height:100svh;min-height:520px;overflow:hidden;background:linear-gradient(#f6c79a,#f1a48f 60%,#e58f8f);touch-action:pan-y;-webkit-user-select:none;user-select:none;cursor:grab}
+/* the lane holds the screen while it rides: scrolling down moves it sideways, and so does a sideways swipe, drag, trackpad, the arrow keys or a dot */
+.lane{position:sticky;top:0;height:100vh;height:100lvh;overflow:hidden;background:linear-gradient(#f6c79a,#f1a48f 60%,#e58f8f);touch-action:pan-y;-webkit-user-select:none;user-select:none;cursor:grab}
 .lane.drag{cursor:grabbing}
 .track{position:absolute;top:0;bottom:var(--g);left:0;display:flex;will-change:transform}
 .ground{position:absolute;left:0;right:0;bottom:0;height:var(--g);background:repeating-linear-gradient(90deg,transparent 0 118px,rgba(120,60,40,.07) 118px 120px),linear-gradient(#e9b9a0,#f1cdb8 30%,#edc4ad);border-top:5px solid #d99a80}
@@ -145,8 +145,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offse
 .rick svg{width:100%;height:100%;overflow:visible}
 .lhint{position:absolute;left:50%;top:max(14px,2.2%);z-index:3;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:8px 16px 8px 10px;border-radius:999px;background:rgba(43,20,28,.84);color:#fff6e9;font-size:.74rem;line-height:1.3;letter-spacing:.04em;white-space:nowrap;pointer-events:none;transition:opacity .6s}
 .lhint svg{flex:none;width:28px;height:28px;overflow:visible}
-.lhint .dt{animation:slide 2.2s ease-in-out infinite}
-@keyframes slide{0%{transform:translateX(7px);opacity:0}15%{opacity:1}75%{transform:translateX(-9px);opacity:1}100%{transform:translateX(-9px);opacity:0}}
+.lhint .dt{animation:updown 2.6s ease-in-out infinite}
+@keyframes updown{0%{transform:translate(0,7px);opacity:0}12%{opacity:1}42%,55%{transform:translate(0,-7px)}85%{transform:translate(-10px,-7px);opacity:1}100%{transform:translate(-10px,-7px);opacity:0}}
 .lhint .fine{display:none}
 @media (hover:hover) and (pointer:fine){.lhint .fine{display:inline}.lhint .coarse{display:none}}
 .lhint.gone{opacity:0}
@@ -183,14 +183,15 @@ html.svopen{overflow:hidden}
 .sv{position:fixed;inset:0;z-index:50;color:#fff;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .sv[hidden]{display:none}
 .sv-bk{position:absolute;inset:0;background:#0f080c}
-.sv-card{position:absolute;overflow:hidden;background:#140b10;touch-action:none;cursor:pointer}
+.sv-card{position:absolute;overflow:hidden;background:#0f080c;touch-action:none;cursor:pointer}
 .sv.card .sv-card{border-radius:14px;box-shadow:0 30px 80px -24px rgba(0,0,0,.7)}
 .sv.card.ready .sv-card{transition:left .45s cubic-bezier(.3,.7,.2,1),top .45s cubic-bezier(.3,.7,.2,1),width .45s cubic-bezier(.3,.7,.2,1),height .45s cubic-bezier(.3,.7,.2,1)}
 .sv-slides,.sv-sl{position:absolute;inset:0}
 .sv-sl{visibility:hidden}
 .sv-sl.cur{visibility:visible}
 .sv-sl img{position:absolute;display:block;max-width:none;pointer-events:none;-webkit-user-drag:none}
-.sv-sl .bk{left:0;top:0;width:100%;height:100%;object-fit:cover;transform:scale(1.12)}
+.sv-sl .bk{left:0;top:0;width:100%;height:100%;object-fit:cover}
+/* on a phone the photo sits on black, as round the shaped card; its tiny blurred copy fills only the photo's own frame while it loads */
 .sv-sl .fg{object-fit:cover;opacity:0;transition:opacity .25s}
 .sv.card .sv-sl .fg{left:0;top:0;width:100%;height:100%}
 .sv-sl.ld .fg{opacity:1}
@@ -304,7 +305,7 @@ html.static *{transition:none!important}
     <div class="ground"></div>
     <div class="rick" id="rick" aria-hidden="true"></div>
     <div class="dusk" id="dusk"></div>
-    <div class="lhint" id="lhint" aria-hidden="true"><svg viewBox="0 0 28 28"><path d="M5 14H23" stroke="#fff6e9" stroke-opacity=".35" stroke-width="1.6" stroke-dasharray="2 2.5"/><circle class="dt" cx="14" cy="14" r="4.5" fill="#fff6e9"/></svg><span class="coarse">Swipe sideways to see<br>all four functions</span><span class="fine">Drag sideways or use ← →<br>to see all four functions</span></div>
+    <div class="lhint" id="lhint" aria-hidden="true"><svg viewBox="0 0 28 28"><path d="M17 22V8H6" fill="none" stroke="#fff6e9" stroke-opacity=".35" stroke-width="1.6" stroke-dasharray="2 2.5"/><circle class="dt" cx="17" cy="15" r="4.5" fill="#fff6e9"/></svg><span class="coarse">Swipe up or sideways<br>to ride along</span><span class="fine">Scroll, drag or use ← →<br>to ride along</span></div>
     <div class="ldots" id="ldots" role="group" aria-label="The functions"></div>
   </div>
 </section>
@@ -403,7 +404,7 @@ html.static *{transition:none!important}
   function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647;}
   var stars=[],i;
   for(i=0;i<150;i++)stars.push({x:rnd(),y:rnd()*.56,r:rnd()*1.1+.3,p:rnd()*6.28});
-  var fseed=[];for(i=0;i<14;i++)fseed.push([rnd(),rnd(),rnd()*6.28]);
+  var fseed=[];for(i=0;i<10;i++)fseed.push([rnd(),rnd(),rnd()*6.28]);   /* ten floating diyas, plus the one already lit */
 
   function clamp(v){return v<0?0:v>1?1:v;}
   function smooth(v){v=clamp(v);return v*v*(3-2*v);}
@@ -430,11 +431,11 @@ html.static *{transition:none!important}
     fl(.1,.97,1,true);
     /* ghat: stepped terraces at the right-hand shore, a row of diyas on every rim */
     var cxg=W*(narrow?1.08:1.0),cyg=H*(narrow?1.01:1.07),rx0=Math.min(W*(narrow?.7:.36),(H-hz)*1.5),st=Math.max(9,rx0*.065);
-    ghat={cx:cxg,tiers:[],diyas:[]};
+    ghat={cx:cxg,tiers:[],diyas:[]};var gi=0;
     for(k=0;k<4;k++){var rx=rx0*(1-k*.2),ry=rx*.5,cy=cyg-k*st,n=Math.floor(rx*1.7/(narrow?28:36));
       ghat.tiers.push({rx:rx,ry:ry,cy:cy,st:st});
       for(j=0;j<=n;j++){var a=Math.PI*(1.02+.56*j/n),dx=cxg+(rx-7)*Math.cos(a),dy=cy+(ry-5)*Math.sin(a);
-        if(dx<W+8&&dy<H+8)ghat.diyas.push({x:dx,y:dy,s:3+dy/H*2.4,p:j*1.7+k*2.3});}}
+        if(dx<W+8&&dy<H+8&&gi++%2===0)ghat.diyas.push({x:dx,y:dy,s:3+dy/H*2.4,p:j*1.7+k*2.3});}}   /* every second one on screen: half as many */
     things.push({t:'ghat',d:1.5});
     things.sort(function(p,q){return q.d-p.d;});
   }
@@ -893,6 +894,7 @@ EVENTS.forEach(e => P.push(`<div class="pn ev${e.lit ? ' lit' : ''}${e.dress ? '
 const track = $('#track'), fillPn = s => `<div class="pn fill"${s ? ` style="${s}"` : ''}><div class="dado"></div></div>`;
 track.innerHTML = fillPn('') + P.join('') + fillPn('--wall:#b9606a;--shade:#9a4a58');
 const panels = [...track.children].slice(1, -1);
+$('#ride').style.height = (panels.length * 92) + 'vh';
 
 const spokes = Array.from({ length: 8 }, (_, i) => `<path d="M0 0L${(24 * Math.cos(i * .785)).toFixed(1)} ${(24 * Math.sin(i * .785)).toFixed(1)}" stroke="#7d8b98" stroke-width="1"/>`).join('');
 const wheel = (x, id) => `<g transform="translate(${x} 122)"><g id="${id}"><circle r="25" fill="none" stroke="#4d5a68" stroke-width="3.4"/>${spokes}<circle r="3.4" fill="#4d5a68"/></g></g>`;
@@ -939,73 +941,70 @@ if (STATIC) document.documentElement.classList.add('static');
 const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .2 });
 document.querySelectorAll('.rv').forEach(e => io.observe(e));
 const hstage = $('#stage'), hero = $('#hero'), day = $('#day'), glow = $('#glow'), dscn = $('#dscn'), dboat = $('#dboat'), ddt = $('#ddt'), noon = $('#noon'), htop = hero.querySelector('.hero-top');
-const lane = $('#lane'), rick = $('#rick'), dusk = $('#dusk'), lhint = $('#lhint'), ground = lane.querySelector('.ground'), eve = $('#eve'), nite = $('#nite');
+const ride = $('#ride'), lane = $('#lane'), rick = $('#rick'), dusk = $('#dusk'), lhint = $('#lhint'), ground = lane.querySelector('.ground'), eve = $('#eve'), nite = $('#nite');
 let VW = 1, VH = 1, U = 1, OX = 0, M = {}, cen = [];
 const absTop = el => el.getBoundingClientRect().top + scrollY;
 function measure() {
   VW = hero.clientWidth; VH = hero.clientHeight; U = Math.min(VW / 400, VH / 700); OX = (VW - 400 * U) / 2;
   const oy = (VH - 700 * U) / 2, hz = window.__hz || VH * .6;
-  M = { ht: absTop(hstage), hl: hstage.offsetHeight - VH, sh: hz - (oy + HOR * U), lw: lane.clientWidth, et: absTop(eve), el: eve.offsetHeight - innerHeight };
-  cen = panels.map(p => p.offsetLeft + p.offsetWidth / 2); ldirty = true;
+  M = { ht: absTop(hstage), hl: hstage.offsetHeight - VH, sh: hz - (oy + HOR * U), rt: absTop(ride), rl: ride.offsetHeight - lane.offsetHeight, lw: lane.clientWidth, et: absTop(eve), el: eve.offsetHeight - innerHeight };
+  cen = panels.map(p => p.offsetLeft + p.offsetWidth / 2);
 }
 
-/* ----- the lane: sideways only. lp is where the lane is (in doorways), lt where it is heading; scrolling down passes it by ----- */
-const NAMES = ['Blessings', ...EVENTS.map(e => e.name)], LAST = panels.length - 1;
+/* ----- the lane. Scrolling down rides it; a sideways swipe, mouse drag, trackpad, the arrow keys or a dot ride it too.
+   The page's scroll position is the one source of truth: sideways input scrolls the page to the matching point. ----- */
+const NAMES = ['Blessings', ...EVENTS.map(e => e.name)], LAST = panels.length - 1, root = document.documentElement;
 const dotEls = NAMES.map((n, k) => { const b = document.createElement('button'); b.type = 'button'; b.dataset.name = n; b.setAttribute('aria-label', n); b.innerHTML = '<i></i>'; b.addEventListener('click', () => laneGo(k)); $('#ldots').append(b); return b; });
-let lp = 0, lt = 0, ldrag = 0, lvis = 0, lseen = false, nudged = false, nudgeT = 0, ldirty = true, ld = null, wt = 0;
-function laneTouched() { if (!lseen) { lseen = true; lhint.classList.add('gone'); } nudgeT = 0; }
-function laneGo(k) { lt = clamp(Math.round(k), 0, LAST); ldirty = true; laneTouched(); }
-function centerAt(f) { const i = Math.min(panels.length - 2, Math.max(0, Math.floor(f))); return lerp(cen[i], cen[i + 1], clamp(f - i)); }
-function laneDraw(now) {
-  let nu = 0;
-  if (nudgeT) { const u = (now - nudgeT) / 1100; if (u >= 1) nudgeT = 0; else if (u > 0) nu = -64 * Math.sin(Math.PI * u); }
-  const c = centerAt(lp), x = M.lw / 2 - c + ldrag + nu;
+let lseen = false, ld = null, wt = 0, wFrom = null, follow = false;
+const perDoor = () => M.rl / LAST;                                   /* page scroll that moves the lane by one doorway */
+const yFor = k => M.rt + clamp(k / LAST) * M.rl;                     /* scroll position with doorway k in the middle */
+const fAt = y => clamp((y - M.rt) / M.rl) * LAST;                    /* where the lane is, in doorways, at scroll position y */
+const pinned = () => scrollY > M.rt - VH * .3 && scrollY < M.rt + M.rl + VH * .3;
+function laneSeen() { if (!lseen) { lseen = true; lhint.classList.add('gone'); } }
+function laneGo(k) { laneSeen(); root.style.scrollBehavior = ''; scrollTo({ top: yFor(clamp(Math.round(k), 0, LAST)), behavior: calm ? 'auto' : 'smooth' }); }
+function jump(y) { root.style.scrollBehavior = 'auto'; scrollTo(0, y); }   /* follow a finger exactly, without the page's smooth scrolling */
+function laneDraw(y) {
+  const f = fAt(y), i = Math.min(LAST - 1, Math.floor(f)), c = lerp(cen[i], cen[i + 1], ez(f - i)), x = M.lw / 2 - c;
   track.style.transform = `translate3d(${x.toFixed(1)}px,0,0)`; ground.style.backgroundPosition = `${x.toFixed(1)}px 0,0 0`;
   rick.style.transform = `translate3d(0,${(Math.sin(x / 34) * 1.2).toFixed(2)}px,0)`;
   const s = rick.clientHeight / 150 || 1, ang = -x / (25 * s), deg = ang * 57.2958;
   w1.setAttribute('transform', `rotate(${deg.toFixed(1)})`); w2.setAttribute('transform', `rotate(${deg.toFixed(1)})`); crank.setAttribute('transform', `rotate(${(deg * .5).toFixed(1)})`);
   leg(legA, ang * .5); leg(legB, ang * .5 + Math.PI);
-  const mid = M.lw / 2 - x;
-  if (lvis > .25) panels.forEach((el, k) => { if (!el.classList.contains('on') && Math.abs(cen[k] - mid) < M.lw * .5) el.classList.add('on'); });
-  dusk.style.opacity = seg(lp, panels.length - 2.6, panels.length - 1) * .3;
-  const on = Math.round(lt); dotEls.forEach((b, k) => b.classList.toggle('on', k === on));
+  panels.forEach((el, k) => { if (!el.classList.contains('on') && Math.abs(cen[k] - c) < M.lw * .5 && y > M.rt - VH * .5) el.classList.add('on'); });
+  dusk.style.opacity = seg(f, LAST - 1.6, LAST) * .3;
+  const on = Math.round(f); dotEls.forEach((b, k) => b.classList.toggle('on', k === on));
+  if (f > .05) laneSeen();
 }
-/* a sideways swipe or mouse drag moves it; an up-down swipe is left to the page */
-lane.addEventListener('pointerdown', e => { if (e.button > 0 || e.target.closest('button')) return; ld = { x: e.clientX, y: e.clientY, id: e.pointerId, lock: null }; });
+/* a sideways swipe or mouse drag scrolls the page by the matching amount; an up-down swipe is the page's own scrolling */
+lane.addEventListener('pointerdown', e => { if (e.button > 0 || e.target.closest('button')) return; ld = { x: e.clientX, y: e.clientY, id: e.pointerId, lock: null, y0: scrollY, dx: 0 }; });
 lane.addEventListener('pointermove', e => {
   if (!ld || e.pointerId !== ld.id) return;
   const dx = e.clientX - ld.x, dy = e.clientY - ld.y;
   if (!ld.lock) {
-    if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) { ld.lock = 'x'; try { lane.setPointerCapture(e.pointerId); } catch (_) {} lane.classList.add('drag'); laneTouched(); }
+    if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) { ld.lock = 'x'; follow = true; try { lane.setPointerCapture(e.pointerId); } catch (_) {} lane.classList.add('drag'); laneSeen(); }
     else if (Math.abs(dy) > 8) { ld = null; return; }
   }
-  if (ld.lock === 'x') { const edge = (lt <= 0 && dx > 0) || (lt >= LAST && dx < 0); ldrag = edge ? dx * .35 : dx; ldirty = true; }
+  if (ld.lock === 'x') { ld.dx = dx; const y = ld.y0 - dx / panels[0].offsetWidth * perDoor(); jump(clamp(y, Math.min(ld.y0, M.rt), Math.max(ld.y0, M.rt + M.rl))); }
 });
 function laneUp() {
-  if (!ld) return; const sideways = ld.lock === 'x', dx = ldrag; ld = null; lane.classList.remove('drag'); if (!sideways) return;
-  lp = clamp(lp - dx / panels[0].offsetWidth, 0, LAST); ldrag = 0;            /* keep where the finger left it, then ease to the doorway */
-  laneGo(Math.abs(dx) > 40 ? lt + (dx < 0 ? 1 : -1) : lt);
+  if (!ld) return; const sideways = ld.lock === 'x', dx = ld.dx, k0 = Math.round(fAt(ld.y0)); ld = null; follow = false; lane.classList.remove('drag'); root.style.scrollBehavior = '';
+  if (sideways) laneGo(Math.abs(dx) > 40 ? k0 + (dx < 0 ? 1 : -1) : k0);
 }
 lane.addEventListener('pointerup', laneUp); lane.addEventListener('pointercancel', laneUp);
 /* a trackpad's sideways scroll follows the fingers, then settles on a doorway in the direction it was going */
-let wFrom = null;
 lane.addEventListener('wheel', e => {
   if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
-  e.preventDefault(); laneTouched();
-  if (wFrom === null) wFrom = Math.round(lt);
-  lp = clamp(lp + e.deltaX / panels[0].offsetWidth, 0, LAST); lt = lp; ldirty = true;
-  clearTimeout(wt); wt = setTimeout(() => { const m = lp - wFrom, from = wFrom; wFrom = null;
+  e.preventDefault(); laneSeen(); follow = true;
+  if (wFrom === null) wFrom = Math.round(fAt(scrollY));
+  const y = scrollY + e.deltaX / panels[0].offsetWidth * perDoor(); jump(clamp(y, Math.min(scrollY, M.rt), Math.max(scrollY, M.rt + M.rl)));
+  clearTimeout(wt); wt = setTimeout(() => { const m = fAt(scrollY) - wFrom, from = wFrom; wFrom = null; follow = false;
     laneGo(Math.abs(m) < .12 ? from : from + Math.sign(m) * Math.max(1, Math.round(Math.abs(m)))); }, 180);
 }, { passive: false });
 addEventListener('keydown', e => {
-  if (lvis < .5 || e.altKey || e.ctrlKey || e.metaKey || document.documentElement.classList.contains('svopen') || /^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName)) return;
-  if (e.key === 'ArrowRight') { laneGo(lt + 1); e.preventDefault(); } else if (e.key === 'ArrowLeft') { laneGo(lt - 1); e.preventDefault(); }
+  if (!pinned() || e.altKey || e.ctrlKey || e.metaKey || root.classList.contains('svopen') || /^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName)) return;
+  const k = Math.round(fAt(scrollY));
+  if (e.key === 'ArrowRight') { laneGo(k + 1); e.preventDefault(); } else if (e.key === 'ArrowLeft') { laneGo(k - 1); e.preventDefault(); }
 });
-/* once, as the lane arrives: a small sideways nudge to show there is more to the side */
-new IntersectionObserver(es => {
-  lvis = es[0].intersectionRatio; ldirty = true;
-  if (lvis >= .6 && !nudged && !lseen && !calm) { nudged = true; nudgeT = performance.now() + 250; }
-}, { threshold: [0, .25, .5, .6, .8, 1] }).observe(lane);
 function update(y) {
   /* daybreak over the same lake, then the boat crosses and the date is left in its wake */
   const p = clamp((y - M.ht) / M.hl);
@@ -1022,15 +1021,14 @@ function update(y) {
     dboat.style.transform = `translate3d(${(bx * U).toFixed(1)}px,0,0)`;
     ddt.style.clipPath = calm && !STATIC ? 'none' : `inset(0 ${Math.max(0, VW - (OX + (bx - 62) * U)).toFixed(1)}px 0 0)`;
   }
+  laneDraw(y);
   /* evening comes on over the venue */
   const e = clamp((y - M.et) / M.el);
   nite.style.opacity = seg(e, .3, .62); eve.classList.toggle('lit', e > .16);
 }
 let cy = scrollY, last = -1;
 function frame(now) {
-  const t = scrollY; cy += (t - cy) * (calm ? 1 : .14); if (Math.abs(t - cy) < .3) cy = t; if (cy !== last) { update(cy); last = cy; }
-  const d = lt - lp; if (Math.abs(d) > .0005) { lp += d * (calm ? 1 : .12); ldirty = true; } else if (lp !== lt) { lp = lt; ldirty = true; }
-  if (ldirty || nudgeT) { laneDraw(now || 0); ldirty = false; }
+  const t = scrollY; cy += (t - cy) * (calm || follow ? 1 : .14); if (Math.abs(t - cy) < .3) cy = t; if (cy !== last) { update(cy); last = cy; }
   requestAnimationFrame(frame);
 }
 addEventListener('resize', () => { measure(); last = -1; }); new ResizeObserver(() => { measure(); last = -1; }).observe(document.body);
@@ -1041,7 +1039,7 @@ function start() { measure(); if (STATIC) { scrollTo(0, +Q.get('y') * (document.
 /* ===== Photographs, shown as stories.
    The list comes from photos/photos.js, written by scripts/build_photos.py (see CLAUDE.md).
    Nothing is fetched until the section is near; the viewer then loads only the photo on screen and the next one,
-   each at the size the screen needs (srcset), over a tiny pre-blurred copy that shows at once. ===== */
+   each at the size the screen needs (srcset), with a tiny pre-blurred copy in its place until it has loaded. ===== */
 (function () {
 const PHOTOS_BASE = 'photos/';            /* saved copies in versions/ point this at ../../photos/ */
 const DUR = 7000;                         /* each photo shows this long; holding a finger on it pauses it */
@@ -1114,7 +1112,7 @@ function build() {
   slides = list.map((p, i) => {
     const el = document.createElement('div'); el.className = 'sv-sl';
     el.innerHTML = `<img class="bk" alt="" src="${p.lqip}"><img class="fg" alt="Photo ${i + 1} of ${list.length}${p.caption ? ': ' + p.caption.replace(/"/g, '&quot;') : ''}" decoding="async">`;
-    q('.sv-slides').append(el); return { el, fg: el.querySelector('.fg'), p, ready: null };
+    q('.sv-slides').append(el); return { el, fg: el.querySelector('.fg'), bk: el.querySelector('.bk'), p, ready: null };
   });
   /* taps, holding, swipes */
   let pd = null, holdT = 0, dragging = false, dy = 0;
@@ -1173,9 +1171,9 @@ function layout() {
   Object.assign(card.style, { left: r.x + 'px', top: r.y + 'px', width: r.w + 'px', height: r.h + 'px' });
   slides.forEach((s, i) => {
     let w, h, l = 0, t = 0;
-    if (mode === 'card') { const ri = cardRect(i); w = ri.w; h = ri.h; s.fg.style.cssText = ''; }
+    if (mode === 'card') { const ri = cardRect(i); w = ri.w; h = ri.h; s.fg.style.cssText = ''; s.bk.style.cssText = ''; }
     else { const ar = s.p.w / s.p.h; w = r.w; h = w / ar; if (h > r.h) { h = r.h; w = h * ar; } l = (r.w - w) / 2; t = (r.h - h) / 2;
-      s.fg.style.cssText = `left:${l.toFixed(1)}px;top:${t.toFixed(1)}px;width:${w.toFixed(1)}px;height:${h.toFixed(1)}px`; }
+      s.fg.style.cssText = s.bk.style.cssText = `left:${l.toFixed(1)}px;top:${t.toFixed(1)}px;width:${w.toFixed(1)}px;height:${h.toFixed(1)}px`; }
     s.fg.sizes = Math.ceil(w) + 'px';                                          /* the browser picks the file for this width and the screen's density */
   });
   if (mode === 'card') { prevB.style.cssText = `left:${Math.max(10, r.x - 64)}px;top:${r.y + r.h / 2 - 22}px`; nextB.style.cssText = `left:${Math.min(innerWidth - 54, r.x + r.w + 20)}px;top:${r.y + r.h / 2 - 22}px`; }
