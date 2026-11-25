@@ -185,14 +185,14 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--diya);outline-offse
 
 /* the stories viewer: full screen on a phone; on a computer, a card the shape of each photo */
 html.svopen{overflow:hidden}
-.sv{position:fixed;inset:0;z-index:50;color:#fff;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.sv{position:fixed;inset:0;z-index:50;color:#fff;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none}
 .sv[hidden]{display:none}
 .sv-bk{position:absolute;inset:0;background:#0f080c}
 .sv-card{position:absolute;overflow:hidden;background:#0f080c;touch-action:none;cursor:pointer}
 .sv.card .sv-card{border-radius:14px;box-shadow:0 30px 80px -24px rgba(0,0,0,.7)}
 .sv.card.ready .sv-card{transition:left .45s cubic-bezier(.3,.7,.2,1),top .45s cubic-bezier(.3,.7,.2,1),width .45s cubic-bezier(.3,.7,.2,1),height .45s cubic-bezier(.3,.7,.2,1)}
 .sv-slides,.sv-sl{position:absolute;inset:0}
-.sv-sl{visibility:hidden}
+.sv-sl{visibility:hidden;transform-origin:0 0}   /* two fingers zoom the photo on screen (see "pinching" below) */
 .sv-sl.cur{visibility:visible}
 .sv-sl img{position:absolute;display:block;max-width:none;pointer-events:none;-webkit-user-drag:none}
 .sv-sl .bk{left:0;top:0;width:100%;height:100%;object-fit:cover}
@@ -970,19 +970,41 @@ function measure() {
 }
 
 /* ----- the lane. Scrolling down rides it; a sideways swipe, mouse drag, trackpad, the arrow keys or a dot ride it too.
-   The page's scroll position is the one source of truth: sideways input scrolls the page to the matching point. ----- */
+   The page's scroll position is the one source of truth: sideways input scrolls the page to the matching point.
+   Scrolling down eases the street between doorways (ez), so it lingers at each one. Sideways input undoes that ease,
+   so the street stays under the finger, and on letting go it glides on like a spring from the finger's own speed. ----- */
 const NAMES = ['Blessings', ...EVENTS.map(e => e.name)], LAST = panels.length - 1, root = document.documentElement;
 const dotEls = NAMES.map((n, k) => { const b = document.createElement('button'); b.type = 'button'; b.dataset.name = n; b.setAttribute('aria-label', n); b.innerHTML = '<i></i>'; b.addEventListener('click', () => laneGo(k)); $('#ldots').append(b); return b; });
-let lseen = false, ld = null, wt = 0, wFrom = null, follow = false;
-const perDoor = () => M.rl / LAST;                                   /* page scroll that moves the lane by one doorway */
-const yFor = k => M.rt + clamp(k / LAST) * M.rl;                     /* scroll position with doorway k in the middle */
+let lseen = false, ld = null, wt = 0, wFrom = null, wc = 0, vLast = -1e9, follow = false, gl = null;
+const yFor = k => M.rt + clamp(k / LAST) * M.rl;                     /* scroll position with the lane at doorway k (fractions too) */
 const fAt = y => clamp((y - M.rt) / M.rl) * LAST;                    /* where the lane is, in doorways, at scroll position y */
+const cAt = f => { const i = Math.min(LAST - 1, Math.floor(f)); return lerp(cen[i], cen[i + 1], ez(f - i)); };   /* the street point in the middle of the screen */
+const ezInv = u => .5 - Math.sin(Math.asin(clamp(1 - 2 * u, -1, 1)) / 3);   /* undoes ez */
+const fAtC = c => { if (c <= cen[0]) return 0; if (c >= cen[LAST]) return LAST; let i = 0; while (i < LAST - 1 && c > cen[i + 1]) i++; return i + ezInv((c - cen[i]) / (cen[i + 1] - cen[i])); };
 const pinned = () => scrollY > M.rt - VH * .3 && scrollY < M.rt + M.rl + VH * .3;
+const riding = () => Math.abs(scrollY - clamp(scrollY, M.rt, M.rt + M.rl)) < 2;   /* the lane is holding the screen */
 function laneSeen() { if (!lseen) { lseen = true; lhint.classList.add('gone'); } }
-function laneGo(k) { laneSeen(); root.style.scrollBehavior = ''; scrollTo({ top: yFor(clamp(Math.round(k), 0, LAST)), behavior: calm ? 'auto' : 'smooth' }); }
-function jump(y) { root.style.scrollBehavior = 'auto'; scrollTo(0, y); }   /* follow a finger exactly, without the page's smooth scrolling */
+function jump(y) { if (root.style.scrollBehavior !== 'auto') root.style.scrollBehavior = 'auto'; scrollTo(0, y); }   /* move exactly, without the page's smooth scrolling */
+/* glide the street to doorway k on a critically damped spring, starting at speed v (px per ms, + is forwards), so a flick carries on without a hitch */
+function glide(k, v = 0) {
+  k = clamp(Math.round(k), 0, LAST); laneSeen();
+  if (calm || !riding()) { gl = null; follow = false; root.style.scrollBehavior = ''; scrollTo({ top: yFor(k), behavior: calm ? 'auto' : 'smooth' }); return; }
+  const f = fAt(scrollY), c = cAt(f), x = c - cen[k], w = .012 / Math.sqrt(Math.max(1, Math.abs(f - k)));   /* longer trips take a little longer */
+  if (x * v < 0 && Math.abs(v) > 1.5 * w * Math.abs(x)) v = -Math.sign(x) * 1.5 * w * Math.abs(x);       /* never so fast that it overshoots the doorway */
+  gl = { k, c, v, w, t: performance.now(), y: null }; follow = true;
+}
+function endGlide() { gl = null; follow = false; root.style.scrollBehavior = ''; }
+function glideStep(now) {
+  if (gl.y !== null && Math.abs(scrollY - gl.y) > 2) { endGlide(); return; }      /* the page was scrolled meanwhile: let that win */
+  const dt = clamp(now - gl.t, 0, 34), w = gl.w, ct = cen[gl.k], x0 = gl.c - ct, q = gl.v + w * x0, e = Math.exp(-w * dt);
+  let x = (x0 + q * dt) * e; gl.v = (gl.v - w * q * dt) * e; gl.t = Math.max(gl.t, now);
+  if (Math.abs(x) < .3 && Math.abs(gl.v) < .01) x = 0;
+  gl.c = ct + x; jump(x ? yFor(fAtC(gl.c)) : yFor(gl.k)); gl.y = scrollY;
+  if (!x) endGlide();
+}
+const laneGo = k => glide(k);
 function laneDraw(y) {
-  const f = fAt(y), i = Math.min(LAST - 1, Math.floor(f)), c = lerp(cen[i], cen[i + 1], ez(f - i)), x = M.lw / 2 - c;
+  const f = fAt(y), c = cAt(f), x = M.lw / 2 - c;
   track.style.transform = `translate3d(${x.toFixed(1)}px,0,0)`; ground.style.backgroundPosition = `${x.toFixed(1)}px 0,0 0`;
   rick.style.transform = `translate3d(0,${(Math.sin(x / 34) * 1.2).toFixed(2)}px,0)`;
   const s = rick.clientHeight / 150 || 1, ang = -x / (25 * s), deg = ang * 57.2958;
@@ -993,30 +1015,50 @@ function laneDraw(y) {
   const on = Math.round(f); dotEls.forEach((b, k) => b.classList.toggle('on', k === on));
   if (f > .05) laneSeen();
 }
-/* a sideways swipe or mouse drag scrolls the page by the matching amount; an up-down swipe is the page's own scrolling */
-lane.addEventListener('pointerdown', e => { if (e.button > 0 || e.target.closest('button')) return; ld = { x: e.clientX, y: e.clientY, id: e.pointerId, lock: null, y0: scrollY, dx: 0 }; });
+/* the doorway to settle on after sideways input stops at street point c: the nearest one, but a deliberate push of 40 px reaches the next */
+function settle(c, k0) { const k = Math.round(fAtC(c)), m = c - cen[k0]; return k === k0 && Math.abs(m) > 40 ? k0 + Math.sign(m) : k; }
+/* a sideways swipe or mouse drag moves the street with the finger; an up-down swipe is the page's own scrolling */
+lane.addEventListener('pointerdown', e => {
+  if (e.button > 0 || e.target.closest('button')) return;
+  const gk = gl ? gl.k : null; if (gl) endGlide();                   /* a touch catches the street mid-glide */
+  ld = { x: e.clientX, y: e.clientY, id: e.pointerId, lock: null, gk, k0: Math.round(fAt(scrollY)), x0: 0, c0: 0, s: [] };
+});
 lane.addEventListener('pointermove', e => {
   if (!ld || e.pointerId !== ld.id) return;
-  const dx = e.clientX - ld.x, dy = e.clientY - ld.y;
   if (!ld.lock) {
-    if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) { ld.lock = 'x'; follow = true; try { lane.setPointerCapture(e.pointerId); } catch (_) {} lane.classList.add('drag'); laneSeen(); }
-    else if (Math.abs(dy) > 8) { ld = null; return; }
+    const dx = e.clientX - ld.x, dy = e.clientY - ld.y;
+    if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {             /* counted from here, so the street doesn't jump by the first 8 px */
+      ld.lock = riding() ? 'x' : 'far'; ld.x0 = e.clientX; ld.c0 = cAt(fAt(scrollY)); follow = true; laneSeen();
+      try { lane.setPointerCapture(e.pointerId); } catch (_) {} lane.classList.add('drag');
+    } else { if (Math.abs(dy) > 8) ld = null; return; }
   }
-  if (ld.lock === 'x') { ld.dx = dx; const y = ld.y0 - dx / panels[0].offsetWidth * perDoor(); jump(clamp(y, Math.min(ld.y0, M.rt), Math.max(ld.y0, M.rt + M.rl))); }
+  const c = clamp(ld.c0 - (e.clientX - ld.x0), cen[0], cen[LAST]);
+  ld.s.push([e.timeStamp, c]); while (ld.s.length > 2 && e.timeStamp - ld.s[0][0] > 100) ld.s.shift();
+  if (ld.lock === 'x') jump(yFor(fAtC(c)));                           /* 'far': the lane isn't holding the screen yet; letting go brings it in */
 });
-function laneUp() {
-  if (!ld) return; const sideways = ld.lock === 'x', dx = ld.dx, k0 = Math.round(fAt(ld.y0)); ld = null; follow = false; lane.classList.remove('drag'); root.style.scrollBehavior = '';
-  if (sideways) laneGo(Math.abs(dx) > 40 ? k0 + (dx < 0 ? 1 : -1) : k0);
+function laneUp(e) {
+  const d = ld; if (!d || e.pointerId !== d.id) return; ld = null; lane.classList.remove('drag');
+  if (!d.lock) { if (e.type === 'pointerup' && d.gk !== null) glide(d.gk); return; }   /* a tap mid-glide lets it carry on */
+  const s = d.s, a = s[0], b = s[s.length - 1]; let v = 0;
+  if (s.length > 1 && e.timeStamp - b[0] < 80) v = (b[1] - a[1]) / Math.max(16, b[0] - a[0]);   /* the finger's speed as it let go */
+  const c = b ? b[1] : d.c0, look = Math.abs(v) * 80; let k;
+  if (Math.abs(v) < .25) k = settle(c, d.k0);
+  else if (v > 0) { k = cen.findIndex(p => p > c + 1); if (k < 0) k = LAST; else if (cen[k] - c < look) k++; }    /* a flick goes on to the next doorway, */
+  else { k = LAST; while (k >= 0 && cen[k] >= c - 1) k--; if (k < 0) k = 0; else if (c - cen[k] < look) k--; }               /* or the one after if that is nearly here */
+  glide(k, v);
 }
 lane.addEventListener('pointerup', laneUp); lane.addEventListener('pointercancel', laneUp);
-/* a trackpad's sideways scroll follows the fingers, then settles on a doorway in the direction it was going */
+/* a trackpad's sideways scroll moves the street with the fingers (and its momentum), then settles on a doorway in the direction it was going */
 lane.addEventListener('wheel', e => {
-  if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
-  e.preventDefault(); laneSeen(); follow = true;
-  if (wFrom === null) wFrom = Math.round(fAt(scrollY));
-  const y = scrollY + e.deltaX / panels[0].offsetWidth * perDoor(); jump(clamp(y, Math.min(scrollY, M.rt), Math.max(scrollY, M.rt + M.rl)));
-  clearTimeout(wt); wt = setTimeout(() => { const m = fAt(scrollY) - wFrom, from = wFrom; wFrom = null; follow = false;
-    laneGo(Math.abs(m) < .12 ? from : from + Math.sign(m) * Math.max(1, Math.round(Math.abs(m)))); }, 180);
+  const u = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerWidth : 1, dx = e.deltaX * u, dy = e.deltaY * u;
+  if (wFrom === null) {                                               /* a new gesture: sideways ones are the lane's, up-down ones the page's */
+    if (Math.abs(dx) <= Math.abs(dy) || e.timeStamp - vLast < 200) { if (dy) vLast = e.timeStamp; return; }
+    if (!riding()) return;
+    if (gl) endGlide(); wFrom = Math.round(fAt(scrollY)); wc = cAt(fAt(scrollY)); laneSeen(); follow = true;
+  }
+  e.preventDefault();
+  wc = clamp(wc + dx, cen[0], cen[LAST]); jump(yFor(fAtC(wc)));
+  clearTimeout(wt); wt = setTimeout(() => { const k0 = wFrom; wFrom = null; glide(settle(wc, k0)); }, 140);
 }, { passive: false });
 addEventListener('keydown', e => {
   if (!pinned() || e.altKey || e.ctrlKey || e.metaKey || root.classList.contains('svopen') || /^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName)) return;
@@ -1048,6 +1090,7 @@ function update(y) {
 let cy = scrollY, last = -1;
 const EASE = matchMedia('(pointer: coarse)').matches ? .5 : .14;   /* a phone's scrolling already glides, so follow it closely; ease mouse-wheel steps on a computer */
 function frame(now) {
+  if (gl) glideStep(now);
   const t = scrollY; cy += (t - cy) * (calm || follow ? 1 : EASE); if (Math.abs(t - cy) < .3) cy = t; if (cy !== last) { update(cy); last = cy; }
   requestAnimationFrame(frame);
 }
@@ -1113,7 +1156,45 @@ near.observe(sec);
 /* ---------- the viewer ---------- */
 let sv, bk, card, ui, bars, cap, sndB, loader, prevB, nextB, slides = [];
 let mode = 'phone', cur = 0, open = false, closing = false, held = false, pushed = false, token = 0, loadT = 0;
+let pd = null, holdT = 0, dragging = false, dy = 0;
 const pickMode = () => innerWidth < 760 ? 'phone' : 'card';      /* a phone: full screen; anything wider: the shaped card */
+
+/* pinching, as on Instagram: two fingers zoom the photo and carry it about while the story pauses and its bars and caption fade;
+   letting go springs it back and the story carries on. Past 1.3x the photo's largest file is fetched, so it stays sharp. */
+const pts = new Map(); let zm = null;
+const pair = () => [...pts.values()].slice(0, 2);
+const midOf = (p, r) => ({ x: (p[0].x + p[p.length - 1].x) / 2 - r.left, y: (p[0].y + p[p.length - 1].y) / 2 - r.top });
+function zoomStart() {
+  clearTimeout(holdT); pd = null;
+  if (dragging) { dragging = false; card.getAnimations().forEach(a => a.cancel()); card.style.transform = ''; bk.style.opacity = ''; }
+  setHold(true);
+  const el = slides[cur].el, run = el.getAnimations(); let s = 1, tx = 0, ty = 0;
+  if (run.length) { const m = new DOMMatrix(getComputedStyle(el).transform); s = m.a; tx = m.e; ty = m.f; run.forEach(a => a.cancel()); }   /* caught while springing back */
+  zm = { el, s, raw: s, tx, ty, r: card.getBoundingClientRect() };
+  zoomAnchor();
+}
+function zoomAnchor() {                                                       /* a finger lands or lifts: carry on from where the photo is */
+  const p = pair(); zm.m0 = midOf(p, zm.r); zm.d0 = p.length > 1 ? Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) : 0;
+  zm.b = { s: zm.s, raw: zm.raw, tx: zm.tx, ty: zm.ty };
+}
+function zoomMove() {
+  const p = pair(), b = zm.b, m = midOf(p, zm.r);
+  if (p.length > 1 && zm.d0 > 0) {
+    zm.raw = b.raw * Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) / zm.d0;
+    zm.s = zm.raw < 1 ? 1 - (1 - zm.raw) * .3 : zm.raw > 5 ? 5 + (zm.raw - 5) * .2 : zm.raw;   /* it gives a little, past its smallest and largest */
+  }
+  const cx = (zm.m0.x - b.tx) / b.s, cy = (zm.m0.y - b.ty) / b.s;           /* the spot that was between the fingers stays between them */
+  zm.tx = m.x - cx * zm.s; zm.ty = m.y - cy * zm.s;
+  zm.el.style.transform = `translate3d(${zm.tx.toFixed(1)}px,${zm.ty.toFixed(1)}px,0) scale(${zm.s.toFixed(4)})`;
+  if (zm.s > 1.3) sharper(cur);
+}
+function zoomEnd() {
+  const el = zm.el, from = el.style.transform; zm = null; el.style.transform = '';
+  if (from && !calm) el.animate([{ transform: from }, { transform: 'none' }], { duration: 320, easing: 'cubic-bezier(.2,.8,.2,1)' });
+  setHold(false);
+}
+function zoomReset() { pts.clear(); if (!zm) return; zm.el.getAnimations().forEach(a => a.cancel()); zm.el.style.transform = ''; zm = null; }
+function sharper(i) { const s = slides[i]; if (s.big) return; s.big = true; s.fg.sizes = Math.ceil(parseFloat(s.fg.sizes) * 2.5) + 'px'; }
 function build() {
   sv = document.createElement('div'); sv.className = 'sv'; sv.hidden = true;
   sv.setAttribute('role', 'dialog'); sv.setAttribute('aria-modal', 'true'); sv.setAttribute('aria-label', 'Our story');
@@ -1134,21 +1215,26 @@ function build() {
     el.innerHTML = `<img class="bk" alt="" src="${p.lqip}"><img class="fg" alt="Photo ${i + 1} of ${list.length}${p.caption ? ': ' + p.caption.replace(/"/g, '&quot;') : ''}" decoding="async">`;
     q('.sv-slides').append(el); return { el, fg: el.querySelector('.fg'), bk: el.querySelector('.bk'), p, ready: null };
   });
-  /* taps, holding, swipes */
-  let pd = null, holdT = 0, dragging = false, dy = 0;
+  /* taps, holding, swipes, and pinching with two fingers */
   card.addEventListener('pointerdown', e => {
     if (!open || closing || e.button > 0 || e.target.closest('button')) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    try { card.setPointerCapture(e.pointerId); } catch (_) {}
+    if (zm) { zoomAnchor(); return; }
+    if (pts.size > 1) { zoomStart(); return; }
     pd = { x: e.clientX, y: e.clientY, id: e.pointerId }; dragging = false; dy = 0;
     clearTimeout(holdT); holdT = setTimeout(() => { if (pd && !dragging) setHold(true); }, 180);
-    try { card.setPointerCapture(e.pointerId); } catch (_) {}
   });
   card.addEventListener('pointermove', e => {
+    const p = pts.get(e.pointerId); if (p) { p.x = e.clientX; p.y = e.clientY; }
+    if (zm) { if (p) zoomMove(); return; }
     if (!pd || e.pointerId !== pd.id) return;
     const dx = e.clientX - pd.x, ddy = e.clientY - pd.y;
     if (!dragging && ddy > 12 && ddy > Math.abs(dx) * 1.2) { dragging = true; clearTimeout(holdT); setHold(true); }
     if (dragging) { dy = Math.max(0, ddy); card.style.transform = `translate3d(0,${dy.toFixed(1)}px,0) scale(${(1 - dy / 1600).toFixed(4)})`; bk.style.opacity = String(1 - Math.min(.7, dy / 500)); }
   });
   card.addEventListener('pointerup', e => {
+    if (pts.delete(e.pointerId) && zm) { pts.size ? zoomAnchor() : zoomEnd(); return; }
     if (!pd || e.pointerId !== pd.id) return;
     clearTimeout(holdT); const dx = e.clientX - pd.x, ddy = e.clientY - pd.y, wasHeld = held; pd = null;
     if (dragging) {
@@ -1162,8 +1248,12 @@ function build() {
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(ddy)) { dx < 0 ? next() : prev(); return; }
     const r = card.getBoundingClientRect(); (e.clientX - r.left) < r.width * .3 ? prev() : next();
   });
-  card.addEventListener('pointercancel', () => { pd = null; clearTimeout(holdT); if (dragging) { dragging = false; card.style.transform = ''; bk.style.opacity = ''; } setHold(false); });
+  card.addEventListener('pointercancel', e => {
+    if (pts.delete(e.pointerId) && zm) { pts.size ? zoomAnchor() : zoomEnd(); return; }
+    pd = null; clearTimeout(holdT); if (dragging) { dragging = false; card.style.transform = ''; bk.style.opacity = ''; } setHold(false);
+  });
   sv.addEventListener('contextmenu', e => e.preventDefault());                /* a long press holds the photo; no menu */
+  sv.addEventListener('gesturestart', e => e.preventDefault());               /* older iPhones: a pinch zooms the photo, not the page */
   q('.sv-x').addEventListener('click', closeUI); q('.sv-xx').addEventListener('click', closeUI);
   prevB.addEventListener('click', prev); nextB.addEventListener('click', next);
   sndB.addEventListener('click', () => { if (window.__music) window.__music.toggle(); });
@@ -1194,7 +1284,7 @@ function layout() {
     if (mode === 'card') { const ri = cardRect(i); w = ri.w; h = ri.h; s.fg.style.cssText = ''; s.bk.style.cssText = ''; }
     else { const ar = s.p.w / s.p.h; w = r.w; h = w / ar; if (h > r.h) { h = r.h; w = h * ar; } l = (r.w - w) / 2; t = (r.h - h) / 2;
       s.fg.style.cssText = s.bk.style.cssText = `left:${l.toFixed(1)}px;top:${t.toFixed(1)}px;width:${w.toFixed(1)}px;height:${h.toFixed(1)}px`; }
-    s.fg.sizes = Math.ceil(w) + 'px';                                          /* the browser picks the file for this width and the screen's density */
+    s.fg.sizes = Math.ceil(w * (s.big ? 2.5 : 1)) + 'px';                      /* the browser picks the file for this width and the screen's density (larger once zoomed) */
   });
   if (mode === 'card') { prevB.style.cssText = `left:${Math.max(10, r.x - 64)}px;top:${r.y + r.h / 2 - 22}px`; nextB.style.cssText = `left:${Math.min(innerWidth - 54, r.x + r.w + 20)}px;top:${r.y + r.h / 2 - 22}px`; }
 }
@@ -1245,7 +1335,7 @@ function openStory() {
 function closeUI() { if (!open || closing) return; if (pushed) { pushed = false; history.back(); } else doClose(); }
 addEventListener('popstate', () => { if (open) { pushed = false; doClose(); } });    /* the phone's back gesture closes it too */
 function doClose() {
-  if (!open || closing) return; closing = true; token++; clearTimeout(loadT); loader.classList.remove('on');
+  if (!open || closing) return; closing = true; token++; clearTimeout(loadT); loader.classList.remove('on'); zoomReset(); pd = null; clearTimeout(holdT);
   sv.classList.remove('ready'); setHold(true);
   const f = fromCover(), from = card.style.transform || 'none', bo = getComputedStyle(bk).opacity;
   const done = () => {

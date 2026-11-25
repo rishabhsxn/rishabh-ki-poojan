@@ -32,6 +32,7 @@ How the page loads them (the "Photographs" script at the end of `index.html`). D
 - Every `<img>` uses `srcset` with all widths, plus a `sizes` value set to its laid-out CSS width. The browser then picks the right file for the screen's density: about 720 for the cover, 1280 on phones, and up to 2048 for wide photos on large screens.
 - The viewer loads only the photo on screen and its neighbours (`ensure(cur ± 1)`). Pointing at the cover preloads the first photo, after the layout is set so it fetches the right size.
 - Each photo's 7 seconds (`DUR`) start only once it has decoded. Holding a finger or the mouse on it pauses it.
+- Two fingers zoom a photo, as on Instagram stories: it pauses, follows the fingers and springs back when they lift. Once a photo is zoomed past 1.3×, its `sizes` is raised 2.5× so the browser fetches the 2048 file. This is the one deliberate exception to "`sizes` = laid-out width", and it applies only to photos someone has zoomed.
 
 After rebuilding, check:
 
