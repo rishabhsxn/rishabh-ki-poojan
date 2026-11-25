@@ -397,7 +397,7 @@ html.static *{transition:none!important}
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var W=0,H=0,D=1,hz=0,u=1,PW=0,PH=0,px0=0,vy0=0,Q=1,lastE=-1,narrow=false;
   var litAt=null,covered=false,visible=true,raf=0,prev=0,sparks=[],rockets=[],nextFw=0,shots=0,fly=0,sway=[0,0],swayTo=[0,0];
-  var things=[],ghat={};
+  var things=[];
 
   /* depth of each layer: bigger is further away. The camera position c runs from 0 past each one. */
   var DF=3.0,DM=3.25,DR=3.65,DH1=11,DH2=8,DT=1.15,IN=[3.55,4.1],DEND=4.75,CMAX=4.5;
@@ -409,7 +409,6 @@ html.static *{transition:none!important}
   function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647;}
   var stars=[],i;
   for(i=0;i<150;i++)stars.push({x:rnd(),y:rnd()*.56,r:rnd()*1.1+.3,p:rnd()*6.28});
-  var fseed=[];for(i=0;i<10;i++)fseed.push([rnd(),rnd(),rnd()*6.28]);   /* ten floating diyas, plus the one already lit */
 
   function clamp(v){return v<0?0:v>1?1:v;}
   function smooth(v){v=clamp(v);return v*v*(3-2*v);}
@@ -429,19 +428,12 @@ html.static *{transition:none!important}
     vy0=hz-(H-hz)*.9;Q=0;lastE=-1;
     var k,j,d,y;
     things=[];
-    /* fourteen diyas floating on the lake plus the one already lit, placed as in the earlier lake versions */
+    /* the quiet lake: no ghat, just eight diyas in two lines that open towards the viewer like a V, with clear water
+       round the names, "Scroll down" and the music button. The nearest on the left, just above "Tap to light the diyas",
+       is the one already lit before the tap. Each pair is [across the screen, from the palace (0) to the bottom (1)]. */
     function fl(fx,fd,fp,sd){y=hz+24+Math.pow(fd,1.3)*(H-hz-64);
       things.push({t:'diya',x:fx*W,y:y,d:dAt(y),s:(3+fd*6.5)*(narrow?.85:1),p:fp,seed:sd});}
-    for(k=0;k<fseed.length;k++)fl(.04+fseed[k][0]*.5,.1+fseed[k][1]*.8,fseed[k][2],false);
-    fl(.1,.97,1,true);
-    /* ghat: stepped terraces at the right-hand shore, a row of diyas on every rim */
-    var cxg=W*(narrow?1.08:1.0),cyg=H*(narrow?1.01:1.07),rx0=Math.min(W*(narrow?.7:.36),(H-hz)*1.5),st=Math.max(9,rx0*.065);
-    ghat={cx:cxg,tiers:[],diyas:[]};var gi=0;
-    for(k=0;k<4;k++){var rx=rx0*(1-k*.2),ry=rx*.5,cy=cyg-k*st,n=Math.floor(rx*1.7/(narrow?28:36));
-      ghat.tiers.push({rx:rx,ry:ry,cy:cy,st:st});
-      for(j=0;j<=n;j++){var a=Math.PI*(1.02+.56*j/n),dx=cxg+(rx-7)*Math.cos(a),dy=cy+(ry-5)*Math.sin(a);
-        if(dx<W+8&&dy<H+8&&gi++%2===0)ghat.diyas.push({x:dx,y:dy,s:3+dy/H*2.4,p:j*1.7+k*2.3});}}   /* every second one on screen: half as many */
-    things.push({t:'ghat',d:1.5});
+    [[.37,.1],[.27,.34],[.19,.6],[.11,.8],[.63,.18],[.72,.43],[.81,.7],[.89,.85]].forEach(function(q,n){fl(q[0],q[1],n*2.1+.7,n===3);});
     things.sort(function(p,q){return q.d-p.d;});
   }
 
@@ -561,9 +553,9 @@ html.static *{transition:none!important}
   }
   function diya(dx,dy,sz,a,t,p,streak){
     if(a>0){g.globalCompositeOperation='lighter';
-      var fk=.9+.1*Math.sin(t*9+p*3),rg=g.createRadialGradient(dx,dy-sz*.5,0,dx,dy-sz*.5,sz*5);
-      rg.addColorStop(0,'rgba(255,176,80,'+(.5*a*fk)+')');rg.addColorStop(1,'rgba(255,176,80,0)');
-      g.fillStyle=rg;g.fillRect(dx-sz*5,dy-sz*5.5,sz*10,sz*10);
+      var hr=sz*3.6,fk=.9+.1*Math.sin(t*9+p*3),rg=g.createRadialGradient(dx,dy-sz*.5,0,dx,dy-sz*.5,hr);   /* a small glow: flames, not haze */
+      rg.addColorStop(0,'rgba(255,176,80,'+(.43*a*fk)+')');rg.addColorStop(1,'rgba(255,176,80,0)');
+      g.fillStyle=rg;g.fillRect(dx-hr,dy-sz*.5-hr,hr*2,hr*2);
       if(streak){var rl=g.createLinearGradient(0,dy,0,dy+sz*4);
         rl.addColorStop(0,'rgba(255,186,90,'+(.3*a)+')');rl.addColorStop(1,'rgba(255,186,90,0)');
         g.fillStyle=rl;g.fillRect(dx-sz*.45,dy+sz*.3,sz*.9,sz*4);}
@@ -719,15 +711,10 @@ html.static *{transition:none!important}
       g.setTransform(D,0,0,D,0,0);g.strokeStyle='rgba(255,226,160,'+clamp((gs-1.6)/2)*clamp(e*2)+')';g.lineWidth=Math.max(1,gs*.5);
       g.beginPath();archPath(scrX(DF,W/2),scrY(DF,hz),gw*gs,gh*gs);g.stroke();}
 
-    /* on the water: floating diyas and the ghat, far to near; each fades as the camera passes it */
+    /* on the water: floating diyas, far to near; each fades as the camera passes it */
     if(!through)for(k=0;k<things.length;k++){o=things[k];s=at3(o.d);if(!s)continue;
       var fade=clamp((o.d-cam-.02)/.16);g.globalAlpha=fade;
       if(o.t==='diya')diya(o.x+Math.sin(t*.35+o.p)*4,o.y+Math.sin(t*1.2+o.p)*.6,o.s,o.seed?1:lit(o.y),t,o.p,true);
-      else{var gi,gt,gd;
-        for(gi=0;gi<ghat.tiers.length;gi++){gt=ghat.tiers[gi];
-          g.fillStyle=mix([30,27,56],[128,76,44],ge);g.beginPath();g.ellipse(ghat.cx,gt.cy+gt.st,gt.rx,gt.ry,0,0,6.29);g.fill();
-          g.fillStyle=mix([50,45,80],[206,140,82],ge);g.beginPath();g.ellipse(ghat.cx,gt.cy,gt.rx,gt.ry,0,0,6.29);g.fill();}
-        for(gi=0;gi<ghat.diyas.length;gi++){gd=ghat.diyas[gi];diya(gd.x,gd.y,gd.s,lit(gd.y),t,gd.p,false);g.globalAlpha=fade;}}
       g.globalAlpha=1;}
 
     if(at3(DT)){g.globalAlpha=clamp((DT-cam-.02)/.2);toran(ge,lit(H*.2),t);g.globalAlpha=1;}
